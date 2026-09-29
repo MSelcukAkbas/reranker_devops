@@ -1,0 +1,166 @@
+62:    fn default() -> Config {
+108:    pub fn new() -> StandardBuilder {
+130:    pub fn build<W: WriteColor>(&self, wtr: W) -> Standard<W> {
+143:    pub fn build_no_color<W: io::Write>(
+167:    pub fn color_specs(&mut self, specs: ColorSpecs) -> &mut StandardBuilder {
+183:    pub fn hyperlink(
+206:    pub fn stats(&mut self, yes: bool) -> &mut StandardBuilder {
+221:    pub fn heading(&mut self, yes: bool) -> &mut StandardBuilder {
+232:    pub fn path(&mut self, yes: bool) -> &mut StandardBuilder {
+241:    pub fn only_matching(&mut self, yes: bool) -> &mut StandardBuilder {
+263:    pub fn per_match(&mut self, yes: bool) -> &mut StandardBuilder {
+278:    pub fn per_match_one_line(&mut self, yes: bool) -> &mut StandardBuilder {
+293:    pub fn replacement(
+309:    pub fn max_columns(&mut self, limit: Option<u64>) -> &mut StandardBuilder {
+324:    pub fn max_columns_preview(&mut self, yes: bool) -> &mut StandardBuilder {
+334:    pub fn max_matches(&mut self, limit: Option<u64>) -> &mut StandardBuilder {
+348:    pub fn column(&mut self, yes: bool) -> &mut StandardBuilder {
+360:    pub fn byte_offset(&mut self, yes: bool) -> &mut StandardBuilder {
+369:    pub fn trim_ascii(&mut self, yes: bool) -> &mut StandardBuilder {
+387:    pub fn separator_search(
+404:    pub fn separator_context(
+420:    pub fn separator_field_match(
+436:    pub fn separator_field_context(
+457:    pub fn separator_path(&mut self, sep: Option<u8>) -> &mut StandardBuilder {
+470:    pub fn path_terminator(
+507:    pub fn new(wtr: W) -> Standard<W> {
+518:    pub fn new_no_color(wtr: W) -> Standard<NoColor<W>> {
+528:    pub fn sink<'s, M: Matcher>(
+555:    pub fn sink_with_path<'p, 's, M, P>(
+593:    fn needs_match_granularity(&self) -> bool {
+615:    pub fn has_written(&self) -> bool {
+620:    pub fn get_mut(&mut self) -> &mut W {
+626:    pub fn into_inner(self) -> W {
+674:    pub fn has_match(&self) -> bool {
+685:    pub fn match_count(&self) -> u64 {
+699:    pub fn binary_byte_offset(&self) -> Option<u64> {
+708:    pub fn stats(&self) -> Option<&Stats> {
+714:    fn record_matches(
+757:    fn replace(
+785:    fn should_quit(&self) -> bool {
+798:    fn match_more_than_limit(&self) -> bool {
+810:    fn matched(
+851:    fn context(
+877:    fn context_break(
+885:    fn binary_data(
+903:    fn begin(&mut self, _searcher: &Searcher) -> Result<bool, io::Error> {
+915:    fn finish(
+952:    fn new(
+966:    fn from_match(
+981:    fn from_context(
+994:    fn sink(&self) -> io::Result<()> {
+1017:    fn sink_fast(&self) -> io::Result<()> {
+1035:    fn sink_fast_multi_line(&self) -> io::Result<()> {
+1060:    fn sink_slow(&self) -> io::Result<()> {
+1095:    fn sink_slow_multi_line(&self) -> io::Result<()> {
+1130:    fn sink_slow_multi_line_only_matching(&self) -> io::Result<()> {
+1181:    fn sink_slow_multi_per_match(&self) -> io::Result<()> {
+1242:    fn write_prelude(
+1258:    fn write_line(&self, line: &[u8]) -> io::Result<()> {
+1285:    fn write_colored_line(
+1313:    fn write_colored_matches(
+1354:    fn write_exceeded_line(
+1422:    fn write_path_line(&self) -> io::Result<()> {
+1434:    fn write_search_prelude(&self) -> io::Result<()> {
+1452:    fn write_binary_message(&self, offset: u64) -> io::Result<()> {
+1485:    fn write_context_separator(&self) -> io::Result<()> {
+1493:    fn write_line_term(&self) -> io::Result<()> {
+1497:    fn write_spec(&self, spec: &ColorSpec, buf: &[u8]) -> io::Result<()> {
+1505:    fn write_path(&self, path: &PrinterPath) -> io::Result<()> {
+1512:    fn write_path_hyperlink(&self, path: &PrinterPath) -> io::Result<()> {
+1518:    fn start_hyperlink(
+1532:    fn end_hyperlink(
+1539:    fn start_color_match(&self) -> io::Result<()> {
+1548:    fn end_color_match(&self) -> io::Result<()> {
+1557:    fn write(&self, buf: &[u8]) -> io::Result<()> {
+1561:    fn trim_line_terminator(&self, buf: &[u8], line: &mut Match) {
+1565:    fn has_line_terminator(&self, buf: &[u8]) -> bool {
+1569:    fn is_context(&self) -> bool {
+1574:    fn config(&self) -> &'a Config {
+1579:    fn wtr(&self) -> &'a RefCell<CounterWriter<W>> {
+1584:    fn path(&self) -> Option<&'a PrinterPath<'a>> {
+1590:    fn separator_field(&self) -> &[u8] {
+1600:    fn exceeds_max_columns(&self, line: &[u8]) -> bool {
+1611:    fn multi_line(&self) -> bool {
+1620:    fn trim_ascii_prefix(&self, slice: &[u8], range: &mut Match) {
+1652:    fn new(std: &'a StandardImpl<'a, M, W>) -> PreludeWriter<'a, M, W> {
+1668:    fn start(
+1685:    fn end(&mut self) -> io::Result<()> {
+1698:    fn write_path(&mut self) -> io::Result<()> {
+1719:    fn write_line_number(&mut self, line: Option<u64>) -> io::Result<()> {
+1730:    fn write_column_number(&mut self, column: Option<u64>) -> io::Result<()> {
+1744:    fn write_byte_offset(&mut self, offset: u64) -> io::Result<()> {
+1760:    fn write_separator(&mut self) -> io::Result<()> {
+1777:    fn config(&self) -> &Config {
+1810:    fn printer_contents(printer: &mut Standard<NoColor<Vec<u8>>>) -> String {
+1814:    fn printer_contents_ansi(printer: &mut Standard<Ansi<Vec<u8>>>) -> String {
+1819:    fn reports_match() {
+1842:    fn reports_binary() {
+1868:    fn reports_stats() {
+1895:    fn reports_stats_multiple() {
+1932:    fn context_break() {
+1962:    fn context_break_multiple_no_heading() {
+2012:    fn context_break_multiple_heading() {
+2063:    fn path() {
+2086:    fn separator_field() {
+2117:    fn separator_path() {
+2141:    fn path_terminator() {
+2165:    fn heading() {
+2189:    fn no_heading() {
+2212:    fn no_heading_multiple() {
+2248:    fn heading_multiple() {
+2286:    fn trim_ascii() {
+2309:    fn trim_ascii_multi_line() {
+2334:    fn trim_ascii_with_line_term() {
+2359:    fn line_number() {
+2381:    fn line_number_multi_line() {
+2407:    fn column_number() {
+2430:    fn column_number_multi_line() {
+2457:    fn byte_offset() {
+2481:    fn byte_offset_multi_line() {
+2509:    fn max_columns() {
+2533:    fn max_columns_preview() {
+2558:    fn max_columns_with_count() {
+2583:    fn max_columns_with_count_preview_no_match() {
+2609:    fn max_columns_with_count_preview_one_match() {
+2635:    fn max_columns_with_count_preview_two_matches() {
+2662:    fn max_columns_multi_line() {
+2687:    fn max_columns_multi_line_preview() {
+2717:    fn max_matches() {
+2740:    fn max_matches_context() {
+2843:    fn max_matches_multi_line1() {
+2867:    fn max_matches_multi_line2() {
+2893:    fn only_matching() {
+2919:    fn only_matching_multi_line1() {
+2947:    fn only_matching_multi_line2() {
+2976:    fn only_matching_max_columns() {
+3003:    fn only_matching_max_columns_preview() {
+3031:    fn only_matching_max_columns_multi_line1() {
+3064:    fn only_matching_max_columns_preview_multi_line1() {
+3098:    fn only_matching_max_columns_multi_line2() {
+3128:    fn only_matching_max_columns_preview_multi_line2() {
+3159:    fn per_match() {
+3185:    fn per_match_multi_line1() {
+3213:    fn per_match_multi_line2() {
+3242:    fn per_match_multi_line3() {
+3271:    fn per_match_multi_line1_only_first_line() {
+3300:    fn per_match_multi_line2_only_first_line() {
+3328:    fn per_match_multi_line3_only_first_line() {
+3356:    fn replacement_passthru() {
+3385:    fn replacement() {
+3414:    fn replacement_multi_line() {
+3436:    fn replacement_multi_line_diff_line_term() {
+3462:    fn replacement_multi_line_combine_lines() {
+3484:    fn replacement_max_columns() {
+3510:    fn replacement_max_columns_preview1() {
+3537:    fn replacement_max_columns_preview2() {
+3564:    fn replacement_only_matching() {
+3591:    fn replacement_per_match() {
+3618:    fn invert() {
+3643:    fn invert_multi_line() {
+3669:    fn invert_context() {
+3698:    fn invert_context_multi_line() {
+3728:    fn invert_context_only_matching() {
+3759:    fn invert_context_only_matching_multi_line() {
+3791:    fn regression_search_empty_with_crlf() {
+3808:    fn regression_after_context_with_match() {

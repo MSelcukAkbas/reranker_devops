@@ -1,0 +1,552 @@
+{
+  "version": 1,
+  "repos": {
+    "pytest": {
+      "url": "https://github.com/pytest-dev/pytest",
+      "tag": "8.3.3",
+      "commit": "d0f136fe64f9374f18a04562305b178fb380d1ec",
+      "lang": "python"
+    },
+    "ripgrep": {
+      "url": "https://github.com/BurntSushi/ripgrep",
+      "tag": "14.1.1",
+      "commit": "4649aa9700619f94cf9c66876e9549d83420e16c",
+      "lang": "rust"
+    },
+    "express": {
+      "url": "https://github.com/expressjs/express",
+      "tag": "4.21.1",
+      "commit": "8e229f92752ad51462c868b99f6e6c2e559801b0",
+      "lang": "javascript"
+    },
+    "cobra": {
+      "url": "https://github.com/spf13/cobra",
+      "tag": "v1.8.1",
+      "commit": "e94f6d0dd9a5e5738dca6bce03c4b1207ffbc0ec",
+      "lang": "go"
+    }
+  },
+  "tasks": [
+    {
+      "id": "pytest-usage-error-p-option",
+      "repo": "pytest",
+      "intent": "Explain why `pytest -p no:X` fails for some plugins.",
+      "subtask": "Find where pytest raises UsageError for plugins that cannot be disabled.",
+      "cmd": [
+        "rg",
+        "-n",
+        "-C2",
+        "raise ",
+        "src"
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/config/__init__.py",
+          "line": 794,
+          "text": "cannot be disabled",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/config/__init__.py",
+          "line": 238,
+          "text": "cannot be disabled via",
+          "critical": false
+        }
+      ]
+    },
+    {
+      "id": "pytest-raises-impl",
+      "repo": "pytest",
+      "intent": "Find where pytest.raises is defined and which context manager class it returns.",
+      "subtask": "Locate the raises() implementation and the context manager's __exit__.",
+      "cmd": [
+        "rg",
+        "-n",
+        "-C2",
+        "-i",
+        "raises",
+        "src"
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/python_api.py",
+          "line": 794,
+          "text": "def raises(",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/python_api.py",
+          "line": 979,
+          "text": "class RaisesContext",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/python_api.py",
+          "line": 1003,
+          "text": "def __exit__(",
+          "critical": false
+        }
+      ]
+    },
+    {
+      "id": "pytest-fixture-scope",
+      "repo": "pytest",
+      "intent": "Fix a bug where a dynamic fixture scope is accepted when it should not be.",
+      "subtask": "Find where a fixture's user-given scope is parsed and where ScopeMismatch is reported.",
+      "cmd": [
+        "rg",
+        "-n",
+        "scope",
+        "src/_pytest/fixtures.py"
+      ],
+      "default_path": "src/_pytest/fixtures.py",
+      "evidence": [
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 991,
+          "text": "Scope.from_user(",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 920,
+          "text": "def _eval_scope_callable(",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 771,
+          "text": "ScopeMismatch",
+          "critical": false
+        }
+      ]
+    },
+    {
+      "id": "pytest-warnings-importers",
+      "repo": "pytest",
+      "intent": "Audit which modules use the warnings module directly.",
+      "subtask": "List files that import warnings.",
+      "cmd": [
+        "rg",
+        "-l",
+        "import warnings"
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/warnings.py",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/recwarn.py",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-fixture-tests-file",
+      "repo": "pytest",
+      "intent": "Add a regression test for fixture scoping.",
+      "subtask": "Find the existing fixture test module.",
+      "cmd": [
+        "rg",
+        "--files",
+        "-g",
+        "*.py",
+        "testing"
+      ],
+      "evidence": [
+        {
+          "path": "testing/python/fixtures.py",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-src-files-find",
+      "repo": "pytest",
+      "intent": "Get an overview of pytest's source layout.",
+      "subtask": "List Python source files.",
+      "cmd": [
+        "find",
+        "src",
+        "-name",
+        "*.py"
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/fixtures.py",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/python_api.py",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-test-counts",
+      "repo": "pytest",
+      "intent": "Find the heaviest test modules to split a slow CI job.",
+      "subtask": "Count test functions per file.",
+      "cmd": [
+        "rg",
+        "-c",
+        "def test_",
+        "testing"
+      ],
+      "evidence": [
+        {
+          "path": "testing/python/fixtures.py",
+          "critical": true
+        },
+        {
+          "path": "testing/test_terminal.py",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ripgrep-max-columns",
+      "repo": "ripgrep",
+      "intent": "Change how --max-columns reports omitted long lines.",
+      "subtask": "Find where the standard printer checks and replaces lines over max_columns.",
+      "cmd": [
+        "rg",
+        "-n",
+        "-C3",
+        "max_columns",
+        "crates"
+      ],
+      "evidence": [
+        {
+          "path": "crates/printer/src/standard.rs",
+          "line": 309,
+          "text": "pub fn max_columns(",
+          "critical": true
+        },
+        {
+          "path": "crates/printer/src/standard.rs",
+          "line": 1267,
+          "text": "exceeds_max_columns(line)",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ripgrep-search-fns",
+      "repo": "ripgrep",
+      "intent": "Trace how a single file is searched.",
+      "subtask": "List search entry-point functions.",
+      "cmd": [
+        "rg",
+        "-n",
+        "fn search",
+        "crates"
+      ],
+      "evidence": [
+        {
+          "path": "crates/searcher/src/searcher/mod.rs",
+          "text": "fn search_path",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ripgrep-unwrap-counts",
+      "repo": "ripgrep",
+      "intent": "Reduce panics from unwrap() in library crates.",
+      "subtask": "Count unwrap() calls per file.",
+      "cmd": [
+        "rg",
+        "-c",
+        "unwrap\\(\\)"
+      ],
+      "evidence": [
+        {
+          "path": "crates/printer/src/standard.rs",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "express-redirect-status",
+      "repo": "express",
+      "intent": "Change the default status code of res.redirect.",
+      "subtask": "Find res.redirect and where its default status is set.",
+      "cmd": [
+        "rg",
+        "-n",
+        "-C3",
+        "redirect",
+        "lib",
+        "test"
+      ],
+      "evidence": [
+        {
+          "path": "lib/response.js",
+          "line": 946,
+          "text": "res.redirect = function redirect(url)",
+          "critical": true
+        },
+        {
+          "path": "lib/response.js",
+          "line": 949,
+          "text": "var status = 302;",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "express-req-query",
+      "repo": "express",
+      "intent": "Understand where req.query is populated.",
+      "subtask": "Find assignments to req.query.",
+      "cmd": [
+        "rg",
+        "-n",
+        "req\\.query",
+        "."
+      ],
+      "evidence": [
+        {
+          "path": "lib/middleware/query.js",
+          "line": 42,
+          "text": "req.query = queryparse(val, opts);",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "cobra-persistent-flags",
+      "repo": "cobra",
+      "intent": "Fix persistent flags not reaching subcommands.",
+      "subtask": "Find PersistentFlags, InheritedFlags and how parents' pflags are merged.",
+      "cmd": [
+        "rg",
+        "-n",
+        "-C2",
+        "PersistentFlags",
+        "."
+      ],
+      "evidence": [
+        {
+          "path": "command.go",
+          "line": 1737,
+          "text": "func (c *Command) PersistentFlags()",
+          "critical": true
+        },
+        {
+          "path": "command.go",
+          "line": 1869,
+          "text": "func (c *Command) updateParentsPflags()",
+          "critical": false
+        }
+      ]
+    },
+    {
+      "id": "cobra-execute",
+      "repo": "cobra",
+      "intent": "Trace command execution from Execute().",
+      "subtask": "List Command methods and find Execute/ExecuteC.",
+      "cmd": [
+        "rg",
+        "-n",
+        "func \\(c \\*Command\\)",
+        "."
+      ],
+      "evidence": [
+        {
+          "path": "command.go",
+          "line": 1040,
+          "text": "func (c *Command) Execute() error",
+          "critical": true
+        },
+        {
+          "path": "command.go",
+          "line": 1054,
+          "text": "func (c *Command) ExecuteC()",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-fixture-defs",
+      "repo": "pytest",
+      "intent": "Find where a fixture's value is actually computed during setup.",
+      "subtask": "List function definitions in fixtures.py and find the setup hook and active-fixturedef lookup.",
+      "cmd": [
+        "rg",
+        "-n",
+        "def ",
+        "src/_pytest/fixtures.py"
+      ],
+      "default_path": "src/_pytest/fixtures.py",
+      "evidence": [
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 1129,
+          "text": "def pytest_fixture_setup(",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 549,
+          "text": "def _get_active_fixturedef(",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 510,
+          "text": "def getfixturevalue(",
+          "critical": false
+        }
+      ]
+    },
+    {
+      "id": "pytest-addoption-hooks",
+      "repo": "pytest",
+      "intent": "Add a new command-line option to pytest's terminal reporter.",
+      "subtask": "Find the pytest_addoption hook of the terminal plugin.",
+      "cmd": [
+        "rg",
+        "-n",
+        "-A3",
+        "def pytest_addoption",
+        "src"
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/terminal.py",
+          "line": 133,
+          "text": "def pytest_addoption(",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-fixture-mentions",
+      "repo": "pytest",
+      "intent": "Find the core module that implements fixtures.",
+      "subtask": "List files that mention fixture.",
+      "cmd": [
+        "rg",
+        "-l",
+        "fixture"
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/fixtures.py",
+          "critical": true
+        },
+        {
+          "path": "src/_pytest/python.py",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ripgrep-standard-fns",
+      "repo": "ripgrep",
+      "intent": "Fix a bug where the standard printer keeps a trailing line terminator.",
+      "subtask": "List functions in standard.rs and find where lines are written and terminators trimmed.",
+      "cmd": [
+        "rg",
+        "-n",
+        "fn ",
+        "crates/printer/src/standard.rs"
+      ],
+      "default_path": "crates/printer/src/standard.rs",
+      "evidence": [
+        {
+          "path": "crates/printer/src/standard.rs",
+          "line": 1561,
+          "text": "fn trim_line_terminator(",
+          "critical": true
+        },
+        {
+          "path": "crates/printer/src/standard.rs",
+          "line": 1258,
+          "text": "fn write_line(",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ripgrep-crate-files",
+      "repo": "ripgrep",
+      "intent": "Add a new command-line flag to ripgrep.",
+      "subtask": "List source files in crates to find where flags are defined.",
+      "cmd": [
+        "rg",
+        "--files",
+        "crates"
+      ],
+      "evidence": [
+        {
+          "path": "crates/core/flags/defs.rs",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "express-router-handle",
+      "repo": "express",
+      "intent": "Understand how the router dispatches a request to matching layers.",
+      "subtask": "Find the router's handle and process_params functions.",
+      "cmd": [
+        "rg",
+        "-n",
+        "-C2",
+        "function",
+        "lib/router"
+      ],
+      "evidence": [
+        {
+          "path": "lib/router/index.js",
+          "line": 136,
+          "text": "proto.handle = function handle(req, res, out)",
+          "critical": true
+        },
+        {
+          "path": "lib/router/index.js",
+          "line": 338,
+          "text": "proto.process_params = function process_params(",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "cobra-command-funcs",
+      "repo": "cobra",
+      "intent": "Fix argument validation happening after the command runs.",
+      "subtask": "List functions in command.go and find execute, Find and ValidateArgs.",
+      "cmd": [
+        "rg",
+        "-n",
+        "func ",
+        "command.go"
+      ],
+      "default_path": "command.go",
+      "evidence": [
+        {
+          "path": "command.go",
+          "line": 876,
+          "text": "func (c *Command) execute(a []string) (err error)",
+          "critical": true
+        },
+        {
+          "path": "command.go",
+          "line": 1141,
+          "text": "func (c *Command) ValidateArgs(",
+          "critical": true
+        },
+        {
+          "path": "command.go",
+          "line": 728,
+          "text": "func (c *Command) Find(",
+          "critical": false
+        }
+      ]
+    }
+  ]
+}
