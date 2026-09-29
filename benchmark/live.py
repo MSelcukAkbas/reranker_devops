@@ -1,11 +1,12 @@
-"""Live agent layer (tier B): run Claude Code headless on each task, hook off vs on.
+"""Live agent layer (tier B): run Claude Code headless on each task: no hook, rules, rules + lexical ranking.
 
   python3 benchmark/live.py --only cobra-execute --repeat 1
   python3 benchmark/live.py --modes off on --repeat 3 --jsonl live.jsonl
 
 Each run is `claude -p` in the pinned checkout with the task's `intent` as the
 prompt, read-only tools, and the searchslim PreToolUse hook either absent
-(`off`) or installed through `--settings` (`on`). From the stream-json
+(`off`) or installed through `--settings`, with ranking off (`rules`) or
+lexical (`on`, the hook's default). From the stream-json
 transcript it records: whether the answer cites every critical evidence line
 (within 2 lines), number of search calls (Grep, Glob, Bash rg/grep/find/fd),
 Read calls, tokens of search results the agent read, turns, total input
@@ -27,8 +28,10 @@ import statistics
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -184,7 +187,7 @@ def cited(answer: str, ev: dict, tolerance: int = 2) -> bool:
 def run_one(task: dict, repo_dir: Path, mode: str, src: Path, args) -> dict:
     settings_path = None
     tmp = None
-    if mode == "on":
+    if mode != "off":
         tmp = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
         json.dump(hook_settings(src), tmp)
         tmp.close()
@@ -194,7 +197,9 @@ def run_one(task: dict, repo_dir: Path, mode: str, src: Path, args) -> dict:
         print(f"[{task['id']} {mode}] cd {repo_dir} && {shlex.join(argv)}")
         return {}
     env = {k: v for k, v in os.environ.items() if k not in DROP_ENV}
-    env["SEARCHSLIM"] = "on" if mode == "on" else "off"
+    env["SEARCHSLIM"] = "off" if mode == "off" else "on"
+    # "rules": deterministic rules only; "on": rules + lexical ranking (the hook's default).
+    env["SEARCHSLIM_RERANK"] = "off" if mode == "rules" else "lexical"
     t0 = time.perf_counter()
     try:
         proc = subprocess.run(argv, cwd=repo_dir, env=env, capture_output=True, text=True, timeout=args.timeout, stdin=subprocess.DEVNULL)
@@ -237,38 +242,54 @@ def summarize(rows: list[dict], modes: list[str]) -> str:
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--only", nargs="*")
-    p.add_argument("--modes", nargs="+", default=["off", "on"], choices=["off", "on"])
+    p.add_argument("--modes", nargs="+", default=["off", "rules", "on"], choices=["off", "rules", "on"],
+                   help="off: no hook; rules: hook without ranking; on: hook with lexical ranking")
     p.add_argument("--repeat", type=int, default=3)
     p.add_argument("--model", help="model for the agent (default: Claude Code's default)")
     p.add_argument("--max-turns", type=int, default=20)
     p.add_argument("--timeout", type=int, default=600, help="seconds per run")
     p.add_argument("--searchslim-src", default=str(ROOT.parent / "src"))
     p.add_argument("--jsonl")
+    p.add_argument("--jobs", type=int, default=1, help="runs in parallel")
     p.add_argument("--dry-run", action="store_true")
     args = p.parse_args(argv)
 
     src = Path(args.searchslim_src).resolve()
-    if "on" in args.modes and not (src / "searchslim" / "hooks.py").exists():
+    if set(args.modes) - {"off"} and not (src / "searchslim" / "hooks.py").exists():
         raise SystemExit(f"{src} has no searchslim/hooks.py; pass --searchslim-src pointing at a checkout with the hook")
 
     spec = bench.load_spec()
-    rows = []
-    sink = open(args.jsonl, "a", encoding="utf-8") if args.jsonl else None
+    jobs = []
     for task in spec["tasks"]:
         if args.only and task["id"] not in args.only:
             continue
         repo_dir = bench.ensure_repo(task["repo"], spec["repos"][task["repo"]])
         for i in range(args.repeat):
             for mode in args.modes:  # interleave modes so drift over time hits both
-                row = run_one(task, repo_dir, mode, src, args)
-                if not row:
-                    continue
-                row["rep"] = i
-                rows.append(row)
-                print(f"{task['id']} {mode} #{i}: ok={row['success']} searches={row['search_calls']} ${row['cost_usd']:.3f}", file=sys.stderr)
-                if sink:
-                    sink.write(json.dumps(row) + "\n")
-                    sink.flush()
+                jobs.append((task, repo_dir, mode, i))
+
+    rows = []
+    sink = open(args.jsonl, "a", encoding="utf-8") if args.jsonl else None
+    lock = threading.Lock()
+
+    def work(job):
+        task, repo_dir, mode, i = job
+        row = run_one(task, repo_dir, mode, src, args)
+        if not row:
+            return
+        row["rep"] = i
+        with lock:
+            rows.append(row)
+            print(f"{task['id']} {mode} #{i}: ok={row['success']} searches={row['search_calls']} ${row['cost_usd']:.3f}", file=sys.stderr)
+            if sink:
+                sink.write(json.dumps(row) + "\n")
+                sink.flush()
+
+    # Runs are independent claude -p processes (own session id, own hook cache).
+    with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
+        list(pool.map(work, jobs))
+    order = {(j[0]["id"], j[3], j[2]): n for n, j in enumerate(jobs)}
+    rows.sort(key=lambda r: order[(r["task"], r["rep"], r["mode"])])
     if sink:
         sink.close()
     if rows:
