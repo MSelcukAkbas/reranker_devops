@@ -24,7 +24,7 @@ def test_bash_search_is_rewritten_keeping_other_fields():
     out = handle({"tool_name": "Bash", "tool_input": {"command": "rg foo", "description": "search"}})
     upd = out["hookSpecificOutput"]["updatedInput"]
     assert upd["description"] == "search"
-    assert upd["command"].endswith("-m searchslim run --max-tokens=2000 -- rg --with-filename --line-number foo")
+    assert upd["command"].endswith("-m searchslim run --max-tokens=2000 --rerank=lexical -- rg --with-filename --line-number foo")
     assert "permissionDecision" not in out["hookSpecificOutput"]
 
 
@@ -92,4 +92,17 @@ def test_hook_cli_searches_cwd_not_its_own_stdin(repo):
 def test_hook_cli_emits_json():
     event = json.dumps({"tool_name": "Bash", "tool_input": {"command": "fd -e py"}})
     proc = subprocess.run([sys.executable, "-m", "searchslim", "hook"], input=event, capture_output=True, text=True)
-    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=2000 -- fd -e py")
+    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=2000 --rerank=lexical -- fd -e py")
+
+
+def test_rerank_can_be_turned_off(monkeypatch):
+    monkeypatch.setenv("SEARCHSLIM_RERANK", "off")
+    out = handle({"tool_name": "Bash", "tool_input": {"command": "rg foo"}})
+    assert "--rerank" not in out["hookSpecificOutput"]["updatedInput"]["command"]
+
+
+@needs_rg
+def test_large_grep_is_ranked_by_default(repo):
+    event = {"tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": "content"}}
+    reason = handle(event, Config(max_tokens=800))["hookSpecificOutput"]["permissionDecisionReason"]
+    assert "ranked by relevance (lexical)" in reason

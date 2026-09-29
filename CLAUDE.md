@@ -72,8 +72,17 @@ an agent that must decide from it whether to search again.
   term), and down-weights for comment-only matches, test code, docs and changelogs.
 - `ClaudeScorer`: lexical top-60 shortlist, then `claude-haiku-4-5` returns an ordering of
   unit ids (`pip install 'searchslim[claude]'`, API credentials needed). Unknown ids are ignored.
-- Hook: `SEARCHSLIM_RERANK=lexical|claude`; intent = last user message and subtask = last
+- Hook: ranking is on by default (`SEARCHSLIM_RERANK=lexical|claude|off`); intent = last user message and subtask = last
   assistant text from the hook's `transcript_path`.
+
+Budget sweep on the benchmark tasks (critical evidence visible in the body, of 22; tokens chars/4):
+
+| budget | rules tokens | rules kept | lexical tokens | lexical kept |
+|---|---|---|---|---|
+| 800 | 7.3k | 9 | 8.1k | 19 |
+| 1200 | 10.0k | 11 | 11.5k | 20 |
+| 2000 | 14.1k | 16 | 18.0k | 22 |
+| 3000 | 20.0k | 21 | 23.7k | 22 |
 
 ## Commands
 

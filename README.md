@@ -66,7 +66,7 @@ numarası döndürür; çıktıdaki her satır ham çıktıdan gelir.
 
 ```sh
 searchslim run --rerank lexical --intent "res.redirect varsayılan status'u değiştir" -- rg -n -C2 redirect lib
-SEARCHSLIM_RERANK=lexical   # hook'ta açmak için; amaç oturum kaydından okunur
+SEARCHSLIM_RERANK=off       # hook'ta sıralama varsayılan açık; kapatmak için. Amaç oturum kaydından okunur
 ```
 
 - `lexical` (varsayılan): bağımlılıksız, deterministik.

@@ -13,8 +13,8 @@
 Every failure path (bad input, missing rg, timeout) returns no output so the
 original tool call runs unchanged. `SEARCHSLIM=off` in the environment
 disables the hook; `SEARCHSLIM_MAX_TOKENS` sets the budget.
-`SEARCHSLIM_RERANK=lexical|claude` turns on rules+model mode, with the intent
-taken from the session transcript.
+`SEARCHSLIM_RERANK=lexical|claude|off` picks the ranking (default lexical), with
+the intent taken from the session transcript.
 """
 
 from __future__ import annotations
@@ -32,6 +32,10 @@ from .rewrite import rewrite_command
 from .rules import Config, estimate_tokens
 
 RG_TIMEOUT_S = 20
+# Lexical ranking kept more critical evidence than rules alone at every budget
+# on the benchmark set (e.g. 20/22 at 1200 tokens vs 16/22 at 2000), so it is on
+# by default. SEARCHSLIM_RERANK=off gives the plain rules mode.
+DEFAULT_RERANK = "lexical"
 GREP_REASON_HEADER = (
     "searchslim ran this search and reduced the output. This is the search "
     "result, not an error; do not retry the same call. Lines keep path:line "
@@ -56,7 +60,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     tool_input = event.get("tool_input") or {}
     cwd = event.get("cwd") or os.getcwd()
 
-    rerank = os.environ.get("SEARCHSLIM_RERANK", "").lower()
+    rerank = os.environ.get("SEARCHSLIM_RERANK", DEFAULT_RERANK).lower()
     rerank = rerank if rerank in ("lexical", "claude") else ""
     transcript = event.get("transcript_path") or ""
 
