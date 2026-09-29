@@ -38,7 +38,7 @@ def test_off_switch(monkeypatch):
 
 
 def test_grep_mapping():
-    argv, _, _, post = grep_to_rg(
+    argv, _, _, post, _ = grep_to_rg(
         {"pattern": "a.b", "output_mode": "content", "-i": True, "-C": 2, "glob": "*.py", "head_limit": 2, "offset": 1},
         "/r",
     )
@@ -106,3 +106,20 @@ def test_large_grep_is_ranked_by_default(repo):
     event = {"tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": "content"}}
     reason = handle(event, Config(max_tokens=800))["hookSpecificOutput"]["permissionDecisionReason"]
     assert "ranked by relevance (lexical)" in reason
+
+
+@needs_rg
+def test_single_file_grep_keeps_pathless_lines(repo):
+    event = {"tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": "content", "path": "mod00.py"}}
+    # 30 matches, ~35 chars each: fits 800 tokens without filenames, not with them.
+    assert handle(event, Config(max_tokens=800)) is None
+
+
+def test_single_file_bash_search_keeps_pathless_lines(tmp_path):
+    (tmp_path / "f.rs").write_text("fn a() {}\n")
+    (tmp_path / "d").mkdir()
+    out = handle({"tool_name": "Bash", "cwd": str(tmp_path), "tool_input": {"command": "rg -n 'fn ' f.rs"}})
+    cmd = out["hookSpecificOutput"]["updatedInput"]["command"]
+    assert "--with-filename" not in cmd and "--default-path=f.rs" in cmd
+    cmd = handle({"tool_name": "Bash", "cwd": str(tmp_path), "tool_input": {"command": "rg -n 'fn ' d"}})["hookSpecificOutput"]["updatedInput"]["command"]
+    assert "--with-filename" in cmd
