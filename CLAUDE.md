@@ -11,7 +11,7 @@ an agent that must decide from it whether to search again.
 1. Common data model + parsers for every tool's output shape. **Done** (`models.py`, `parsers.py`).
 2. Deterministic rules (dedupe, merge overlapping ranges, keep `path:line`, budget). **Done** (`rules.py`).
 3. Drop-in integration via a Claude Code PreToolUse hook; no new tool. **Done** (`rewrite.py`, `hooks.py`, `.claude/settings.json`).
-4. Benchmark harness: raw vs rules vs rules+model on tokens, latency, cost,
+4. **Done** (`benchmark/`, PR #3). Benchmark harness: raw vs rules vs rules+model on tokens, latency, cost,
    extra searches, and lost critical evidence.
 5. Optional light-model reranker on top of rules (rules+model mode). It may only reorder or
    select existing blocks; it must never rewrite code or produce new results. **Done** (`rerank.py`).
