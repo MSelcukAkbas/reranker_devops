@@ -184,7 +184,7 @@ atmadığı (çıktıyı aynen geçirdiği) görevlerde model çağrılmaz.
 
 ### Canlı ajan koşusu (katman B, 21 görev, 1 tekrar, 2026-09-29)
 
-`live.py --repeat 1`, hook `abc4767` (PR #2), varsayılan Claude Code modeli:
+`live.py --repeat 1`, hook `8be193f` (PR #2, `rg` sıralaması ve rerank öncesi), varsayılan Claude Code modeli:
 
 | mod | başarı | medyan arama çağrısı | medyan arama sonucu tok | medyan girdi tok | toplam $ | medyan s |
 |---|---|---|---|---|---|---|
