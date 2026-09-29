@@ -5,6 +5,7 @@ import pytest
 
 from searchslim import Config, Kind, slim
 from searchslim.parsers import parse
+from searchslim.rerank import LexicalScorer
 from searchslim.rules import NOTE_PREFIX, build_blocks, dedupe_lines, estimate_tokens
 
 
@@ -196,10 +197,10 @@ def test_unordered_input_still_names_the_dropped_evidence_dir():
     assert "src/_pytest/config/" in note
 
 
-def test_one_file_with_path_asks_to_narrow_the_pattern():
+def test_one_file_note_names_the_file():
     raw = "".join(f"src/f.py:{i}:scope = {i} * 1234567890\n" for i in range(1, 300))
     note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
-    assert "src/f.py (" in note and "Refine the pattern only if" in note
+    assert "src/f.py (" in note
 
 
 def _ls_r(dirs):
@@ -253,7 +254,10 @@ def test_trigger_passes_mid_sized_output_unchanged():
     assert estimate_tokens(out) <= 2000
 
 
-def test_note_does_not_invite_a_search_for_its_own_sake():
+def test_note_is_a_neutral_count():
+    # Any advice about narrowing or searching again made agents re-search in live runs.
     raw = "".join(f"src/m{i}.py:{n}:x\n" for i in range(50) for n in range(1, 40))
-    note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
-    assert "only if you need something specific" in note and "to see them" not in note
+    for scorer in (None, LexicalScorer()):
+        note = slim(raw, config=Config(max_tokens=300), scorer=scorer).text.splitlines()[-1]
+        assert "Not shown" in note
+        assert not any(w in note.lower() for w in ("narrow", "search again", "see them", "only if", "refine"))

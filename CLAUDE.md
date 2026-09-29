@@ -43,7 +43,7 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/rules.py`    SearchResult -> reduced text + stats
 - `src/searchslim/rewrite.py`  wraps shell search commands (and filter pipelines) in `searchslim run --`;
                                `prepare` adds anchor flags at run time
-- `src/searchslim/hooks.py`    PreToolUse hook for Bash, Grep, Glob
+- `src/searchslim/hooks.py`    hook: PreToolUse Bash/PowerShell, PostToolUse Grep/Glob, PreCompact
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
 - `src/searchslim/session.py`  session memory: lines already shown in this agent session (lock-free store)
 - `src/searchslim/install.py`  `searchslim install [--user|DIR]` merges the hook into Claude Code settings
@@ -64,6 +64,12 @@ an agent that must decide from it whether to search again.
   `searchslim run --kind=K --shell -- '<pipeline>'` (POSIX only). Other redirects, `$(...)`,
   chaining (other than a leading `cd x &&`) and side-effect flags (`find -exec/-delete`,
   `fd -x`, `rg -r`, `git grep -O`, `tree -o`) are never rewritten.
+- PowerShell (Claude Code's PowerShell tool; on Windows agents used it instead of Grep for
+  big searches): `rewrite.rewrite_powershell` wraps a lone `rg ...` as `& '<python>' -m searchslim
+  run <opts> rg ...` (no `--`: some PowerShell versions drop it) and `Get-ChildItem -Recurse` /
+  `Select-String` pipelines as `<cmd> | Out-String -Stream -Width 4096 | & '<python>' -m searchslim
+  filter`, prefixed with a UTF-8 `$OutputEncoding`/`[Console]::OutputEncoding` assignment. Anything
+  with `$`, `()`, `{}`, `;`, `&`, redirects, backticks or other cmdlets is left alone.
 - `tree`/`ls -R` output is `Kind.LINES`: kept verbatim, no dedupe; when over budget the deepest
   levels are dropped (tree entries / ls sections) and the note counts hidden entries per directory.
 - Grep/Glob: the tool runs normally; on PostToolUse the hook runs the equivalent `rg`
@@ -85,8 +91,9 @@ an agent that must decide from it whether to search again.
   `SEARCHSLIM_TRIGGER_TOKENS`, `--trigger-tokens`); below it output passes unchanged. Trimming
   mid-sized results made agents search again for what was cut (benchmark/results/2026-09-29-trigger.md).
   Library `Config()` keeps trigger 0 (= max_tokens), so tests and the benchmark are unchanged.
-- The note says the kept part is the most relevant and asks for another search only if
-  something specific is needed (`rules.ASK_*`); it must not invite a search for its own sake.
+- The note is a neutral count (what is not shown, how many, where) with no advice: any
+  wording about truncation or narrowing led agents to search again in live runs. Net gain
+  only shows on very large outputs (README "Canlı Windows testi"); don't retune the note.
 - Hook stdin is the event JSON: any subprocess the hook starts must get
   `stdin=DEVNULL` and an explicit path, or `rg` will search the JSON.
 

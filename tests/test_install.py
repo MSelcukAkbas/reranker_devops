@@ -16,7 +16,7 @@ def test_install_merges_and_is_idempotent(tmp_path):
     assert data["model"] == "x"
     pre = data["hooks"]["PreToolUse"]
     assert pre[0] == other
-    assert pre[1]["matcher"] == "Bash|Grep|Glob" and MARKER in pre[1]["hooks"][0]["command"]
+    assert pre[1]["matcher"] == "Bash|PowerShell|Grep|Glob" and MARKER in pre[1]["hooks"][0]["command"]
 
 
 def test_uninstall_keeps_other_hooks(tmp_path):
