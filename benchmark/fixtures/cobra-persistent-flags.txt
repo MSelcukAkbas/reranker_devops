@@ -1,0 +1,445 @@
+./bash_completions.go-563-	}
+./bash_completions.go-564-
+./bash_completions.go:565:	localNonPersistentFlags := cmd.LocalNonPersistentFlags()
+./bash_completions.go-566-	cmd.NonInheritedFlags().VisitAll(func(flag *pflag.Flag) {
+./bash_completions.go-567-		if nonCompletableFlag(flag) {
+--
+./bash_completions.go-572-			writeShortFlag(buf, flag, cmd)
+./bash_completions.go-573-		}
+./bash_completions.go:574:		// localNonPersistentFlags are used to stop the completion of subcommands when one is set
+./bash_completions.go-575-		// if TraverseChildren is true we should allow to complete subcommands
+./bash_completions.go:576:		if localNonPersistentFlags.Lookup(flag.Name) != nil && !cmd.Root().TraverseChildren {
+./bash_completions.go-577-			writeLocalNonPersistentFlag(buf, flag)
+./bash_completions.go-578-		}
+--
+./bash_completions_test.go-97-
+./bash_completions_test.go-98-	// Persistent filename.
+./bash_completions_test.go:99:	rootCmd.PersistentFlags().String("persistent-filename", "", "Enter a filename")
+./bash_completions_test.go-100-	assertNoErr(t, rootCmd.MarkPersistentFlagFilename("persistent-filename"))
+./bash_completions_test.go-101-	assertNoErr(t, rootCmd.MarkPersistentFlagRequired("persistent-filename"))
+--
+./command.go-366-func (c *Command) SetGlobalNormalizationFunc(n func(f *flag.FlagSet, name string) flag.NormalizedName) {
+./command.go-367-	c.Flags().SetNormalizeFunc(n)
+./command.go:368:	c.PersistentFlags().SetNormalizeFunc(n)
+./command.go-369-	c.globNormFunc = n
+./command.go-370-
+--
+./command.go-434-	}
+./command.go-435-	return func(c *Command) error {
+./command.go:436:		c.mergePersistentFlags()
+./command.go-437-		err := tmpl(c.OutOrStderr(), c.UsageTemplate(), c)
+./command.go-438-		if err != nil {
+--
+./command.go-460-	}
+./command.go-461-	return func(c *Command, a []string) {
+./command.go:462:		c.mergePersistentFlags()
+./command.go-463-		// The help should be sent to stdout
+./command.go-464-		// See https://github.com/spf13/cobra/issues/1002
+--
+./command.go-647-		return args
+./command.go-648-	}
+./command.go:649:	c.mergePersistentFlags()
+./command.go-650-
+./command.go-651-	commands := []string{}
+--
+./command.go-688-		return args
+./command.go-689-	}
+./command.go:690:	c.mergePersistentFlags()
+./command.go-691-	flags := c.Flags()
+./command.go-692-
+--
+./command.go-1187-// If c already has help flag, it will do nothing.
+./command.go-1188-func (c *Command) InitDefaultHelpFlag() {
+./command.go:1189:	c.mergePersistentFlags()
+./command.go-1190-	if c.Flags().Lookup("help") == nil {
+./command.go-1191-		usage := "help for "
+--
+./command.go-1210-	}
+./command.go-1211-
+./command.go:1212:	c.mergePersistentFlags()
+./command.go-1213-	if c.Flags().Lookup("version") == nil {
+./command.go-1214-		usage := "version for "
+--
+./command.go-1466-
+./command.go-1467-	debugflags = func(x *Command) {
+./command.go:1468:		if x.HasFlags() || x.HasPersistentFlags() {
+./command.go-1469-			c.Println(x.Name())
+./command.go-1470-		}
+./command.go-1471-		if x.HasFlags() {
+./command.go-1472-			x.flags.VisitAll(func(f *flag.Flag) {
+./command.go:1473:				if x.HasPersistentFlags() && x.persistentFlag(f.Name) != nil {
+./command.go-1474-					c.Println("  -"+f.Shorthand+",", "--"+f.Name, "["+f.DefValue+"]", "", f.Value, "  [LP]")
+./command.go-1475-				} else {
+--
+./command.go-1478-			})
+./command.go-1479-		}
+./command.go:1480:		if x.HasPersistentFlags() {
+./command.go-1481-			x.pflags.VisitAll(func(f *flag.Flag) {
+./command.go-1482-				if x.HasFlags() {
+--
+./command.go-1660-}
+./command.go-1661-
+./command.go:1662:// LocalNonPersistentFlags are flags specific to this command which will NOT persist to subcommands.
+./command.go-1663-// This function does not modify the flags of the current command, it's purpose is to return the current state.
+./command.go:1664:func (c *Command) LocalNonPersistentFlags() *flag.FlagSet {
+./command.go:1665:	persistentFlags := c.PersistentFlags()
+./command.go-1666-
+./command.go-1667-	out := flag.NewFlagSet(c.displayName(), flag.ContinueOnError)
+--
+./command.go-1677-// This function does not modify the flags of the current command, it's purpose is to return the current state.
+./command.go-1678-func (c *Command) LocalFlags() *flag.FlagSet {
+./command.go:1679:	c.mergePersistentFlags()
+./command.go-1680-
+./command.go-1681-	if c.lflags == nil {
+--
+./command.go-1698-	}
+./command.go-1699-	c.Flags().VisitAll(addToLocal)
+./command.go:1700:	c.PersistentFlags().VisitAll(addToLocal)
+./command.go-1701-	return c.lflags
+./command.go-1702-}
+--
+./command.go-1705-// This function does not modify the flags of the current command, it's purpose is to return the current state.
+./command.go-1706-func (c *Command) InheritedFlags() *flag.FlagSet {
+./command.go:1707:	c.mergePersistentFlags()
+./command.go-1708-
+./command.go-1709-	if c.iflags == nil {
+--
+./command.go-1734-}
+./command.go-1735-
+./command.go:1736:// PersistentFlags returns the persistent FlagSet specifically set in the current command.
+./command.go:1737:func (c *Command) PersistentFlags() *flag.FlagSet {
+./command.go-1738-	if c.pflags == nil {
+./command.go-1739-		c.pflags = flag.NewFlagSet(c.displayName(), flag.ContinueOnError)
+--
+./command.go-1765-}
+./command.go-1766-
+./command.go:1767:// HasPersistentFlags checks if the command contains persistent flags.
+./command.go:1768:func (c *Command) HasPersistentFlags() bool {
+./command.go:1769:	return c.PersistentFlags().HasFlags()
+./command.go-1770-}
+./command.go-1771-
+--
+./command.go-1786-}
+./command.go-1787-
+./command.go:1788:// HasAvailablePersistentFlags checks if the command contains persistent flags which are not hidden or deprecated.
+./command.go:1789:func (c *Command) HasAvailablePersistentFlags() bool {
+./command.go:1790:	return c.PersistentFlags().HasAvailableFlags()
+./command.go-1791-}
+./command.go-1792-
+--
+./command.go-1816-// Recursively find matching persistent flag.
+./command.go-1817-func (c *Command) persistentFlag(name string) (flag *flag.Flag) {
+./command.go:1818:	if c.HasPersistentFlags() {
+./command.go:1819:		flag = c.PersistentFlags().Lookup(name)
+./command.go-1820-	}
+./command.go-1821-
+--
+./command.go-1837-	}
+./command.go-1838-	beforeErrorBufLen := c.flagErrorBuf.Len()
+./command.go:1839:	c.mergePersistentFlags()
+./command.go-1840-
+./command.go-1841-	// do it here after merging all flags and just before parse
+--
+./command.go-1856-}
+./command.go-1857-
+./command.go:1858:// mergePersistentFlags merges c.PersistentFlags() to c.Flags()
+./command.go-1859-// and adds missing persistent flags of all parents.
+./command.go:1860:func (c *Command) mergePersistentFlags() {
+./command.go-1861-	c.updateParentsPflags()
+./command.go:1862:	c.Flags().AddFlagSet(c.PersistentFlags())
+./command.go-1863-	c.Flags().AddFlagSet(c.parentsPflags)
+./command.go-1864-}
+--
+./command.go-1878-	}
+./command.go-1879-
+./command.go:1880:	c.Root().PersistentFlags().AddFlagSet(flag.CommandLine)
+./command.go-1881-
+./command.go-1882-	c.VisitParents(func(parent *Command) {
+./command.go:1883:		c.parentsPflags.AddFlagSet(parent.PersistentFlags())
+./command.go-1884-	})
+./command.go-1885-}
+--
+./command_test.go-697-
+./command_test.go-698-	c := &Command{Use: "c", Run: emptyRun}
+./command_test.go:699:	c.PersistentFlags().BoolP("persist", "p", false, "")
+./command_test.go-700-	c.Flags().IntP("int", "i", -1, "")
+./command_test.go-701-	c.Flags().StringP("str", "s", "", "")
+--
+./command_test.go-734-}
+./command_test.go-735-
+./command_test.go:736:func TestPersistentFlagsOnSameCommand(t *testing.T) {
+./command_test.go-737-	var rootCmdArgs []string
+./command_test.go-738-	rootCmd := &Command{
+--
+./command_test.go-743-
+./command_test.go-744-	var flagValue int
+./command_test.go:745:	rootCmd.PersistentFlags().IntVarP(&flagValue, "intf", "i", -1, "")
+./command_test.go-746-
+./command_test.go-747-	output, err := executeCommand(rootCmd, "-i7", "one", "two")
+--
+./command_test.go-787-	child := &Command{Use: "child", Run: emptyRun}
+./command_test.go-788-
+./command_test.go:789:	parent.PersistentFlags().Bool("boolf", false, "")
+./command_test.go:790:	parent.PersistentFlags().Int("intf", -1, "")
+./command_test.go-791-	child.Flags().String("strf", "", "")
+./command_test.go-792-	child.Flags().Int("intf", -1, "")
+--
+./command_test.go-812-}
+./command_test.go-813-
+./command_test.go:814:func TestPersistentFlagsOnChild(t *testing.T) {
+./command_test.go-815-	var childCmdArgs []string
+./command_test.go-816-	rootCmd := &Command{Use: "root", Run: emptyRun}
+--
+./command_test.go-824-	var parentFlagValue int
+./command_test.go-825-	var childFlagValue int
+./command_test.go:826:	rootCmd.PersistentFlags().IntVarP(&parentFlagValue, "parentf", "p", -1, "")
+./command_test.go-827-	childCmd.Flags().IntVarP(&childFlagValue, "childf", "c", -1, "")
+./command_test.go-828-
+--
+./command_test.go-867-func TestPersistentRequiredFlags(t *testing.T) {
+./command_test.go-868-	parent := &Command{Use: "parent", Run: emptyRun}
+./command_test.go:869:	parent.PersistentFlags().String("foo1", "", "")
+./command_test.go-870-	assertNoErr(t, parent.MarkPersistentFlagRequired("foo1"))
+./command_test.go:871:	parent.PersistentFlags().String("foo2", "", "")
+./command_test.go-872-	assertNoErr(t, parent.MarkPersistentFlagRequired("foo2"))
+./command_test.go-873-	parent.Flags().String("foo3", "", "")
+--
+./command_test.go-895-
+./command_test.go-896-	parent := &Command{Use: "parent", Run: emptyRun}
+./command_test.go:897:	parent.PersistentFlags().Bool("foo", false, "")
+./command_test.go:898:	flag := parent.PersistentFlags().Lookup("foo")
+./command_test.go-899-	assertNoErr(t, parent.MarkPersistentFlagRequired("foo"))
+./command_test.go-900-
+--
+./command_test.go-924-	usage := "custom flag"
+./command_test.go-925-	rootCmd := &Command{Use: "root"}
+./command_test.go:926:	rootCmd.PersistentFlags().Bool("help", false, "custom flag")
+./command_test.go-927-	childCmd := &Command{Use: "child"}
+./command_test.go-928-	rootCmd.AddCommand(childCmd)
+--
+./command_test.go-965-	parent.AddCommand(child)
+./command_test.go-966-
+./command_test.go:967:	parent.PersistentFlags().Bool("foo", false, "parent foo usage")
+./command_test.go:968:	parent.PersistentFlags().Bool("bar", false, "parent bar usage")
+./command_test.go-969-	child.Flags().Bool("foo", false, "child foo usage") // This shadows parent's foo flag
+./command_test.go-970-	child.Flags().Bool("baz", false, "child baz usage")
+--
+./command_test.go-1728-	c.AddCommand(child1)
+./command_test.go-1729-
+./command_test.go:1730:	c.PersistentFlags().Bool("flagname", true, "")
+./command_test.go-1731-
+./command_test.go-1732-	child2 := &Command{}
+--
+./command_test.go-2131-func TestFlagErrorFuncHelp(t *testing.T) {
+./command_test.go-2132-	c := &Command{Use: "c", Run: emptyRun}
+./command_test.go:2133:	c.PersistentFlags().Bool("help", false, "help for c")
+./command_test.go-2134-	c.SetFlagErrorFunc(func(_ *Command, err error) error {
+./command_test.go-2135-		return fmt.Errorf("wrap error: %w", err)
+--
+./command_test.go-2188-// TestMergeCommandLineToFlags checks,
+./command_test.go-2189-// if pflag.CommandLine is correctly merged to c.Flags() after first call
+./command_test.go:2190:// of c.mergePersistentFlags.
+./command_test.go-2191-// Related to https://github.com/spf13/cobra/issues/443.
+./command_test.go-2192-func TestMergeCommandLineToFlags(t *testing.T) {
+./command_test.go-2193-	pflag.Bool("boolflag", false, "")
+./command_test.go-2194-	c := &Command{Use: "c", Run: emptyRun}
+./command_test.go:2195:	c.mergePersistentFlags()
+./command_test.go-2196-	if c.Flags().Lookup("boolflag") == nil {
+./command_test.go-2197-		t.Fatal("Expecting to have flag from CommandLine in c.Flags()")
+--
+./command_test.go-2692-		Use: "root",
+./command_test.go-2693-	}
+./command_test.go:2694:	root.PersistentFlags().StringVarP(&foo, "foo", "f", "", "")
+./command_test.go:2695:	root.PersistentFlags().StringVarP(&bar, "bar", "b", "something", "")
+./command_test.go-2696-
+./command_test.go-2697-	child := &Command{
+--
+./command_test.go-2798-		Run: emptyRun,
+./command_test.go-2799-	}
+./command_test.go:2800:	root.PersistentFlags().String("namespace", "", "a string flag")
+./command_test.go-2801-
+./command_test.go-2802-	c := &Command{
+--
+./completions.go-447-			if !finalCmd.Root().TraverseChildren {
+./completions.go-448-				// Check if there are any local, non-persistent flags on the command-line
+./completions.go:449:				localNonPersistentFlags := finalCmd.LocalNonPersistentFlags()
+./completions.go-450-				finalCmd.NonInheritedFlags().VisitAll(func(flag *pflag.Flag) {
+./completions.go:451:					if localNonPersistentFlags.Lookup(flag.Name) != nil && flag.Changed {
+./completions.go-452-						foundLocalNonPersistentFlag = true
+./completions.go-453-					}
+--
+./completions_test.go-169-	}
+./completions_test.go-170-	rootCmd.AddCommand(childCmd1)
+./completions_test.go:171:	childCmd1.PersistentFlags().StringP("persistent", "p", "", "persistent flag")
+./completions_test.go:172:	persistentFlag := childCmd1.PersistentFlags().Lookup("persistent")
+./completions_test.go-173-	childCmd1.Flags().StringP("nonPersistent", "n", "", "non-persistent flag")
+./completions_test.go-174-	nonPersistentFlag := childCmd1.Flags().Lookup("nonPersistent")
+--
+./completions_test.go-504-
+./completions_test.go-505-	rootCmd.Flags().IntP("first", "f", -1, "first flag")
+./completions_test.go:506:	rootCmd.PersistentFlags().BoolP("second", "s", false, "second flag")
+./completions_test.go-507-	childCmd.Flags().String("subFlag", "", "sub flag")
+./completions_test.go-508-
+--
+./completions_test.go-595-
+./completions_test.go-596-	rootCmd.Flags().IntP("first", "f", -1, "first flag\nlonger description for flag")
+./completions_test.go:597:	rootCmd.PersistentFlags().BoolP("second", "s", false, "second flag")
+./completions_test.go-598-	childCmd.Flags().String("subFlag", "", "sub flag")
+./completions_test.go-599-
+--
+./completions_test.go-828-	requiredFlag := rootCmd.Flags().Lookup("requiredFlag")
+./completions_test.go-829-
+./completions_test.go:830:	rootCmd.PersistentFlags().IntP("requiredPersistent", "p", -1, "required persistent")
+./completions_test.go-831-	assertNoErr(t, rootCmd.MarkPersistentFlagRequired("requiredPersistent"))
+./completions_test.go:832:	requiredPersistent := rootCmd.PersistentFlags().Lookup("requiredPersistent")
+./completions_test.go-833-
+./completions_test.go-834-	rootCmd.Flags().StringP("release", "R", "", "Release name")
+--
+./completions_test.go-2044-}
+./completions_test.go-2045-
+./completions_test.go:2046:func TestFlagCompletionForPersistentFlagsCalledFromSubCmd(t *testing.T) {
+./completions_test.go-2047-	rootCmd := &Command{Use: "root", Run: emptyRun}
+./completions_test.go:2048:	rootCmd.PersistentFlags().String("string", "", "test string flag")
+./completions_test.go-2049-	_ = rootCmd.RegisterFlagCompletionFunc("string", func(cmd *Command, args []string, toComplete string) ([]string, ShellCompDirective) {
+./completions_test.go-2050-		return []string{"myval"}, ShellCompDirectiveDefault
+--
+./completions_test.go-2720-	rootCmd.AddCommand(childCmd)
+./completions_test.go-2721-
+./completions_test.go:2722:	rootCmd.PersistentFlags().StringP("persistent", "p", "", "persistent flag")
+./completions_test.go-2723-	childCmd.Flags().StringP("nonPersistent", "n", "", "non-persistent flag")
+./completions_test.go-2724-
+--
+./completions_test.go-2855-		rootCmd.AddCommand(childCmd)
+./completions_test.go-2856-
+./completions_test.go:2857:		rootCmd.PersistentFlags().Int("ingroup1", -1, "ingroup1")
+./completions_test.go:2858:		rootCmd.PersistentFlags().String("ingroup2", "", "ingroup2")
+./completions_test.go-2859-
+./completions_test.go-2860-		childCmd.Flags().Bool("ingroup3", false, "ingroup3")
+--
+./completions_test.go-2955-		rootCmd.AddCommand(childCmd)
+./completions_test.go-2956-
+./completions_test.go:2957:		rootCmd.PersistentFlags().Int("ingroup1", -1, "ingroup1")
+./completions_test.go:2958:		rootCmd.PersistentFlags().String("ingroup2", "", "ingroup2")
+./completions_test.go-2959-
+./completions_test.go-2960-		childCmd.Flags().Bool("ingroup3", false, "ingroup3")
+--
+./completions_test.go-3053-		rootCmd.AddCommand(childCmd)
+./completions_test.go-3054-
+./completions_test.go:3055:		rootCmd.PersistentFlags().IntSlice("ingroup1", []int{1}, "ingroup1")
+./completions_test.go:3056:		rootCmd.PersistentFlags().String("ingroup2", "", "ingroup2")
+./completions_test.go-3057-
+./completions_test.go-3058-		childCmd.Flags().Bool("ingroup3", false, "ingroup3")
+--
+./completions_test.go-3438-	})
+./completions_test.go-3439-
+./completions_test.go:3440:	rootCmd.PersistentFlags().String("persistentflag", "", "persistent flag")
+./completions_test.go-3441-	_ = rootCmd.RegisterFlagCompletionFunc("persistentflag", func(cmd *Command, args []string, toComplete string) ([]string, ShellCompDirective) {
+./completions_test.go-3442-		return []string{"persistentvalue"}, ShellCompDirectiveDefault
+--
+./doc/cmd_test.go-25-
+./doc/cmd_test.go-26-func init() {
+./doc/cmd_test.go:27:	rootCmd.PersistentFlags().StringP("rootflag", "r", "two", "")
+./doc/cmd_test.go:28:	rootCmd.PersistentFlags().StringP("strtwo", "t", "two", "help message for parent flag strtwo")
+./doc/cmd_test.go-29-
+./doc/cmd_test.go:30:	echoCmd.PersistentFlags().StringP("strone", "s", "one", "help message for flag strone")
+./doc/cmd_test.go:31:	echoCmd.PersistentFlags().BoolP("persistentbool", "p", false, "help message for flag persistentbool")
+./doc/cmd_test.go-32-	echoCmd.Flags().IntP("intone", "i", 123, "help message for flag intone")
+./doc/cmd_test.go-33-	echoCmd.Flags().BoolP("boolone", "b", true, "help message for flag boolone")
+./doc/cmd_test.go-34-
+./doc/cmd_test.go:35:	timesCmd.PersistentFlags().StringP("strtwo", "t", "2", "help message for child flag strtwo")
+./doc/cmd_test.go-36-	timesCmd.Flags().IntP("inttwo", "j", 234, "help message for flag inttwo")
+./doc/cmd_test.go-37-	timesCmd.Flags().BoolP("booltwo", "c", false, "help message for flag booltwo")
+./doc/cmd_test.go-38-
+./doc/cmd_test.go:39:	printCmd.PersistentFlags().StringP("strthree", "s", "three", "help message for flag strthree")
+./doc/cmd_test.go-40-	printCmd.Flags().IntP("intthree", "i", 345, "help message for flag intthree")
+./doc/cmd_test.go-41-	printCmd.Flags().BoolP("boolthree", "b", true, "help message for flag boolthree")
+--
+./doc/man_docs_test.go-76-	// We generate on a subcommand so we have both subcommands and parents
+./doc/man_docs_test.go-77-	for _, name := range []string{"rootflag", "strtwo"} {
+./doc/man_docs_test.go:78:		f := rootCmd.PersistentFlags().Lookup(name)
+./doc/man_docs_test.go-79-		f.Hidden = true
+./doc/man_docs_test.go-80-		defer func() { f.Hidden = false }()
+--
+./doc/md_docs_test.go-60-	// We generate on subcommand so we have both subcommands and parents.
+./doc/md_docs_test.go-61-	for _, name := range []string{"rootflag", "strtwo"} {
+./doc/md_docs_test.go:62:		f := rootCmd.PersistentFlags().Lookup(name)
+./doc/md_docs_test.go-63-		f.Hidden = true
+./doc/md_docs_test.go-64-		defer func() { f.Hidden = false }()
+--
+./doc/rest_docs_test.go-45-	// We generate on a subcommand so we have both subcommands and parents
+./doc/rest_docs_test.go-46-	for _, name := range []string{"rootflag", "strtwo"} {
+./doc/rest_docs_test.go:47:		f := rootCmd.PersistentFlags().Lookup(name)
+./doc/rest_docs_test.go-48-		f.Hidden = true
+./doc/rest_docs_test.go-49-		defer func() { f.Hidden = false }()
+--
+./flag_groups.go-32-// if the command is invoked with a subset (but not all) of the given flags.
+./flag_groups.go-33-func (c *Command) MarkFlagsRequiredTogether(flagNames ...string) {
+./flag_groups.go:34:	c.mergePersistentFlags()
+./flag_groups.go-35-	for _, v := range flagNames {
+./flag_groups.go-36-		f := c.Flags().Lookup(v)
+--
+./flag_groups.go-48-// if the command is invoked without at least one flag from the given set of flags.
+./flag_groups.go-49-func (c *Command) MarkFlagsOneRequired(flagNames ...string) {
+./flag_groups.go:50:	c.mergePersistentFlags()
+./flag_groups.go-51-	for _, v := range flagNames {
+./flag_groups.go-52-		f := c.Flags().Lookup(v)
+--
+./flag_groups.go-64-// if the command is invoked with more than one flag from the given set of flags.
+./flag_groups.go-65-func (c *Command) MarkFlagsMutuallyExclusive(flagNames ...string) {
+./flag_groups.go:66:	c.mergePersistentFlags()
+./flag_groups.go-67-	for _, v := range flagNames {
+./flag_groups.go-68-		f := c.Flags().Lookup(v)
+--
+./flag_groups_test.go-31-		}
+./flag_groups_test.go-32-		for _, v := range []string{"e", "f", "g"} {
+./flag_groups_test.go:33:			c.PersistentFlags().String(v, "", "")
+./flag_groups_test.go-34-		}
+./flag_groups_test.go-35-		subC := &Command{
+--
+./shell_completions.go-30-// and causes your command to report an error if invoked without the flag.
+./shell_completions.go-31-func (c *Command) MarkPersistentFlagRequired(name string) error {
+./shell_completions.go:32:	return MarkFlagRequired(c.PersistentFlags(), name)
+./shell_completions.go-33-}
+./shell_completions.go-34-
+--
+./shell_completions.go-60-// specified file extensions.
+./shell_completions.go-61-func (c *Command) MarkPersistentFlagFilename(name string, extensions ...string) error {
+./shell_completions.go:62:	return MarkFlagFilename(c.PersistentFlags(), name, extensions...)
+./shell_completions.go-63-}
+./shell_completions.go-64-
+--
+./shell_completions.go-89-// directory names.
+./shell_completions.go-90-func (c *Command) MarkPersistentFlagDirname(name string) error {
+./shell_completions.go:91:	return MarkFlagDirname(c.PersistentFlags(), name)
+./shell_completions.go-92-}
+./shell_completions.go-93-
+--
+./site/content/user_guide.md-103-	cobra.OnInitialize(initConfig)
+./site/content/user_guide.md-104-
+./site/content/user_guide.md:105:	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
+./site/content/user_guide.md:106:	rootCmd.PersistentFlags().StringP("author", "a", "YOUR NAME", "author name for copyright attribution")
+./site/content/user_guide.md:107:	rootCmd.PersistentFlags().StringVarP(&userLicense, "license", "l", "", "name of license for the project")
+./site/content/user_guide.md:108:	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
+./site/content/user_guide.md:109:	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
+./site/content/user_guide.md:110:	viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
+./site/content/user_guide.md-111-	viper.SetDefault("author", "NAME HERE <EMAIL ADDRESS>")
+./site/content/user_guide.md-112-	viper.SetDefault("license", "apache")
+--
+./site/content/user_guide.md-275-
+./site/content/user_guide.md-276-```go
+./site/content/user_guide.md:277:rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+./site/content/user_guide.md-278-```
+./site/content/user_guide.md-279-
+--
+./site/content/user_guide.md-307-
+./site/content/user_guide.md-308-func init() {
+./site/content/user_guide.md:309:  rootCmd.PersistentFlags().StringVar(&author, "author", "YOUR NAME", "Author name for copyright attribution")
+./site/content/user_guide.md:310:  viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
+./site/content/user_guide.md-311-}
+./site/content/user_guide.md-312-```
+--
+./site/content/user_guide.md-331-
+./site/content/user_guide.md-332-```go
+./site/content/user_guide.md:333:rootCmd.PersistentFlags().StringVarP(&Region, "region", "r", "", "AWS region (required)")
+./site/content/user_guide.md-334-rootCmd.MarkPersistentFlagRequired("region")
+./site/content/user_guide.md-335-```

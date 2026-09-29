@@ -1,0 +1,124 @@
+168:	// usageFunc is usage func defined by user.
+172:	// flagErrorFunc is func defined by user and it's called when the parsing of
+177:	// helpFunc is help func defined by user.
+266:func (c *Command) Context() context.Context {
+272:func (c *Command) SetContext(ctx context.Context) {
+278:func (c *Command) SetArgs(a []string) {
+285:func (c *Command) SetOutput(output io.Writer) {
+292:func (c *Command) SetOut(newOut io.Writer) {
+298:func (c *Command) SetErr(newErr io.Writer) {
+304:func (c *Command) SetIn(newIn io.Reader) {
+309:func (c *Command) SetUsageFunc(f func(*Command) error) {
+314:func (c *Command) SetUsageTemplate(s string) {
+320:func (c *Command) SetFlagErrorFunc(f func(*Command, error) error) {
+325:func (c *Command) SetHelpFunc(f func(*Command, []string)) {
+330:func (c *Command) SetHelpCommand(cmd *Command) {
+335:func (c *Command) SetHelpCommandGroupID(groupID string) {
+344:func (c *Command) SetCompletionCommandGroupID(groupID string) {
+350:func (c *Command) SetHelpTemplate(s string) {
+355:func (c *Command) SetVersionTemplate(s string) {
+360:func (c *Command) SetErrPrefix(s string) {
+366:func (c *Command) SetGlobalNormalizationFunc(n func(f *flag.FlagSet, name string) flag.NormalizedName) {
+377:func (c *Command) OutOrStdout() io.Writer {
+382:func (c *Command) OutOrStderr() io.Writer {
+387:func (c *Command) ErrOrStderr() io.Writer {
+392:func (c *Command) InOrStdin() io.Reader {
+396:func (c *Command) getOut(def io.Writer) io.Writer {
+406:func (c *Command) getErr(def io.Writer) io.Writer {
+416:func (c *Command) getIn(def io.Reader) io.Reader {
+428:func (c *Command) UsageFunc() (f func(*Command) error) {
+448:func (c *Command) Usage() error {
+454:func (c *Command) HelpFunc() func(*Command, []string) {
+475:func (c *Command) Help() error {
+481:func (c *Command) UsageString() string {
+502:func (c *Command) FlagErrorFunc() (f func(*Command, error) error) {
+518:func (c *Command) UsagePadding() int {
+528:func (c *Command) CommandPathPadding() int {
+538:func (c *Command) NamePadding() int {
+546:func (c *Command) UsageTemplate() string {
+587:func (c *Command) HelpTemplate() string {
+601:func (c *Command) VersionTemplate() string {
+614:func (c *Command) ErrPrefix() string {
+625:func hasNoOptDefVal(name string, fs *flag.FlagSet) bool {
+633:func shortHasNoOptDefVal(name string, fs *flag.FlagSet) bool {
+645:func stripFlags(args []string, c *Command) []string {
+686:func (c *Command) argsMinusFirstX(args []string, x string) []string {
+721:func isFlagArg(arg string) bool {
+728:func (c *Command) Find(args []string) (*Command, []string, error) {
+752:func (c *Command) findSuggestions(arg string) string {
+769:func (c *Command) findNext(next string) *Command {
+792:func (c *Command) Traverse(args []string) (*Command, []string, error) {
+834:func (c *Command) SuggestionsFor(typedName string) []string {
+855:func (c *Command) VisitParents(fn func(*Command)) {
+863:func (c *Command) Root() *Command {
+872:func (c *Command) ArgsLenAtDash() int {
+876:func (c *Command) execute(a []string) (err error) {
+1017:func (c *Command) preRun() {
+1023:func (c *Command) postRun() {
+1032:func (c *Command) ExecuteContext(ctx context.Context) error {
+1040:func (c *Command) Execute() error {
+1048:func (c *Command) ExecuteContextC(ctx context.Context) (*Command, error) {
+1054:func (c *Command) ExecuteC() (cmd *Command, err error) {
+1141:func (c *Command) ValidateArgs(args []string) error {
+1149:func (c *Command) ValidateRequiredFlags() error {
+1174:func (c *Command) checkCommandGroups() {
+1188:func (c *Command) InitDefaultHelpFlag() {
+1207:func (c *Command) InitDefaultVersionFlag() {
+1232:func (c *Command) InitDefaultHelpCmd() {
+1281:func (c *Command) ResetCommands() {
+1291:func (c commandSorterByName) Len() int           { return len(c) }
+1292:func (c commandSorterByName) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
+1293:func (c commandSorterByName) Less(i, j int) bool { return c[i].Name() < c[j].Name() }
+1296:func (c *Command) Commands() []*Command {
+1306:func (c *Command) AddCommand(cmds ...*Command) {
+1335:func (c *Command) Groups() []*Group {
+1340:func (c *Command) AllChildCommandsHaveGroup() bool {
+1350:func (c *Command) ContainsGroup(groupID string) bool {
+1360:func (c *Command) AddGroup(groups ...*Group) {
+1365:func (c *Command) RemoveCommand(cmds ...*Command) {
+1399:func (c *Command) Print(i ...interface{}) {
+1404:func (c *Command) Println(i ...interface{}) {
+1409:func (c *Command) Printf(format string, i ...interface{}) {
+1414:func (c *Command) PrintErr(i ...interface{}) {
+1419:func (c *Command) PrintErrln(i ...interface{}) {
+1424:func (c *Command) PrintErrf(format string, i ...interface{}) {
+1429:func (c *Command) CommandPath() string {
+1436:func (c *Command) displayName() string {
+1444:func (c *Command) UseLine() string {
+1463:func (c *Command) DebugFlags() {
+1503:func (c *Command) Name() string {
+1513:func (c *Command) HasAlias(s string) bool {
+1524:func (c *Command) CalledAs() string {
+1533:func (c *Command) hasNameOrAliasPrefix(prefix string) bool {
+1548:func (c *Command) NameAndAliases() string {
+1553:func (c *Command) HasExample() bool {
+1558:func (c *Command) Runnable() bool {
+1563:func (c *Command) HasSubCommands() bool {
+1569:func (c *Command) IsAvailableCommand() bool {
+1590:func (c *Command) IsAdditionalHelpTopicCommand() bool {
+1610:func (c *Command) HasHelpSubCommands() bool {
+1624:func (c *Command) HasAvailableSubCommands() bool {
+1639:func (c *Command) HasParent() bool {
+1644:func (c *Command) GlobalNormalizationFunc() func(f *flag.FlagSet, name string) flag.NormalizedName {
+1650:func (c *Command) Flags() *flag.FlagSet {
+1664:func (c *Command) LocalNonPersistentFlags() *flag.FlagSet {
+1678:func (c *Command) LocalFlags() *flag.FlagSet {
+1706:func (c *Command) InheritedFlags() *flag.FlagSet {
+1732:func (c *Command) NonInheritedFlags() *flag.FlagSet {
+1737:func (c *Command) PersistentFlags() *flag.FlagSet {
+1749:func (c *Command) ResetFlags() {
+1763:func (c *Command) HasFlags() bool {
+1768:func (c *Command) HasPersistentFlags() bool {
+1773:func (c *Command) HasLocalFlags() bool {
+1778:func (c *Command) HasInheritedFlags() bool {
+1784:func (c *Command) HasAvailableFlags() bool {
+1789:func (c *Command) HasAvailablePersistentFlags() bool {
+1795:func (c *Command) HasAvailableLocalFlags() bool {
+1801:func (c *Command) HasAvailableInheritedFlags() bool {
+1806:func (c *Command) Flag(name string) (flag *flag.Flag) {
+1817:func (c *Command) persistentFlag(name string) (flag *flag.Flag) {
+1830:func (c *Command) ParseFlags(args []string) error {
+1854:func (c *Command) Parent() *Command {
+1860:func (c *Command) mergePersistentFlags() {
+1869:func (c *Command) updateParentsPflags() {
+1890:func commandNameMatches(s string, t string) bool {

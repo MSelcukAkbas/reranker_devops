@@ -1,0 +1,389 @@
+lib/response.js-897-/**
+lib/response.js-898- * Set the location header to `url`.
+lib/response.js-899- *
+lib/response.js:900: * The given `url` can also be "back", which redirects
+lib/response.js-901- * to the _Referrer_ or _Referer_ headers or "/".
+lib/response.js-902- *
+lib/response.js-903- * Examples:
+--
+lib/response.js-916-
+lib/response.js-917-  // "back" is an alias for the referrer
+lib/response.js-918-  if (url === 'back') {
+lib/response.js:919:    deprecate('res.location("back"): use res.location(req.get("Referrer") || "/") and refer to https://dub.sh/security-redirect for best practices');
+lib/response.js-920-    loc = this.req.get('Referrer') || '/';
+lib/response.js-921-  } else {
+lib/response.js-922-    loc = String(url);
+--
+lib/response.js-935- *
+lib/response.js-936- * Examples:
+lib/response.js-937- *
+lib/response.js:938: *    res.redirect('/foo/bar');
+lib/response.js:939: *    res.redirect('http://example.com');
+lib/response.js:940: *    res.redirect(301, 'http://example.com');
+lib/response.js:941: *    res.redirect('../login'); // /blog/post/1 -> /blog/login
+lib/response.js-942- *
+lib/response.js-943- * @public
+lib/response.js-944- */
+lib/response.js-945-
+lib/response.js:946:res.redirect = function redirect(url) {
+lib/response.js-947-  var address = url;
+lib/response.js-948-  var body;
+lib/response.js-949-  var status = 302;
+--
+lib/response.js-954-      status = arguments[0];
+lib/response.js-955-      address = arguments[1];
+lib/response.js-956-    } else {
+lib/response.js:957:      deprecate('res.redirect(url, status): Use res.redirect(status, url) instead');
+lib/response.js-958-      status = arguments[1];
+lib/response.js-959-    }
+lib/response.js-960-  }
+--
+test/acceptance/auth.js-7-
+test/acceptance/auth.js-8-describe('auth', function(){
+test/acceptance/auth.js-9-  describe('GET /',function(){
+test/acceptance/auth.js:10:    it('should redirect to /login', function(done){
+test/acceptance/auth.js-11-      request(app)
+test/acceptance/auth.js-12-      .get('/')
+test/acceptance/auth.js-13-      .expect('Location', '/login')
+--
+test/acceptance/auth.js-54-  })
+test/acceptance/auth.js-55-
+test/acceptance/auth.js-56-  describe('GET /logout',function(){
+test/acceptance/auth.js:57:    it('should redirect to /', function(done){
+test/acceptance/auth.js-58-      request(app)
+test/acceptance/auth.js-59-      .get('/logout')
+test/acceptance/auth.js-60-      .expect('Location', '/')
+--
+test/acceptance/auth.js-63-  })
+test/acceptance/auth.js-64-
+test/acceptance/auth.js-65-  describe('GET /restricted',function(){
+test/acceptance/auth.js:66:    it('should redirect to /login without cookie', function(done){
+test/acceptance/auth.js-67-      request(app)
+test/acceptance/auth.js-68-      .get('/restricted')
+test/acceptance/auth.js-69-      .expect('Location', '/login')
+--
+test/acceptance/mvc.js-4-
+test/acceptance/mvc.js-5-describe('mvc', function(){
+test/acceptance/mvc.js-6-  describe('GET /', function(){
+test/acceptance/mvc.js:7:    it('should redirect to /users', function(done){
+test/acceptance/mvc.js-8-      request(app)
+test/acceptance/mvc.js-9-      .get('/')
+test/acceptance/mvc.js-10-      .expect('Location', '/users')
+--
+test/acceptance/vhost.js-24-
+test/acceptance/vhost.js-25-  describe('foo.example.com', function(){
+test/acceptance/vhost.js-26-    describe('GET /', function(){
+test/acceptance/vhost.js:27:      it('should redirect to /foo', function(done){
+test/acceptance/vhost.js-28-        request(app)
+test/acceptance/vhost.js-29-        .get('/')
+test/acceptance/vhost.js-30-        .set('Host', 'foo.example.com')
+--
+test/acceptance/vhost.js-35-
+test/acceptance/vhost.js-36-  describe('bar.example.com', function(){
+test/acceptance/vhost.js-37-    describe('GET /', function(){
+test/acceptance/vhost.js:38:      it('should redirect to /bar', function(done){
+test/acceptance/vhost.js-39-        request(app)
+test/acceptance/vhost.js-40-        .get('/')
+test/acceptance/vhost.js-41-        .set('Host', 'bar.example.com')
+--
+test/express.static.js-287-          .expect(404, 'Not Found', done)
+test/express.static.js-288-      })
+test/express.static.js-289-
+test/express.static.js:290:      describe('with redirect: true', function () {
+test/express.static.js-291-        before(function () {
+test/express.static.js:292:          this.app = createApp(fixtures, { 'fallthrough': true, 'redirect': true })
+test/express.static.js-293-        })
+test/express.static.js-294-
+test/express.static.js-295-        it('should fall-through when directory', function (done) {
+--
+test/express.static.js-298-            .expect(404, 'Not Found', done)
+test/express.static.js-299-        })
+test/express.static.js-300-
+test/express.static.js:301:        it('should redirect when directory without slash', function (done) {
+test/express.static.js-302-          request(this.app)
+test/express.static.js-303-            .get('/pets')
+test/express.static.js-304-            .expect(301, /Redirecting/, done)
+test/express.static.js-305-        })
+test/express.static.js-306-      })
+test/express.static.js-307-
+test/express.static.js:308:      describe('with redirect: false', function () {
+test/express.static.js-309-        before(function () {
+test/express.static.js:310:          this.app = createApp(fixtures, { 'fallthrough': true, 'redirect': false })
+test/express.static.js-311-        })
+test/express.static.js-312-
+test/express.static.js-313-        it('should fall-through when directory', function (done) {
+--
+test/express.static.js-362-          .expect(404, /ENAMETOOLONG/, done)
+test/express.static.js-363-      })
+test/express.static.js-364-
+test/express.static.js:365:      describe('with redirect: true', function () {
+test/express.static.js-366-        before(function () {
+test/express.static.js:367:          this.app = createApp(fixtures, { 'fallthrough': false, 'redirect': true })
+test/express.static.js-368-        })
+test/express.static.js-369-
+test/express.static.js-370-        it('should 404 when directory', function (done) {
+--
+test/express.static.js-373-            .expect(404, /NotFoundError|ENOENT/, done)
+test/express.static.js-374-        })
+test/express.static.js-375-
+test/express.static.js:376:        it('should redirect when directory without slash', function (done) {
+test/express.static.js-377-          request(this.app)
+test/express.static.js-378-            .get('/pets')
+test/express.static.js-379-            .expect(301, /Redirecting/, done)
+test/express.static.js-380-        })
+test/express.static.js-381-      })
+test/express.static.js-382-
+test/express.static.js:383:      describe('with redirect: false', function () {
+test/express.static.js-384-        before(function () {
+test/express.static.js:385:          this.app = createApp(fixtures, { 'fallthrough': false, 'redirect': false })
+test/express.static.js-386-        })
+test/express.static.js-387-
+test/express.static.js-388-        it('should 404 when directory', function (done) {
+--
+test/express.static.js-464-    })
+test/express.static.js-465-  })
+test/express.static.js-466-
+test/express.static.js:467:  describe('redirect', function () {
+test/express.static.js-468-    before(function () {
+test/express.static.js-469-      this.app = express()
+test/express.static.js-470-      this.app.use(function (req, res, next) {
+--
+test/express.static.js-475-      this.app.use(express.static(fixtures))
+test/express.static.js-476-    })
+test/express.static.js-477-
+test/express.static.js:478:    it('should redirect directories', function (done) {
+test/express.static.js-479-      request(this.app)
+test/express.static.js-480-        .get('/users')
+test/express.static.js-481-        .expect('Location', '/users/')
+--
+test/express.static.js-489-        .expect(301, /\/users\//, done)
+test/express.static.js-490-    })
+test/express.static.js-491-
+test/express.static.js:492:    it('should redirect directories with query string', function (done) {
+test/express.static.js-493-      request(this.app)
+test/express.static.js-494-        .get('/users?name=john')
+test/express.static.js-495-        .expect('Location', '/users/?name=john')
+test/express.static.js-496-        .expect(301, done)
+test/express.static.js-497-    })
+test/express.static.js-498-
+test/express.static.js:499:    it('should not redirect to protocol-relative locations', function (done) {
+test/express.static.js-500-      request(this.app)
+test/express.static.js-501-        .get('//users')
+test/express.static.js-502-        .expect('Location', '/users/')
+test/express.static.js-503-        .expect(301, done)
+test/express.static.js-504-    })
+test/express.static.js-505-
+test/express.static.js:506:    it('should ensure redirect URL is properly encoded', function (done) {
+test/express.static.js-507-      request(this.app)
+test/express.static.js-508-        .get('/snow')
+test/express.static.js-509-        .expect('Location', '/snow%20%E2%98%83/')
+--
+test/express.static.js-518-        .expect(301, done)
+test/express.static.js-519-    })
+test/express.static.js-520-
+test/express.static.js:521:    it('should not redirect incorrectly', function (done) {
+test/express.static.js-522-      request(this.app)
+test/express.static.js-523-        .get('/')
+test/express.static.js-524-        .expect(404, done)
+--
+test/express.static.js-526-
+test/express.static.js-527-    describe('when false', function () {
+test/express.static.js-528-      before(function () {
+test/express.static.js:529:        this.app = createApp(fixtures, { 'redirect': false })
+test/express.static.js-530-      })
+test/express.static.js-531-
+test/express.static.js:532:      it('should disable redirect', function (done) {
+test/express.static.js-533-        request(this.app)
+test/express.static.js-534-          .get('/users')
+test/express.static.js-535-          .expect(404, done)
+--
+test/express.static.js-563-        .expect(404, done)
+test/express.static.js-564-    })
+test/express.static.js-565-
+test/express.static.js:566:    it('should not get called on redirect', function (done) {
+test/express.static.js-567-      request(this.app)
+test/express.static.js-568-        .get('/users')
+test/express.static.js-569-        .expect(utils.shouldNotHaveHeader('x-custom'))
+--
+test/express.static.js-694-      this.app.use('/users', express.static(fixtures + '/users'))
+test/express.static.js-695-    })
+test/express.static.js-696-
+test/express.static.js:697:    it('should redirect correctly', function (done) {
+test/express.static.js-698-      request(this.app)
+test/express.static.js-699-        .get('/users')
+test/express.static.js-700-        .expect('Location', '/users/')
+--
+test/express.static.js-708-      this.app.use('/static', express.static(fixtures))
+test/express.static.js-709-    })
+test/express.static.js-710-
+test/express.static.js:711:    it('should redirect relative to the originalUrl', function (done) {
+test/express.static.js-712-      request(this.app)
+test/express.static.js-713-        .get('/static/users')
+test/express.static.js-714-        .expect('Location', '/static/users/')
+--
+test/express.static.js-778-        .expect(404, 'Not Found', done)
+test/express.static.js-779-    })
+test/express.static.js-780-
+test/express.static.js:781:    it('should redirect to trailing slash', function (done) {
+test/express.static.js-782-      request(this.app)
+test/express.static.js-783-        .get('/static/users')
+test/express.static.js-784-        .expect('Location', '/static/users/')
+--
+test/express.static.js-791-        .expect(404, 'Not Found', done)
+test/express.static.js-792-    })
+test/express.static.js-793-
+test/express.static.js:794:    it('should redirect to trailing slash mount point', function (done) {
+test/express.static.js-795-      request(this.app)
+test/express.static.js-796-        .get('/static')
+test/express.static.js-797-        .expect('Location', '/static/')
+--
+test/req.path.js-13-      });
+test/req.path.js-14-
+test/req.path.js-15-      request(app)
+test/req.path.js:16:      .get('/login?redirect=/post/1/comments')
+test/req.path.js-17-      .expect('/login', done);
+test/req.path.js-18-    })
+test/req.path.js-19-  })
+--
+test/res.location.js-249-      );
+test/res.location.js-250-    });
+test/res.location.js-251-
+test/res.location.js:252:    it('should not encode urls in such a way that they can bypass redirect allow lists', function (done) {
+test/res.location.js-253-      var app = createRedirectServerForDomain('google.com');
+test/res.location.js-254-      testRequestedRedirect(
+test/res.location.js-255-        app,
+--
+test/res.redirect.js-5-var utils = require('./support/utils');
+test/res.redirect.js-6-
+test/res.redirect.js-7-describe('res', function(){
+test/res.redirect.js:8:  describe('.redirect(url)', function(){
+test/res.redirect.js:9:    it('should default to a 302 redirect', function(done){
+test/res.redirect.js-10-      var app = express();
+test/res.redirect.js-11-
+test/res.redirect.js-12-      app.use(function(req, res){
+test/res.redirect.js:13:        res.redirect('http://google.com');
+test/res.redirect.js-14-      });
+test/res.redirect.js-15-
+test/res.redirect.js-16-      request(app)
+--
+test/res.redirect.js-23-      var app = express()
+test/res.redirect.js-24-
+test/res.redirect.js-25-      app.use(function (req, res) {
+test/res.redirect.js:26:        res.redirect('https://google.com?q=\u2603 §10')
+test/res.redirect.js-27-      })
+test/res.redirect.js-28-
+test/res.redirect.js-29-      request(app)
+--
+test/res.redirect.js-36-      var app = express()
+test/res.redirect.js-37-
+test/res.redirect.js-38-      app.use(function (req, res) {
+test/res.redirect.js:39:        res.redirect('https://google.com?q=%A710')
+test/res.redirect.js-40-      })
+test/res.redirect.js-41-
+test/res.redirect.js-42-      request(app)
+--
+test/res.redirect.js-46-    })
+test/res.redirect.js-47-  })
+test/res.redirect.js-48-
+test/res.redirect.js:49:  describe('.redirect(status, url)', function(){
+test/res.redirect.js-50-    it('should set the response status', function(done){
+test/res.redirect.js-51-      var app = express();
+test/res.redirect.js-52-
+test/res.redirect.js-53-      app.use(function(req, res){
+test/res.redirect.js:54:        res.redirect(303, 'http://google.com');
+test/res.redirect.js-55-      });
+test/res.redirect.js-56-
+test/res.redirect.js-57-      request(app)
+--
+test/res.redirect.js-61-    })
+test/res.redirect.js-62-  })
+test/res.redirect.js-63-
+test/res.redirect.js:64:  describe('.redirect(url, status)', function(){
+test/res.redirect.js-65-    it('should set the response status', function(done){
+test/res.redirect.js-66-      var app = express();
+test/res.redirect.js-67-
+test/res.redirect.js-68-      app.use(function(req, res){
+test/res.redirect.js:69:        res.redirect('http://google.com', 303);
+test/res.redirect.js-70-      });
+test/res.redirect.js-71-
+test/res.redirect.js-72-      request(app)
+--
+test/res.redirect.js-81-      var app = express();
+test/res.redirect.js-82-
+test/res.redirect.js-83-      app.use(function(req, res){
+test/res.redirect.js:84:        res.redirect('http://google.com');
+test/res.redirect.js-85-      });
+test/res.redirect.js-86-
+test/res.redirect.js-87-      request(app)
+--
+test/res.redirect.js-98-      var app = express();
+test/res.redirect.js-99-
+test/res.redirect.js-100-      app.use(function(req, res){
+test/res.redirect.js:101:        res.redirect('http://google.com');
+test/res.redirect.js-102-      });
+test/res.redirect.js-103-
+test/res.redirect.js-104-      request(app)
+--
+test/res.redirect.js-113-      var app = express();
+test/res.redirect.js-114-
+test/res.redirect.js-115-      app.use(function(req, res){
+test/res.redirect.js:116:        res.redirect('<la\'me>');
+test/res.redirect.js-117-      });
+test/res.redirect.js-118-
+test/res.redirect.js-119-      request(app)
+--
+test/res.redirect.js-131-      var encodedXss = 'javascript:eval(document.body.innerHTML=%60%3Cp%3EXSS%3C/p%3E%60);';
+test/res.redirect.js-132-
+test/res.redirect.js-133-      app.use(function(req, res){
+test/res.redirect.js:134:        res.redirect(xss);
+test/res.redirect.js-135-      });
+test/res.redirect.js-136-
+test/res.redirect.js-137-      request(app)
+--
+test/res.redirect.js-143-      .expect(302, '<p>Found. Redirecting to ' + encodedXss +'</p>', done);
+test/res.redirect.js-144-    });
+test/res.redirect.js-145-
+test/res.redirect.js:146:    it('should include the redirect type', function(done){
+test/res.redirect.js-147-      var app = express();
+test/res.redirect.js-148-
+test/res.redirect.js-149-      app.use(function(req, res){
+test/res.redirect.js:150:        res.redirect(301, 'http://google.com');
+test/res.redirect.js-151-      });
+test/res.redirect.js-152-
+test/res.redirect.js-153-      request(app)
+--
+test/res.redirect.js-164-      var app = express();
+test/res.redirect.js-165-
+test/res.redirect.js-166-      app.use(function(req, res){
+test/res.redirect.js:167:        res.redirect('http://google.com');
+test/res.redirect.js-168-      });
+test/res.redirect.js-169-
+test/res.redirect.js-170-      request(app)
+--
+test/res.redirect.js-179-      var app = express();
+test/res.redirect.js-180-
+test/res.redirect.js-181-      app.use(function(req, res){
+test/res.redirect.js:182:        res.redirect('http://example.com/?param=<script>alert("hax");</script>');
+test/res.redirect.js-183-      });
+test/res.redirect.js-184-
+test/res.redirect.js-185-      request(app)
+--
+test/res.redirect.js-191-      .expect(302, 'Found. Redirecting to http://example.com/?param=%3Cscript%3Ealert(%22hax%22);%3C/script%3E', done)
+test/res.redirect.js-192-    })
+test/res.redirect.js-193-
+test/res.redirect.js:194:    it('should include the redirect type', function(done){
+test/res.redirect.js-195-      var app = express();
+test/res.redirect.js-196-
+test/res.redirect.js-197-      app.use(function(req, res){
+test/res.redirect.js:198:        res.redirect(301, 'http://google.com');
+test/res.redirect.js-199-      });
+test/res.redirect.js-200-
+test/res.redirect.js-201-      request(app)
+--
+test/res.redirect.js-212-      var app = express();
+test/res.redirect.js-213-
+test/res.redirect.js-214-      app.use(function(req, res){
+test/res.redirect.js:215:        res.redirect('http://google.com');
+test/res.redirect.js-216-      });
+test/res.redirect.js-217-
+test/res.redirect.js-218-      request(app)

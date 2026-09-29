@@ -1,0 +1,414 @@
+crates/core/flags/defs.rs-3703-
+crates/core/flags/defs.rs-3704-    fn update(&self, v: FlagValue, args: &mut LowArgs) -> anyhow::Result<()> {
+crates/core/flags/defs.rs-3705-        let max = convert::u64(&v.unwrap_value())?;
+crates/core/flags/defs.rs:3706:        args.max_columns = if max == 0 { None } else { Some(max) };
+crates/core/flags/defs.rs-3707-        Ok(())
+crates/core/flags/defs.rs-3708-    }
+crates/core/flags/defs.rs-3709-}
+crates/core/flags/defs.rs-3710-
+crates/core/flags/defs.rs-3711-#[cfg(test)]
+crates/core/flags/defs.rs-3712-#[test]
+crates/core/flags/defs.rs:3713:fn test_max_columns() {
+crates/core/flags/defs.rs-3714-    let args = parse_low_raw(None::<&str>).unwrap();
+crates/core/flags/defs.rs:3715:    assert_eq!(None, args.max_columns);
+crates/core/flags/defs.rs-3716-
+crates/core/flags/defs.rs-3717-    let args = parse_low_raw(["--max-columns", "5"]).unwrap();
+crates/core/flags/defs.rs:3718:    assert_eq!(Some(5), args.max_columns);
+crates/core/flags/defs.rs-3719-
+crates/core/flags/defs.rs-3720-    let args = parse_low_raw(["-M", "5"]).unwrap();
+crates/core/flags/defs.rs:3721:    assert_eq!(Some(5), args.max_columns);
+crates/core/flags/defs.rs-3722-
+crates/core/flags/defs.rs-3723-    let args = parse_low_raw(["-M5"]).unwrap();
+crates/core/flags/defs.rs:3724:    assert_eq!(Some(5), args.max_columns);
+crates/core/flags/defs.rs-3725-
+crates/core/flags/defs.rs-3726-    let args = parse_low_raw(["--max-columns", "5", "-M0"]).unwrap();
+crates/core/flags/defs.rs:3727:    assert_eq!(None, args.max_columns);
+crates/core/flags/defs.rs-3728-}
+crates/core/flags/defs.rs-3729-
+crates/core/flags/defs.rs-3730-/// --max-columns-preview
+--
+crates/core/flags/defs.rs-3762-    }
+crates/core/flags/defs.rs-3763-
+crates/core/flags/defs.rs-3764-    fn update(&self, v: FlagValue, args: &mut LowArgs) -> anyhow::Result<()> {
+crates/core/flags/defs.rs:3765:        args.max_columns_preview = v.unwrap_switch();
+crates/core/flags/defs.rs-3766-        Ok(())
+crates/core/flags/defs.rs-3767-    }
+crates/core/flags/defs.rs-3768-}
+crates/core/flags/defs.rs-3769-
+crates/core/flags/defs.rs-3770-#[cfg(test)]
+crates/core/flags/defs.rs-3771-#[test]
+crates/core/flags/defs.rs:3772:fn test_max_columns_preview() {
+crates/core/flags/defs.rs-3773-    let args = parse_low_raw(None::<&str>).unwrap();
+crates/core/flags/defs.rs:3774:    assert_eq!(false, args.max_columns_preview);
+crates/core/flags/defs.rs-3775-
+crates/core/flags/defs.rs-3776-    let args = parse_low_raw(["--max-columns-preview"]).unwrap();
+crates/core/flags/defs.rs:3777:    assert_eq!(true, args.max_columns_preview);
+crates/core/flags/defs.rs-3778-
+crates/core/flags/defs.rs-3779-    let args =
+crates/core/flags/defs.rs-3780-        parse_low_raw(["--max-columns-preview", "--no-max-columns-preview"])
+crates/core/flags/defs.rs-3781-            .unwrap();
+crates/core/flags/defs.rs:3782:    assert_eq!(false, args.max_columns_preview);
+crates/core/flags/defs.rs-3783-}
+crates/core/flags/defs.rs-3784-
+crates/core/flags/defs.rs-3785-/// -m/--max-count
+--
+crates/core/flags/hiargs.rs-63-    invert_match: bool,
+crates/core/flags/hiargs.rs-64-    is_terminal_stdout: bool,
+crates/core/flags/hiargs.rs-65-    line_number: bool,
+crates/core/flags/hiargs.rs:66:    max_columns: Option<u64>,
+crates/core/flags/hiargs.rs:67:    max_columns_preview: bool,
+crates/core/flags/hiargs.rs-68-    max_count: Option<u64>,
+crates/core/flags/hiargs.rs-69-    max_depth: Option<usize>,
+crates/core/flags/hiargs.rs-70-    max_filesize: Option<u64>,
+--
+crates/core/flags/hiargs.rs-279-            invert_match: low.invert_match,
+crates/core/flags/hiargs.rs-280-            is_terminal_stdout: state.is_terminal_stdout,
+crates/core/flags/hiargs.rs-281-            line_number,
+crates/core/flags/hiargs.rs:282:            max_columns: low.max_columns,
+crates/core/flags/hiargs.rs:283:            max_columns_preview: low.max_columns_preview,
+crates/core/flags/hiargs.rs-284-            max_count: low.max_count,
+crates/core/flags/hiargs.rs-285-            max_depth: low.max_depth,
+crates/core/flags/hiargs.rs-286-            max_filesize: low.max_filesize,
+--
+crates/core/flags/hiargs.rs-605-            .column(self.column)
+crates/core/flags/hiargs.rs-606-            .heading(self.heading)
+crates/core/flags/hiargs.rs-607-            .hyperlink(self.hyperlink_config.clone())
+crates/core/flags/hiargs.rs:608:            .max_columns_preview(self.max_columns_preview)
+crates/core/flags/hiargs.rs:609:            .max_columns(self.max_columns)
+crates/core/flags/hiargs.rs-610-            .max_matches(self.max_count)
+crates/core/flags/hiargs.rs-611-            .only_matching(self.only_matching)
+crates/core/flags/hiargs.rs-612-            .path(self.with_filename)
+--
+crates/core/flags/lowargs.rs-68-    pub(crate) invert_match: bool,
+crates/core/flags/lowargs.rs-69-    pub(crate) line_number: Option<bool>,
+crates/core/flags/lowargs.rs-70-    pub(crate) logging: Option<LoggingMode>,
+crates/core/flags/lowargs.rs:71:    pub(crate) max_columns: Option<u64>,
+crates/core/flags/lowargs.rs:72:    pub(crate) max_columns_preview: bool,
+crates/core/flags/lowargs.rs-73-    pub(crate) max_count: Option<u64>,
+crates/core/flags/lowargs.rs-74-    pub(crate) max_depth: Option<usize>,
+crates/core/flags/lowargs.rs-75-    pub(crate) max_filesize: Option<u64>,
+--
+crates/printer/src/standard.rs-44-    per_match: bool,
+crates/printer/src/standard.rs-45-    per_match_one_line: bool,
+crates/printer/src/standard.rs-46-    replacement: Arc<Option<Vec<u8>>>,
+crates/printer/src/standard.rs:47:    max_columns: Option<u64>,
+crates/printer/src/standard.rs:48:    max_columns_preview: bool,
+crates/printer/src/standard.rs-49-    max_matches: Option<u64>,
+crates/printer/src/standard.rs-50-    column: bool,
+crates/printer/src/standard.rs-51-    byte_offset: bool,
+--
+crates/printer/src/standard.rs-70-            per_match: false,
+crates/printer/src/standard.rs-71-            per_match_one_line: false,
+crates/printer/src/standard.rs-72-            replacement: Arc::new(None),
+crates/printer/src/standard.rs:73:            max_columns: None,
+crates/printer/src/standard.rs:74:            max_columns_preview: false,
+crates/printer/src/standard.rs-75-            max_matches: None,
+crates/printer/src/standard.rs-76-            column: false,
+crates/printer/src/standard.rs-77-            byte_offset: false,
+--
+crates/printer/src/standard.rs-306-    ///
+crates/printer/src/standard.rs-307-    /// The default is to not specify a limit, in which each matching or
+crates/printer/src/standard.rs-308-    /// contextual line is printed regardless of how long it is.
+crates/printer/src/standard.rs:309:    pub fn max_columns(&mut self, limit: Option<u64>) -> &mut StandardBuilder {
+crates/printer/src/standard.rs:310:        self.config.max_columns = limit;
+crates/printer/src/standard.rs-311-        self
+crates/printer/src/standard.rs-312-    }
+crates/printer/src/standard.rs-313-
+--
+crates/printer/src/standard.rs-316-    /// line will be printed instead.
+crates/printer/src/standard.rs-317-    ///
+crates/printer/src/standard.rs-318-    /// The preview will correspond to the first `N` *grapheme clusters* of
+crates/printer/src/standard.rs:319:    /// the line, where `N` is the limit configured by `max_columns`.
+crates/printer/src/standard.rs-320-    ///
+crates/printer/src/standard.rs-321-    /// If no limit is set, then enabling this has no effect.
+crates/printer/src/standard.rs-322-    ///
+crates/printer/src/standard.rs-323-    /// This is disabled by default.
+crates/printer/src/standard.rs:324:    pub fn max_columns_preview(&mut self, yes: bool) -> &mut StandardBuilder {
+crates/printer/src/standard.rs:325:        self.config.max_columns_preview = yes;
+crates/printer/src/standard.rs-326-        self
+crates/printer/src/standard.rs-327-    }
+crates/printer/src/standard.rs-328-
+--
+crates/printer/src/standard.rs-1117-            )?;
+crates/printer/src/standard.rs-1118-            count += 1;
+crates/printer/src/standard.rs-1119-            self.trim_ascii_prefix(bytes, &mut line);
+crates/printer/src/standard.rs:1120:            if self.exceeds_max_columns(&bytes[line]) {
+crates/printer/src/standard.rs-1121-                self.write_exceeded_line(bytes, line, matches, &mut midx)?;
+crates/printer/src/standard.rs-1122-            } else {
+crates/printer/src/standard.rs-1123-                self.write_colored_matches(bytes, line, matches, &mut midx)?;
+--
+crates/printer/src/standard.rs-1163-
+crates/printer/src/standard.rs-1164-                    let this_line = line.with_end(upto);
+crates/printer/src/standard.rs-1165-                    line = line.with_start(upto);
+crates/printer/src/standard.rs:1166:                    if self.exceeds_max_columns(&bytes[this_line]) {
+crates/printer/src/standard.rs-1167-                        self.write_exceeded_line(
+crates/printer/src/standard.rs-1168-                            bytes, this_line, matches, &mut midx,
+crates/printer/src/standard.rs-1169-                        )?;
+--
+crates/printer/src/standard.rs-1201-                count += 1;
+crates/printer/src/standard.rs-1202-                self.trim_line_terminator(bytes, &mut line);
+crates/printer/src/standard.rs-1203-                self.trim_ascii_prefix(bytes, &mut line);
+crates/printer/src/standard.rs:1204:                if self.exceeds_max_columns(&bytes[line]) {
+crates/printer/src/standard.rs-1205-                    self.write_exceeded_line(bytes, line, &[m], &mut 0)?;
+crates/printer/src/standard.rs-1206-                    continue;
+crates/printer/src/standard.rs-1207-                }
+--
+crates/printer/src/standard.rs-1264-            let range = trim_ascii_prefix(lineterm, line, full_range);
+crates/printer/src/standard.rs-1265-            &line[range]
+crates/printer/src/standard.rs-1266-        };
+crates/printer/src/standard.rs:1267:        if self.exceeds_max_columns(line) {
+crates/printer/src/standard.rs-1268-            let range = Match::new(0, line.len());
+crates/printer/src/standard.rs-1269-            self.write_exceeded_line(
+crates/printer/src/standard.rs-1270-                line,
+--
+crates/printer/src/standard.rs-1295-
+crates/printer/src/standard.rs-1296-        let mut line = Match::new(0, bytes.len());
+crates/printer/src/standard.rs-1297-        self.trim_ascii_prefix(bytes, &mut line);
+crates/printer/src/standard.rs:1298:        if self.exceeds_max_columns(bytes) {
+crates/printer/src/standard.rs-1299-            self.write_exceeded_line(bytes, line, matches, &mut 0)
+crates/printer/src/standard.rs-1300-        } else {
+crates/printer/src/standard.rs-1301-            self.write_colored_matches(bytes, line, matches, &mut 0)?;
+--
+crates/printer/src/standard.rs-1358-        matches: &[Match],
+crates/printer/src/standard.rs-1359-        match_index: &mut usize,
+crates/printer/src/standard.rs-1360-    ) -> io::Result<()> {
+crates/printer/src/standard.rs:1361:        if self.config().max_columns_preview {
+crates/printer/src/standard.rs-1362-            let original = line;
+crates/printer/src/standard.rs-1363-            let end = bytes[line]
+crates/printer/src/standard.rs-1364-                .grapheme_indices()
+crates/printer/src/standard.rs-1365-                .map(|(_, end, _)| end)
+crates/printer/src/standard.rs:1366:                .take(self.config().max_columns.unwrap_or(0) as usize)
+crates/printer/src/standard.rs-1367-                .last()
+crates/printer/src/standard.rs-1368-                .unwrap_or(0)
+crates/printer/src/standard.rs-1369-                + line.start();
+--
+crates/printer/src/standard.rs-1597-
+crates/printer/src/standard.rs-1598-    /// Returns true if and only if the given line exceeds the maximum number
+crates/printer/src/standard.rs-1599-    /// of columns set. If no maximum is set, then this always returns false.
+crates/printer/src/standard.rs:1600:    fn exceeds_max_columns(&self, line: &[u8]) -> bool {
+crates/printer/src/standard.rs:1601:        self.config().max_columns.map_or(false, |m| line.len() as u64 > m)
+crates/printer/src/standard.rs-1602-    }
+crates/printer/src/standard.rs-1603-
+crates/printer/src/standard.rs-1604-    /// Returns true if and only if the searcher may report matches over
+--
+crates/printer/src/standard.rs-2506-    }
+crates/printer/src/standard.rs-2507-
+crates/printer/src/standard.rs-2508-    #[test]
+crates/printer/src/standard.rs:2509:    fn max_columns() {
+crates/printer/src/standard.rs-2510-        let matcher = RegexMatcher::new("ash|dusted").unwrap();
+crates/printer/src/standard.rs-2511-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs:2512:            .max_columns(Some(63))
+crates/printer/src/standard.rs-2513-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2514-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2515-            .line_number(false)
+--
+crates/printer/src/standard.rs-2530-    }
+crates/printer/src/standard.rs-2531-
+crates/printer/src/standard.rs-2532-    #[test]
+crates/printer/src/standard.rs:2533:    fn max_columns_preview() {
+crates/printer/src/standard.rs-2534-        let matcher = RegexMatcher::new("exhibited|dusted").unwrap();
+crates/printer/src/standard.rs-2535-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs:2536:            .max_columns(Some(46))
+crates/printer/src/standard.rs:2537:            .max_columns_preview(true)
+crates/printer/src/standard.rs-2538-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2539-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2540-            .line_number(false)
+--
+crates/printer/src/standard.rs-2555-    }
+crates/printer/src/standard.rs-2556-
+crates/printer/src/standard.rs-2557-    #[test]
+crates/printer/src/standard.rs:2558:    fn max_columns_with_count() {
+crates/printer/src/standard.rs-2559-        let matcher = RegexMatcher::new("cigar|ash|dusted").unwrap();
+crates/printer/src/standard.rs-2560-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-2561-            .stats(true)
+crates/printer/src/standard.rs:2562:            .max_columns(Some(63))
+crates/printer/src/standard.rs-2563-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2564-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2565-            .line_number(false)
+--
+crates/printer/src/standard.rs-2580-    }
+crates/printer/src/standard.rs-2581-
+crates/printer/src/standard.rs-2582-    #[test]
+crates/printer/src/standard.rs:2583:    fn max_columns_with_count_preview_no_match() {
+crates/printer/src/standard.rs-2584-        let matcher = RegexMatcher::new("exhibited|has to have it").unwrap();
+crates/printer/src/standard.rs-2585-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-2586-            .stats(true)
+crates/printer/src/standard.rs:2587:            .max_columns(Some(46))
+crates/printer/src/standard.rs:2588:            .max_columns_preview(true)
+crates/printer/src/standard.rs-2589-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2590-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2591-            .line_number(false)
+--
+crates/printer/src/standard.rs-2606-    }
+crates/printer/src/standard.rs-2607-
+crates/printer/src/standard.rs-2608-    #[test]
+crates/printer/src/standard.rs:2609:    fn max_columns_with_count_preview_one_match() {
+crates/printer/src/standard.rs-2610-        let matcher = RegexMatcher::new("exhibited|dusted").unwrap();
+crates/printer/src/standard.rs-2611-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-2612-            .stats(true)
+crates/printer/src/standard.rs:2613:            .max_columns(Some(46))
+crates/printer/src/standard.rs:2614:            .max_columns_preview(true)
+crates/printer/src/standard.rs-2615-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2616-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2617-            .line_number(false)
+--
+crates/printer/src/standard.rs-2632-    }
+crates/printer/src/standard.rs-2633-
+crates/printer/src/standard.rs-2634-    #[test]
+crates/printer/src/standard.rs:2635:    fn max_columns_with_count_preview_two_matches() {
+crates/printer/src/standard.rs-2636-        let matcher =
+crates/printer/src/standard.rs-2637-            RegexMatcher::new("exhibited|dusted|has to have it").unwrap();
+crates/printer/src/standard.rs-2638-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-2639-            .stats(true)
+crates/printer/src/standard.rs:2640:            .max_columns(Some(46))
+crates/printer/src/standard.rs:2641:            .max_columns_preview(true)
+crates/printer/src/standard.rs-2642-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2643-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2644-            .line_number(false)
+--
+crates/printer/src/standard.rs-2659-    }
+crates/printer/src/standard.rs-2660-
+crates/printer/src/standard.rs-2661-    #[test]
+crates/printer/src/standard.rs:2662:    fn max_columns_multi_line() {
+crates/printer/src/standard.rs-2663-        let matcher = RegexMatcher::new("(?s)ash.+dusted").unwrap();
+crates/printer/src/standard.rs-2664-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs:2665:            .max_columns(Some(63))
+crates/printer/src/standard.rs-2666-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2667-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2668-            .line_number(false)
+--
+crates/printer/src/standard.rs-2684-    }
+crates/printer/src/standard.rs-2685-
+crates/printer/src/standard.rs-2686-    #[test]
+crates/printer/src/standard.rs:2687:    fn max_columns_multi_line_preview() {
+crates/printer/src/standard.rs-2688-        let matcher =
+crates/printer/src/standard.rs-2689-            RegexMatcher::new("(?s)clew|cigar ash.+have it|exhibited")
+crates/printer/src/standard.rs-2690-                .unwrap();
+crates/printer/src/standard.rs-2691-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-2692-            .stats(true)
+crates/printer/src/standard.rs:2693:            .max_columns(Some(46))
+crates/printer/src/standard.rs:2694:            .max_columns_preview(true)
+crates/printer/src/standard.rs-2695-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2696-        SearcherBuilder::new()
+crates/printer/src/standard.rs-2697-            .line_number(false)
+--
+crates/printer/src/standard.rs-2973-    }
+crates/printer/src/standard.rs-2974-
+crates/printer/src/standard.rs-2975-    #[test]
+crates/printer/src/standard.rs:2976:    fn only_matching_max_columns() {
+crates/printer/src/standard.rs-2977-        let matcher = RegexMatcher::new("Doctor Watsons|Sherlock").unwrap();
+crates/printer/src/standard.rs-2978-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-2979-            .only_matching(true)
+crates/printer/src/standard.rs:2980:            .max_columns(Some(10))
+crates/printer/src/standard.rs-2981-            .column(true)
+crates/printer/src/standard.rs-2982-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-2983-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3000-    }
+crates/printer/src/standard.rs-3001-
+crates/printer/src/standard.rs-3002-    #[test]
+crates/printer/src/standard.rs:3003:    fn only_matching_max_columns_preview() {
+crates/printer/src/standard.rs-3004-        let matcher = RegexMatcher::new("Doctor Watsons|Sherlock").unwrap();
+crates/printer/src/standard.rs-3005-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-3006-            .only_matching(true)
+crates/printer/src/standard.rs:3007:            .max_columns(Some(10))
+crates/printer/src/standard.rs:3008:            .max_columns_preview(true)
+crates/printer/src/standard.rs-3009-            .column(true)
+crates/printer/src/standard.rs-3010-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3011-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3028-    }
+crates/printer/src/standard.rs-3029-
+crates/printer/src/standard.rs-3030-    #[test]
+crates/printer/src/standard.rs:3031:    fn only_matching_max_columns_multi_line1() {
+crates/printer/src/standard.rs-3032-        // The `(?s:.{0})` trick fools the matcher into thinking that it
+crates/printer/src/standard.rs-3033-        // can match across multiple lines without actually doing so. This is
+crates/printer/src/standard.rs-3034-        // so we can test multi-line handling in the case of a match on only
+--
+crates/printer/src/standard.rs-3037-            RegexMatcher::new(r"(?s:.{0})(Doctor Watsons|Sherlock)").unwrap();
+crates/printer/src/standard.rs-3038-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-3039-            .only_matching(true)
+crates/printer/src/standard.rs:3040:            .max_columns(Some(10))
+crates/printer/src/standard.rs-3041-            .column(true)
+crates/printer/src/standard.rs-3042-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3043-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3061-    }
+crates/printer/src/standard.rs-3062-
+crates/printer/src/standard.rs-3063-    #[test]
+crates/printer/src/standard.rs:3064:    fn only_matching_max_columns_preview_multi_line1() {
+crates/printer/src/standard.rs-3065-        // The `(?s:.{0})` trick fools the matcher into thinking that it
+crates/printer/src/standard.rs-3066-        // can match across multiple lines without actually doing so. This is
+crates/printer/src/standard.rs-3067-        // so we can test multi-line handling in the case of a match on only
+--
+crates/printer/src/standard.rs-3070-            RegexMatcher::new(r"(?s:.{0})(Doctor Watsons|Sherlock)").unwrap();
+crates/printer/src/standard.rs-3071-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-3072-            .only_matching(true)
+crates/printer/src/standard.rs:3073:            .max_columns(Some(10))
+crates/printer/src/standard.rs:3074:            .max_columns_preview(true)
+crates/printer/src/standard.rs-3075-            .column(true)
+crates/printer/src/standard.rs-3076-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3077-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3095-    }
+crates/printer/src/standard.rs-3096-
+crates/printer/src/standard.rs-3097-    #[test]
+crates/printer/src/standard.rs:3098:    fn only_matching_max_columns_multi_line2() {
+crates/printer/src/standard.rs-3099-        let matcher =
+crates/printer/src/standard.rs-3100-            RegexMatcher::new(r"(?s)Watson.+?(Holmeses|clearly)").unwrap();
+crates/printer/src/standard.rs-3101-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-3102-            .only_matching(true)
+crates/printer/src/standard.rs:3103:            .max_columns(Some(50))
+crates/printer/src/standard.rs-3104-            .column(true)
+crates/printer/src/standard.rs-3105-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3106-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3125-    }
+crates/printer/src/standard.rs-3126-
+crates/printer/src/standard.rs-3127-    #[test]
+crates/printer/src/standard.rs:3128:    fn only_matching_max_columns_preview_multi_line2() {
+crates/printer/src/standard.rs-3129-        let matcher =
+crates/printer/src/standard.rs-3130-            RegexMatcher::new(r"(?s)Watson.+?(Holmeses|clearly)").unwrap();
+crates/printer/src/standard.rs-3131-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs-3132-            .only_matching(true)
+crates/printer/src/standard.rs:3133:            .max_columns(Some(50))
+crates/printer/src/standard.rs:3134:            .max_columns_preview(true)
+crates/printer/src/standard.rs-3135-            .column(true)
+crates/printer/src/standard.rs-3136-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3137-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3481-    }
+crates/printer/src/standard.rs-3482-
+crates/printer/src/standard.rs-3483-    #[test]
+crates/printer/src/standard.rs:3484:    fn replacement_max_columns() {
+crates/printer/src/standard.rs-3485-        let matcher = RegexMatcher::new(r"Sherlock|Doctor (\w+)").unwrap();
+crates/printer/src/standard.rs-3486-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs:3487:            .max_columns(Some(67))
+crates/printer/src/standard.rs-3488-            .replacement(Some(b"doctah $1 MD".to_vec()))
+crates/printer/src/standard.rs-3489-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3490-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3507-    }
+crates/printer/src/standard.rs-3508-
+crates/printer/src/standard.rs-3509-    #[test]
+crates/printer/src/standard.rs:3510:    fn replacement_max_columns_preview1() {
+crates/printer/src/standard.rs-3511-        let matcher = RegexMatcher::new(r"Sherlock|Doctor (\w+)").unwrap();
+crates/printer/src/standard.rs-3512-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs:3513:            .max_columns(Some(67))
+crates/printer/src/standard.rs:3514:            .max_columns_preview(true)
+crates/printer/src/standard.rs-3515-            .replacement(Some(b"doctah $1 MD".to_vec()))
+crates/printer/src/standard.rs-3516-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3517-        SearcherBuilder::new()
+--
+crates/printer/src/standard.rs-3534-    }
+crates/printer/src/standard.rs-3535-
+crates/printer/src/standard.rs-3536-    #[test]
+crates/printer/src/standard.rs:3537:    fn replacement_max_columns_preview2() {
+crates/printer/src/standard.rs-3538-        let matcher =
+crates/printer/src/standard.rs-3539-            RegexMatcher::new("exhibited|dusted|has to have it").unwrap();
+crates/printer/src/standard.rs-3540-        let mut printer = StandardBuilder::new()
+crates/printer/src/standard.rs:3541:            .max_columns(Some(43))
+crates/printer/src/standard.rs:3542:            .max_columns_preview(true)
+crates/printer/src/standard.rs-3543-            .replacement(Some(b"xxx".to_vec()))
+crates/printer/src/standard.rs-3544-            .build(NoColor::new(vec![]));
+crates/printer/src/standard.rs-3545-        SearcherBuilder::new()

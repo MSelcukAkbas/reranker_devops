@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PYTHONPATH=\"$CLAUDE_PROJECT_DIR/src\" python3 -m searchslim hook",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

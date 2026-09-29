@@ -5,11 +5,18 @@ Supported content shapes:
   path-12-text        context line (-A/-B/-C)
   --                  separator between context groups
   path                heading line, followed by `12:text` / `12-text` (rg --heading)
-  12:text             no filename (single-file search); needs `default_path`
+  12:text             no filename (single-file search); kept without a path,
+                      `default_path` only names the file in the note
   rg --json           one JSON event per line
 
 Paths shape: one path per line (Glob, fd, find, rg -l, grep -l).
 Count shape: path:N (rg -c, grep -c).
+
+Claude Code's Grep/Glob wrap results in framing lines ("Found 3 files",
+"No files found", "Found 5 total occurrences across 2 files.",
+"(Results are truncated...)", "[Showing results with pagination ...]").
+These are split off into `header`/`footer` so they are neither parsed as
+paths nor dropped.
 """
 
 from __future__ import annotations
@@ -24,6 +31,10 @@ _CONTEXT = re.compile(r"^(?P<path>.+?)-(?P<num>\d+)-(?P<text>.*)$")
 _BARE = re.compile(r"^(?P<num>\d+)(?P<sep>[:-])(?P<text>.*)$")
 _COUNT = re.compile(r"^(?P<path>.+):(?P<count>\d+)$")
 _SEPARATOR = "--"
+_FRAMING = re.compile(
+    r"^(?:Found \d+ .+|No (?:files|matches) found\.?"
+    r"|\(Results are truncated[^)]*\)\.?|\[Showing results with pagination[^\]]*\])$"
+)
 
 
 def detect_kind(raw: str) -> Kind:
@@ -40,6 +51,28 @@ def detect_kind(raw: str) -> Kind:
 
 
 def parse(raw: str, kind: Kind | None = None, default_path: str = "") -> SearchResult:
+    header, raw, footer = split_framing(raw)
+    result = _parse_body(raw, kind, default_path)
+    result.header, result.footer = header, footer
+    return result
+
+
+def split_framing(raw: str) -> tuple[list[str], str, list[str]]:
+    """Split Claude Code framing lines off the start and end of `raw`."""
+    lines = raw.splitlines()
+    start, end = 0, len(lines)
+    while start < end and (not lines[start].strip() or _FRAMING.match(lines[start].strip())):
+        start += 1
+    while end > start and (not lines[end - 1].strip() or _FRAMING.match(lines[end - 1].strip())):
+        end -= 1
+    header = [ln for ln in lines[:start] if ln.strip()]
+    footer = [ln for ln in lines[end:] if ln.strip()]
+    if not header and not footer:
+        return [], raw, []
+    return header, "\n".join(lines[start:end]), footer
+
+
+def _parse_body(raw: str, kind: Kind | None, default_path: str) -> SearchResult:
     kind = kind or detect_kind(raw)
     if kind is Kind.PATHS:
         return parse_paths(raw)
@@ -48,7 +81,9 @@ def parse(raw: str, kind: Kind | None = None, default_path: str = "") -> SearchR
     first = next((ln for ln in raw.splitlines() if ln.strip()), "")
     if first.startswith("{") and _is_rg_json(first):
         return parse_rg_json(raw)
-    return parse_content(raw, default_path=default_path)
+    result = parse_content(raw)
+    result.default_path = default_path
+    return result
 
 
 def parse_paths(raw: str) -> SearchResult:
@@ -73,7 +108,7 @@ def parse_counts(raw: str) -> SearchResult:
     return result
 
 
-def parse_content(raw: str, default_path: str = "") -> SearchResult:
+def parse_content(raw: str) -> SearchResult:
     result = SearchResult(kind=Kind.CONTENT)
     known_paths: set[str] = set()
     heading: str | None = None
@@ -111,10 +146,9 @@ def parse_content(raw: str, default_path: str = "") -> SearchResult:
             result.lines.append(ctx)
             continue
 
-        if bare and default_path:
-            result.lines.append(
-                Line(default_path, int(bare["num"]), bare["text"], bare["sep"] == ":")
-            )
+        if bare:
+            # Single-file search: no path in the output, so none is added.
+            result.lines.append(Line("", int(bare["num"]), bare["text"], bare["sep"] == ":"))
             continue
 
         if not bare and _looks_like_path(ln):

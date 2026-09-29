@@ -1,0 +1,151 @@
+./bash_completions.go:683:func (c *Command) GenBashCompletion(w io.Writer) error {
+./bash_completions.go:701:func (c *Command) GenBashCompletionFile(filename string) error {
+./bash_completionsV2.go:24:func (c *Command) genBashCompletion(w io.Writer, includeDesc bool) error {
+./bash_completionsV2.go:382:func (c *Command) GenBashCompletionFileV2(filename string, includeDesc bool) error {
+./bash_completionsV2.go:394:func (c *Command) GenBashCompletionV2(w io.Writer, includeDesc bool) error {
+./command.go:266:func (c *Command) Context() context.Context {
+./command.go:272:func (c *Command) SetContext(ctx context.Context) {
+./command.go:278:func (c *Command) SetArgs(a []string) {
+./command.go:285:func (c *Command) SetOutput(output io.Writer) {
+./command.go:292:func (c *Command) SetOut(newOut io.Writer) {
+./command.go:298:func (c *Command) SetErr(newErr io.Writer) {
+./command.go:304:func (c *Command) SetIn(newIn io.Reader) {
+./command.go:309:func (c *Command) SetUsageFunc(f func(*Command) error) {
+./command.go:314:func (c *Command) SetUsageTemplate(s string) {
+./command.go:320:func (c *Command) SetFlagErrorFunc(f func(*Command, error) error) {
+./command.go:325:func (c *Command) SetHelpFunc(f func(*Command, []string)) {
+./command.go:330:func (c *Command) SetHelpCommand(cmd *Command) {
+./command.go:335:func (c *Command) SetHelpCommandGroupID(groupID string) {
+./command.go:344:func (c *Command) SetCompletionCommandGroupID(groupID string) {
+./command.go:350:func (c *Command) SetHelpTemplate(s string) {
+./command.go:355:func (c *Command) SetVersionTemplate(s string) {
+./command.go:360:func (c *Command) SetErrPrefix(s string) {
+./command.go:366:func (c *Command) SetGlobalNormalizationFunc(n func(f *flag.FlagSet, name string) flag.NormalizedName) {
+./command.go:377:func (c *Command) OutOrStdout() io.Writer {
+./command.go:382:func (c *Command) OutOrStderr() io.Writer {
+./command.go:387:func (c *Command) ErrOrStderr() io.Writer {
+./command.go:392:func (c *Command) InOrStdin() io.Reader {
+./command.go:396:func (c *Command) getOut(def io.Writer) io.Writer {
+./command.go:406:func (c *Command) getErr(def io.Writer) io.Writer {
+./command.go:416:func (c *Command) getIn(def io.Reader) io.Reader {
+./command.go:428:func (c *Command) UsageFunc() (f func(*Command) error) {
+./command.go:448:func (c *Command) Usage() error {
+./command.go:454:func (c *Command) HelpFunc() func(*Command, []string) {
+./command.go:475:func (c *Command) Help() error {
+./command.go:481:func (c *Command) UsageString() string {
+./command.go:502:func (c *Command) FlagErrorFunc() (f func(*Command, error) error) {
+./command.go:518:func (c *Command) UsagePadding() int {
+./command.go:528:func (c *Command) CommandPathPadding() int {
+./command.go:538:func (c *Command) NamePadding() int {
+./command.go:546:func (c *Command) UsageTemplate() string {
+./command.go:587:func (c *Command) HelpTemplate() string {
+./command.go:601:func (c *Command) VersionTemplate() string {
+./command.go:614:func (c *Command) ErrPrefix() string {
+./command.go:686:func (c *Command) argsMinusFirstX(args []string, x string) []string {
+./command.go:728:func (c *Command) Find(args []string) (*Command, []string, error) {
+./command.go:752:func (c *Command) findSuggestions(arg string) string {
+./command.go:769:func (c *Command) findNext(next string) *Command {
+./command.go:792:func (c *Command) Traverse(args []string) (*Command, []string, error) {
+./command.go:834:func (c *Command) SuggestionsFor(typedName string) []string {
+./command.go:855:func (c *Command) VisitParents(fn func(*Command)) {
+./command.go:863:func (c *Command) Root() *Command {
+./command.go:872:func (c *Command) ArgsLenAtDash() int {
+./command.go:876:func (c *Command) execute(a []string) (err error) {
+./command.go:1017:func (c *Command) preRun() {
+./command.go:1023:func (c *Command) postRun() {
+./command.go:1032:func (c *Command) ExecuteContext(ctx context.Context) error {
+./command.go:1040:func (c *Command) Execute() error {
+./command.go:1048:func (c *Command) ExecuteContextC(ctx context.Context) (*Command, error) {
+./command.go:1054:func (c *Command) ExecuteC() (cmd *Command, err error) {
+./command.go:1141:func (c *Command) ValidateArgs(args []string) error {
+./command.go:1149:func (c *Command) ValidateRequiredFlags() error {
+./command.go:1174:func (c *Command) checkCommandGroups() {
+./command.go:1188:func (c *Command) InitDefaultHelpFlag() {
+./command.go:1207:func (c *Command) InitDefaultVersionFlag() {
+./command.go:1232:func (c *Command) InitDefaultHelpCmd() {
+./command.go:1281:func (c *Command) ResetCommands() {
+./command.go:1296:func (c *Command) Commands() []*Command {
+./command.go:1306:func (c *Command) AddCommand(cmds ...*Command) {
+./command.go:1335:func (c *Command) Groups() []*Group {
+./command.go:1340:func (c *Command) AllChildCommandsHaveGroup() bool {
+./command.go:1350:func (c *Command) ContainsGroup(groupID string) bool {
+./command.go:1360:func (c *Command) AddGroup(groups ...*Group) {
+./command.go:1365:func (c *Command) RemoveCommand(cmds ...*Command) {
+./command.go:1399:func (c *Command) Print(i ...interface{}) {
+./command.go:1404:func (c *Command) Println(i ...interface{}) {
+./command.go:1409:func (c *Command) Printf(format string, i ...interface{}) {
+./command.go:1414:func (c *Command) PrintErr(i ...interface{}) {
+./command.go:1419:func (c *Command) PrintErrln(i ...interface{}) {
+./command.go:1424:func (c *Command) PrintErrf(format string, i ...interface{}) {
+./command.go:1429:func (c *Command) CommandPath() string {
+./command.go:1436:func (c *Command) displayName() string {
+./command.go:1444:func (c *Command) UseLine() string {
+./command.go:1463:func (c *Command) DebugFlags() {
+./command.go:1503:func (c *Command) Name() string {
+./command.go:1513:func (c *Command) HasAlias(s string) bool {
+./command.go:1524:func (c *Command) CalledAs() string {
+./command.go:1533:func (c *Command) hasNameOrAliasPrefix(prefix string) bool {
+./command.go:1548:func (c *Command) NameAndAliases() string {
+./command.go:1553:func (c *Command) HasExample() bool {
+./command.go:1558:func (c *Command) Runnable() bool {
+./command.go:1563:func (c *Command) HasSubCommands() bool {
+./command.go:1569:func (c *Command) IsAvailableCommand() bool {
+./command.go:1590:func (c *Command) IsAdditionalHelpTopicCommand() bool {
+./command.go:1610:func (c *Command) HasHelpSubCommands() bool {
+./command.go:1624:func (c *Command) HasAvailableSubCommands() bool {
+./command.go:1639:func (c *Command) HasParent() bool {
+./command.go:1644:func (c *Command) GlobalNormalizationFunc() func(f *flag.FlagSet, name string) flag.NormalizedName {
+./command.go:1650:func (c *Command) Flags() *flag.FlagSet {
+./command.go:1664:func (c *Command) LocalNonPersistentFlags() *flag.FlagSet {
+./command.go:1678:func (c *Command) LocalFlags() *flag.FlagSet {
+./command.go:1706:func (c *Command) InheritedFlags() *flag.FlagSet {
+./command.go:1732:func (c *Command) NonInheritedFlags() *flag.FlagSet {
+./command.go:1737:func (c *Command) PersistentFlags() *flag.FlagSet {
+./command.go:1749:func (c *Command) ResetFlags() {
+./command.go:1763:func (c *Command) HasFlags() bool {
+./command.go:1768:func (c *Command) HasPersistentFlags() bool {
+./command.go:1773:func (c *Command) HasLocalFlags() bool {
+./command.go:1778:func (c *Command) HasInheritedFlags() bool {
+./command.go:1784:func (c *Command) HasAvailableFlags() bool {
+./command.go:1789:func (c *Command) HasAvailablePersistentFlags() bool {
+./command.go:1795:func (c *Command) HasAvailableLocalFlags() bool {
+./command.go:1801:func (c *Command) HasAvailableInheritedFlags() bool {
+./command.go:1806:func (c *Command) Flag(name string) (flag *flag.Flag) {
+./command.go:1817:func (c *Command) persistentFlag(name string) (flag *flag.Flag) {
+./command.go:1830:func (c *Command) ParseFlags(args []string) error {
+./command.go:1854:func (c *Command) Parent() *Command {
+./command.go:1860:func (c *Command) mergePersistentFlags() {
+./command.go:1869:func (c *Command) updateParentsPflags() {
+./completions.go:135:func (c *Command) RegisterFlagCompletionFunc(flagName string, f func(cmd *Command, args []string, toComplete string) ([]string, ShellCompDirective)) error {
+./completions.go:151:func (c *Command) GetFlagCompletionFunc(flagName string) (func(*Command, []string, string) ([]string, ShellCompDirective), bool) {
+./completions.go:196:func (c *Command) initCompleteCmd(args []string) {
+./completions.go:273:func (c *Command) getCompletions(args []string) (*Command, []string, ShellCompDirective, error) {
+./completions.go:690:func (c *Command) InitDefaultCompletionCmd() {
+./fish_completions.go:276:func (c *Command) GenFishCompletion(w io.Writer, includeDesc bool) error {
+./fish_completions.go:284:func (c *Command) GenFishCompletionFile(filename string, includeDesc bool) error {
+./flag_groups.go:33:func (c *Command) MarkFlagsRequiredTogether(flagNames ...string) {
+./flag_groups.go:49:func (c *Command) MarkFlagsOneRequired(flagNames ...string) {
+./flag_groups.go:65:func (c *Command) MarkFlagsMutuallyExclusive(flagNames ...string) {
+./flag_groups.go:81:func (c *Command) ValidateFlagGroups() error {
+./flag_groups.go:225:func (c *Command) enforceFlagGroupsForCompletion() {
+./powershell_completions.go:288:func (c *Command) genPowerShellCompletion(w io.Writer, includeDesc bool) error {
+./powershell_completions.go:295:func (c *Command) genPowerShellCompletionFile(filename string, includeDesc bool) error {
+./powershell_completions.go:306:func (c *Command) GenPowerShellCompletionFile(filename string) error {
+./powershell_completions.go:312:func (c *Command) GenPowerShellCompletion(w io.Writer) error {
+./powershell_completions.go:317:func (c *Command) GenPowerShellCompletionFileWithDesc(filename string) error {
+./powershell_completions.go:323:func (c *Command) GenPowerShellCompletionWithDesc(w io.Writer) error {
+./shell_completions.go:24:func (c *Command) MarkFlagRequired(name string) error {
+./shell_completions.go:31:func (c *Command) MarkPersistentFlagRequired(name string) error {
+./shell_completions.go:44:func (c *Command) MarkFlagFilename(name string, extensions ...string) error {
+./shell_completions.go:54:func (c *Command) MarkFlagCustom(name string, f string) error {
+./shell_completions.go:61:func (c *Command) MarkPersistentFlagFilename(name string, extensions ...string) error {
+./shell_completions.go:83:func (c *Command) MarkFlagDirname(name string) error {
+./shell_completions.go:90:func (c *Command) MarkPersistentFlagDirname(name string) error {
+./zsh_completions.go:25:func (c *Command) GenZshCompletionFile(filename string) error {
+./zsh_completions.go:31:func (c *Command) GenZshCompletion(w io.Writer) error {
+./zsh_completions.go:36:func (c *Command) GenZshCompletionFileNoDesc(filename string) error {
+./zsh_completions.go:42:func (c *Command) GenZshCompletionNoDesc(w io.Writer) error {
+./zsh_completions.go:55:func (c *Command) MarkZshCompPositionalArgumentFile(argPosition int, patterns ...string) error {
+./zsh_completions.go:66:func (c *Command) MarkZshCompPositionalArgumentWords(argPosition int, words ...string) error {
+./zsh_completions.go:70:func (c *Command) genZshCompletionFile(filename string, includeDesc bool) error {
+./zsh_completions.go:80:func (c *Command) genZshCompletion(w io.Writer, includeDesc bool) error {

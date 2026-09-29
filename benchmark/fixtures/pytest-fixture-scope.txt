@@ -1,0 +1,133 @@
+73:from _pytest.scope import _ScopeName
+74:from _pytest.scope import HIGH_SCOPES
+75:from _pytest.scope import Scope
+118:    _scope: Scope
+125:def get_scope_package(
+137:def get_scope_node(node: nodes.Node, scope: Scope) -> nodes.Node | None:
+140:    if scope is Scope.Function:
+144:    elif scope is Scope.Class:
+146:    elif scope is Scope.Module:
+148:    elif scope is Scope.Package:
+150:    elif scope is Scope.Session:
+153:        assert_never(scope)
+166:# It is called for Session scope first and performs sorting
+167:# down to the lower scopes such as to minimize number of "high scope"
+175:    scoped_item_path: Path | None
+184:    item: nodes.Item, scope: Scope
+187:    the specified scope."""
+188:    assert scope is not Scope.Function
+196:    if scope is Scope.Session:
+197:        scoped_item_path = None
+198:    elif scope is Scope.Package:
+200:        scoped_item_path = item.path.parent
+201:    elif scope is Scope.Module:
+202:        scoped_item_path = item.path
+203:    elif scope is Scope.Class:
+204:        scoped_item_path = item.path
+207:        assert_never(scope)
+210:        if callspec._arg2scope[argname] != scope:
+213:        yield FixtureArgKey(argname, param_index, scoped_item_path, item_cls)
+221:    for scope in HIGH_SCOPES:
+222:        scoped_argkeys_by_item = argkeys_by_item[scope] = {}
+223:        scoped_items_by_argkey = items_by_argkey[scope] = defaultdict(OrderedDict)
+225:            argkeys = dict.fromkeys(get_parametrized_fixture_argkeys(item, scope))
+227:                scoped_argkeys_by_item[item] = argkeys
+229:                    scoped_items_by_argkey[argkey][item] = None
+233:        reorder_items_atscope(
+239:def reorder_items_atscope(
+245:    scope: Scope,
+247:    if scope is Scope.Function or len(items) < 3:
+250:    scoped_items_by_argkey = items_by_argkey[scope]
+251:    scoped_argkeys_by_item = argkeys_by_item[scope]
+264:                k for k in scoped_argkeys_by_item.get(item, ()) if k not in ignore
+273:                    i for i in scoped_items_by_argkey[slicing_argkey] if i in items
+278:                    for other_scope in HIGH_SCOPES:
+279:                        other_scoped_items_by_argkey = items_by_argkey[other_scope]
+280:                        for argkey in argkeys_by_item[other_scope].get(i, ()):
+281:                            other_scoped_items_by_argkey[argkey][i] = None
+282:                            other_scoped_items_by_argkey[argkey].move_to_end(
+287:            reordered_no_argkey_items = reorder_items_atscope(
+288:                no_argkey_items, argkeys_by_item, items_by_argkey, scope.next_lower()
+399:    def _scope(self) -> Scope:
+403:    def scope(self) -> _ScopeName:
+405:        return self._scope.value
+408:    def _check_scope(
+411:        requested_scope: Scope,
+425:        """Underlying collection node (depends on current request scope)."""
+435:        """Test function object if the request has a per-function scope."""
+436:        if self.scope != "function":
+438:                f"function not available in {self.scope}-scoped context"
+445:        if self.scope not in ("class", "function"):
+446:            raise AttributeError(f"cls not available in {self.scope}-scoped context")
+454:        if self.scope != "function":
+461:        if self.scope not in ("function", "class", "module"):
+462:            raise AttributeError(f"module not available in {self.scope}-scoped context")
+470:        if self.scope not in ("function", "class", "module", "package"):
+471:            raise AttributeError(f"path not available in {self.scope}-scoped context")
+560:            self._check_scope(fixturedef, fixturedef._scope)
+604:            # The parametrize invocation scope overrides the fixture's scope.
+605:            scope = callspec._arg2scope[argname]
+609:            scope = fixturedef._scope
+611:        self._check_scope(fixturedef, scope)
+613:            self, scope, param, param_index, fixturedef, _ispytest=True
+675:    def _scope(self) -> Scope:
+678:    def _check_scope(
+681:        requested_scope: Scope,
+683:        # TopRequest always has function scope so always valid.
+711:        scope: Scope,
+726:        self._scope_field: Final = scope
+736:    def _scope(self) -> Scope:
+737:        return self._scope_field
+741:        scope = self._scope
+742:        if scope is Scope.Function:
+745:        elif scope is Scope.Package:
+746:            node = get_scope_package(self._pyfuncitem, self._fixturedef)
+748:            node = get_scope_node(self._pyfuncitem, scope)
+749:        if node is None and scope is Scope.Class:
+752:        assert node, f'Could not obtain a node for scope "{scope}" for function {self._pyfuncitem!r}'
+755:    def _check_scope(
+758:        requested_scope: Scope,
+762:        if self._scope > requested_scope:
+771:                f"ScopeMismatch: You tried to access the {requested_scope.value} scoped "
+772:                f"fixture {argname} with a {self._scope.value} scoped request object. "
+920:def _eval_scope_callable(
+921:    scope_callable: Callable[[str, Config], _ScopeName],
+928:        result = scope_callable(fixture_name=fixture_name, config=config)  # type: ignore[call-arg]
+931:            f"Error evaluating {scope_callable} while defining fixture '{fixture_name}'.\n"
+936:            f"Expected {scope_callable} to return a 'str' while defining fixture '{fixture_name}', but it returned:\n"
+957:        scope: Scope | _ScopeName | Callable[[str, Config], _ScopeName] | None,
+986:        if scope is None:
+987:            scope = Scope.Function
+988:        elif callable(scope):
+989:            scope = _eval_scope_callable(scope, argname, config)
+990:        if isinstance(scope, str):
+991:            scope = Scope.from_user(
+992:                scope, descr=f"Fixture '{func.__name__}'", where=baseid
+994:        self._scope: Final = scope
+1009:    def scope(self) -> _ScopeName:
+1011:        return self._scope.value
+1102:        return f"<FixtureDef argname={self.argname!r} scope={self.scope!r} baseid={self.baseid!r}>"
+1181:    scope: _ScopeName | Callable[[str, Config], _ScopeName]
+1223:    scope: _ScopeName | Callable[[str, Config], _ScopeName] = ...,
+1235:    scope: _ScopeName | Callable[[str, Config], _ScopeName] = ...,
+1246:    scope: _ScopeName | Callable[[str, Config], _ScopeName] = "function",
+1270:    :param scope:
+1271:        The scope for which this fixture is shared; one of ``"function"``
+1277:        See :ref:`dynamic scope` in the docs for more information.
+1303:        scope=scope,
+1321:    scope="function",
+1336:        scope=scope,
+1344:@fixture(scope="session")
+1346:    """Session-scoped fixture that returns the session's :class:`pytest.Config`
+1569:        def sort_by_scope(arg_name: str) -> Scope:
+1575:                return fixturedefs[-1]._scope
+1577:        fixturenames_closure.sort(key=sort_by_scope, reverse=True)
+1604:            # closest scope (last in the list). But if the fixture overrides
+1614:                        scope=fixturedef.scope,
+1635:        scope: Scope | _ScopeName | Callable[[str, Config], _ScopeName] = "function",
+1651:        :param scope:
+1652:            The fixture's scope.
+1665:            scope=scope,
+1761:                scope=marker.scope,
+1916:        if fixturedef.scope != "function":
+1917:            tw.write(f" [{fixturedef.scope} scope]", cyan=True)

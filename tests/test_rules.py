@@ -121,3 +121,82 @@ def test_real_rg_output_round_trips(tmp_path):
     assert reduced.stats["matches_total"] == 3 * 9
     assert reduced.stats["matches_kept"] == 3 * 9
     assert set(reduced.text.splitlines()) <= set(raw.splitlines())
+
+
+def test_framing_kept_around_trimmed_paths_with_note_last():
+    paths = [f"src/d{i % 3}/f{i}.py" for i in range(500)]
+    footer = "(Results are truncated. Consider using a more specific path or pattern.)"
+    raw = "\n".join(["Found 500 files", *paths, footer]) + "\n"
+    out = slim(raw, config=Config(max_tokens=200))
+    lines = out.text.splitlines()
+    assert lines[0] == "Found 500 files"
+    assert lines[-2] == footer
+    assert lines[-1].startswith(NOTE_PREFIX)
+    assert "/500 paths shown" in lines[-1]
+    assert out.stats["input"] == 500
+
+
+def test_framing_only_passes_through():
+    assert slim("No files found\n").text == "No files found"
+
+
+def test_single_file_output_keeps_its_pathless_format_and_fills_the_budget():
+    raw = "".join(f"{i}:    scope = compute_scope({i}, value_{i})\n" for i in range(1, 201))
+    out = slim(raw, config=Config(max_tokens=800))
+    lines = out.text.splitlines()
+    body, note = lines[:-1], lines[-1]
+    assert body[0] == "1:    scope = compute_scope(1, value_1)"
+    assert all(line in raw.splitlines() for line in body)
+    assert len(body) > 8  # not cut to the multi-file floor
+    assert estimate_tokens(out.text) <= 800
+    assert note.startswith(NOTE_PREFIX) and "this file" in note and "path/glob" not in note
+
+
+def test_single_file_note_uses_default_path_name():
+    raw = "".join(f"{i}:x = {i} * 12345678901234567890\n" for i in range(1, 400))
+    out = slim(raw, config=Config(max_tokens=300), default_path="src/a.py")
+    assert "src/a.py (" in out.text.splitlines()[-1]
+    assert not out.text.startswith("src/a.py")
+
+
+def test_cap_rises_above_floor_when_budget_allows():
+    # One big file and a few small ones: a fixed cap of 8 would hide most of
+    # the big file even though the budget has room for it.
+    big = [f"big.go:{i}:func F{i}() error {{" for i in range(1, 41)]
+    small = [f"s{j}.go:{i}:F{i}()" for j in range(3) for i in range(1, 4)]
+    ctx = [f"big.go-{i}-// padding line for context {i}" for i in range(100, 160)]
+    raw = "\n".join(big + small + ctx) + "\n"
+    out = slim(raw, config=Config(max_tokens=600))
+    kept_big = [ln for ln in out.text.splitlines() if ln.startswith("big.go:")]
+    assert len(kept_big) > 8
+    assert kept_big == big[: len(kept_big)]  # still a prefix in line order
+    assert estimate_tokens(out.text) <= 600
+
+
+def test_note_covers_every_omitted_file_by_directory():
+    from searchslim.rules import rollup_dirs
+
+    files = [f"pkg{k}/sub{j}/f.py" for k in range(4) for j in range(8)]
+    groups = rollup_dirs([(f, 1) for f in files], limit=5)
+    assert len(groups) <= 5
+    assert sum(n for _, n in groups) == len(files)
+    assert [d for d, _ in groups] == ["pkg0", "pkg1", "pkg2", "pkg3"]
+
+    many = [(f"d{i}/f.py", 2) for i in range(30)]
+    groups = rollup_dirs(many, limit=5)
+    assert len(groups) == 5 and sum(n for _, n in groups) == 60
+    assert groups[-1][0] == "+26 other dirs"
+
+
+def test_unordered_input_still_names_the_dropped_evidence_dir():
+    files = [f"src/_pytest/m{i}.py" for i in range(25)] + ["src/_pytest/config/__init__.py"]
+    raw = "".join(f"{f}:{n}:    raise ValueError('x' * {n})\n" for f in files for n in range(1, 30))
+    out = slim(raw, config=Config(max_tokens=500))
+    note = out.text.splitlines()[-1]
+    assert "src/_pytest/config/" in note
+
+
+def test_one_file_with_path_asks_to_narrow_the_pattern():
+    raw = "".join(f"src/f.py:{i}:scope = {i} * 1234567890\n" for i in range(1, 300))
+    note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
+    assert "src/f.py (" in note and "Narrow the pattern" in note
