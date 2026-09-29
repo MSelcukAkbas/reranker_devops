@@ -48,15 +48,17 @@ def test_capture_cmd_sorts_rg_only():
 
 
 def test_fixtures_hold_all_critical_evidence():
-    """Every committed fixture must contain its task's critical evidence (raw mode keeps everything)."""
+    """Every critical evidence line must be in one of its task's committed fixtures (raw mode keeps everything)."""
     spec = bench.load_spec()
     for task in spec["tasks"]:
-        raw = (bench.FIXTURES / f"{task['id']}.txt").read_text(encoding="utf-8")
-        bench.resolve_lines(task, raw)
-        kind = detect_kind(raw)
-        for ev in task["evidence"]:
-            if ev.get("critical"):
-                assert bench.evidence_status(ev, raw, kind, bench.default_path(task)) == "kept", (task["id"], ev)
+        kept = {i: False for i, ev in enumerate(task["evidence"]) if ev.get("critical")}
+        for step in bench.task_steps(task):
+            raw = bench.fixture_path(step).read_text(encoding="utf-8")
+            bench.resolve_lines(step, raw)
+            kind = detect_kind(raw)
+            for i in kept:
+                kept[i] = kept[i] or bench.evidence_status(task["evidence"][i], raw, kind, bench.default_path(step)) == "kept"
+        assert all(kept.values()), (task["id"], kept)
 
 
 def test_run_with_model_cmd(tmp_path, capsys):
@@ -77,3 +79,16 @@ def test_run_with_model_cmd(tmp_path, capsys):
     assert [r["mode"] for r in rows] == ["raw", "rules", "rules+model"]
     assert rows[2]["cost_usd"] > rows[1]["cost_usd"]
     assert "rules+model" in capsys.readouterr().out
+
+
+def test_validate_subset_allows_dot_slash_normalisation():
+    assert bench.validate_subset("a/b.go\n", "./a/b.go\n") == []
+
+
+def test_multi_step_task_takes_best_status_and_sums_tokens():
+    task = {"id": "t", "evidence": [{"path": "a.py", "line": 3, "critical": True}]}
+    first = bench.Row("t", "rules", 10, 1.0, 0.1, {"a.py:3": "recoverable"}, 1)
+    second = bench.Row("t", "rules", 5, 2.0, 0.2, {"a.py:3": "kept"}, 0)
+    row = bench.combine(task, [first, second])
+    assert row.tokens == 15 and row.evidence == {"a.py:3": "kept"} and row.extra_searches == 0
+    assert [s["fixture"] for s in bench.task_steps({"id": "t", "steps": [{"cmd": ["a"]}, {"cmd": ["b"]}]})] == ["t.0", "t.1"]

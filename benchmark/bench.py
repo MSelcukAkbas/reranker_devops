@@ -66,6 +66,41 @@ def default_path(task: dict) -> str:
     return task.get("default_path", "")
 
 
+def task_steps(task: dict) -> list[dict]:
+    """A task is one search (`cmd`) or a sequence (`steps`), like an agent that
+    lists files first and then searches one of them. Each step shares the
+    task's evidence and has its own fixture."""
+    if "steps" not in task:
+        return [task]
+    return [
+        {**task, "cmd": st["cmd"], "default_path": st.get("default_path", ""), "fixture": f"{task['id']}.{i}"}
+        for i, st in enumerate(task["steps"])
+    ]
+
+
+def fixture_path(step: dict) -> Path:
+    return FIXTURES / f"{step.get('fixture', step['id'])}.txt"
+
+
+_RANK = {"kept": 0, "recoverable": 1, "lost": 2}
+
+
+def combine(task: dict, rows: list["Row"]) -> "Row":
+    """One row for a multi-step task: costs add up, each evidence takes its best status."""
+    if len(rows) == 1:
+        return rows[0]
+    evidence = {}
+    for r in rows:
+        for key, status in r.evidence.items():
+            if key not in evidence or _RANK[status] < _RANK[evidence[key]]:
+                evidence[key] = status
+    recover = {key.split(":")[0] for key, st in evidence.items() if st == "recoverable"}
+    return Row(
+        task["id"], rows[0].mode, sum(r.tokens for r in rows), sum(r.latency_ms for r in rows),
+        sum(r.cost_usd for r in rows), evidence, len(recover), sum(r.invalid_lines for r in rows),
+    )
+
+
 def ensure_repo(name: str, repo: dict) -> Path:
     dest = CACHE / name
     if not dest.exists():
@@ -153,6 +188,7 @@ def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
 def validate_subset(output: str, raw: str) -> list[str]:
     """Body lines of a model's output that are not lines of the raw input."""
     raw_lines = set(raw.splitlines())
+    raw_lines |= {_norm(ln) for ln in raw_lines}  # `./x` printed as `x` is the same path
     bad = []
     for ln in split_note(output)[0].splitlines():
         if ln in raw_lines:
@@ -271,14 +307,18 @@ def cmd_fetch(args: argparse.Namespace) -> int:
             continue
         repo_dir = ensure_repo(task["repo"], spec["repos"][task["repo"]])
         problems += verify_evidence(task, repo_dir)
-        raw = run_search(capture_cmd(task), repo_dir)
-        (FIXTURES / f"{task['id']}.txt").write_text(raw, encoding="utf-8")
-        resolve_lines(task, raw)
-        kind = detect_kind(raw)
-        for ev in task["evidence"]:
-            if ev.get("critical") and evidence_status(ev, raw, kind, default_path(task)) != "kept":
+        kept: dict[int, bool] = {}
+        for step in task_steps(task):
+            raw = run_search(capture_cmd(step), repo_dir)
+            fixture_path(step).write_text(raw, encoding="utf-8")
+            resolve_lines(step, raw)
+            kind = detect_kind(raw)
+            for i, ev in enumerate(task["evidence"]):
+                kept[i] = kept.get(i, False) or evidence_status(ev, raw, kind, default_path(step)) == "kept"
+            print(f"{fixture_path(step).stem}: {len(raw)} bytes")
+        for i, ev in enumerate(task["evidence"]):
+            if ev.get("critical") and not kept[i]:
                 problems.append(f"{task['id']}: critical evidence {ev['path']}:{ev.get('line', '')} is not in the raw output")
-        print(f"{task['id']}: {len(raw)} bytes")
     for p in problems:
         print("ANCHOR", p, file=sys.stderr)
     return 1 if problems else 0
@@ -293,23 +333,28 @@ def cmd_run(args: argparse.Namespace) -> int:
     for task in spec["tasks"]:
         if args.only and task["id"] not in args.only:
             continue
-        fixture = FIXTURES / f"{task['id']}.txt"
-        if not fixture.exists():
-            raise SystemExit(f"missing fixture {fixture}; run `bench.py fetch` first")
-        raw = fixture.read_text(encoding="utf-8")
-        resolve_lines(task, raw)
-        rows.append(score(task, "raw", raw, raw, 0.0, count(raw)))
-        reduced, ms = timed(lambda: slim(raw, config=config, default_path=default_path(task)), args.repeat)
-        rows.append(score(task, "rules", raw, reduced.text, ms, count(reduced.text)))
-        if args.model_cmd:
-            if reduced.text.rstrip("\n") == raw.rstrip("\n"):
-                out, mms, mcost = reduced.text, ms, 0.0  # passed through unchanged: model not called
-            else:
-                out, mms, mcost = run_model(args.model_cmd, task, raw, reduced.text, config)
-                mms += ms
-            row = score(task, "rules+model", raw, out, mms, count(out), mcost)
-            row.invalid_lines = len(validate_subset(out, raw))
-            rows.append(row)
+        per_mode: dict[str, list[Row]] = {m: [] for m in modes}
+        for step in task_steps(task):
+            fixture = fixture_path(step)
+            if not fixture.exists():
+                raise SystemExit(f"missing fixture {fixture}; run `bench.py fetch` first")
+            raw = fixture.read_text(encoding="utf-8")
+            resolve_lines(step, raw)
+            per_mode["raw"].append(score(step, "raw", raw, raw, 0.0, count(raw)))
+            reduced, ms = timed(lambda: slim(raw, config=config, default_path=default_path(step)), args.repeat)
+            row = score(step, "rules", raw, reduced.text, ms, count(reduced.text))
+            row.invalid_lines = len(validate_subset(reduced.text, raw))
+            per_mode["rules"].append(row)
+            if args.model_cmd:
+                if reduced.text.rstrip("\n") == raw.rstrip("\n"):
+                    out, mms, mcost = reduced.text, ms, 0.0  # passed through unchanged: model not called
+                else:
+                    out, mms, mcost = run_model(args.model_cmd, step, raw, reduced.text, config)
+                    mms += ms
+                row = score(step, "rules+model", raw, out, mms, count(out), mcost)
+                row.invalid_lines = len(validate_subset(out, raw))
+                per_mode["rules+model"].append(row)
+        rows += [combine(task, per_mode[m]) for m in modes]
 
     if args.jsonl:
         with open(args.jsonl, "w", encoding="utf-8") as fh:
@@ -359,7 +404,7 @@ def cmd_stability(args: argparse.Namespace) -> int:
     print("| task | runs | distinct outputs | runs with lost evidence |")
     print("|---|---|---|---|")
     for task in spec["tasks"]:
-        if task["cmd"][0] != "rg" or (args.only and task["id"] not in args.only):
+        if "cmd" not in task or task["cmd"][0] != "rg" or (args.only and task["id"] not in args.only):
             continue
         repo_dir = ensure_repo(task["repo"], spec["repos"][task["repo"]])
         outputs, lost_runs = set(), 0
