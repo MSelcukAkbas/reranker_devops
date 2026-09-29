@@ -1,0 +1,61 @@
+{
+  "note": "Multi-search agent sessions: each is the sequence of searches an agent runs while working one task (narrowing, widening context, repeating). evidence_from names the tasks.json task whose evidence must surface somewhere in the session.",
+  "sessions": [
+    {
+      "id": "pytest-fixture-scope",
+      "repo": "pytest",
+      "evidence_from": "pytest-fixture-scope",
+      "cmds": [
+        ["rg", "-n", "scope", "src/_pytest"],
+        ["rg", "-n", "scope", "src/_pytest/fixtures.py"],
+        ["rg", "-n", "-C2", "scope", "src/_pytest/fixtures.py"],
+        ["rg", "-n", "def ", "src/_pytest/fixtures.py"],
+        ["rg", "-n", "-C2", "scope", "src/_pytest/fixtures.py"]
+      ]
+    },
+    {
+      "id": "pytest-raises",
+      "repo": "pytest",
+      "evidence_from": "pytest-raises-impl",
+      "cmds": [
+        ["rg", "-n", "raises", "src"],
+        ["rg", "-n", "-C2", "-i", "raises", "src"],
+        ["rg", "-n", "-C2", "-i", "raises", "src/_pytest/python_api.py"],
+        ["rg", "-n", "-C2", "-i", "raises", "src"]
+      ]
+    },
+    {
+      "id": "ripgrep-max-columns",
+      "repo": "ripgrep",
+      "evidence_from": "ripgrep-max-columns",
+      "cmds": [
+        ["rg", "-n", "max_columns", "crates"],
+        ["rg", "-n", "-C3", "max_columns", "crates"],
+        ["rg", "-n", "-C3", "max_columns", "crates/printer"],
+        ["rg", "-n", "-C3", "max_columns", "crates"]
+      ]
+    },
+    {
+      "id": "express-redirect",
+      "repo": "express",
+      "evidence_from": "express-redirect-status",
+      "cmds": [
+        ["rg", "-n", "redirect", "lib", "test"],
+        ["rg", "-n", "-C3", "redirect", "lib", "test"],
+        ["rg", "-n", "-C3", "redirect", "lib"],
+        ["rg", "-n", "-C3", "redirect", "lib", "test"]
+      ]
+    },
+    {
+      "id": "cobra-flags-and-execute",
+      "repo": "cobra",
+      "evidence_from": "cobra-persistent-flags",
+      "cmds": [
+        ["rg", "-n", "func \\(c \\*Command\\)", "."],
+        ["rg", "-n", "-C2", "PersistentFlags", "."],
+        ["rg", "-n", "PersistentFlags", "command.go"],
+        ["rg", "-n", "-C2", "PersistentFlags", "."]
+      ]
+    }
+  ]
+}

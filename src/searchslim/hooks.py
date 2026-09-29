@@ -15,6 +15,10 @@ original tool call runs unchanged. `SEARCHSLIM=off` in the environment
 disables the hook; `SEARCHSLIM_MAX_TOKENS` sets the budget.
 `SEARCHSLIM_RERANK=lexical|claude|off` picks the ranking (default lexical), with
 the intent taken from the session transcript.
+
+Searches in one session share a memory of lines already shown (session.py), so
+an over-budget search does not re-send them. On `PreCompact` that memory is
+cleared, since compaction drops the earlier results from the agent's context.
 """
 
 from __future__ import annotations
@@ -30,6 +34,7 @@ from . import slim
 from .models import Kind
 from .rewrite import rewrite_command
 from .rules import Config, estimate_tokens
+from .session import SessionStore, enabled as session_enabled
 
 RG_TIMEOUT_S = 20
 # Lexical ranking kept more critical evidence than rules alone at every budget
@@ -60,6 +65,15 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     """Return the hook's JSON output, or None to let the tool run unchanged."""
     if os.environ.get("SEARCHSLIM", "").lower() == "off":
         return None
+    # Subagents have their own context: tool calls made inside one carry
+    # `agent_id`, and must not count as lines the main agent has seen.
+    session_id = event.get("session_id") or ""
+    if session_id and event.get("agent_id"):
+        session_id = f"{session_id}.{event['agent_id']}"
+    if event.get("hook_event_name") == "PreCompact":
+        if session_id:
+            SessionStore(session_id).clear()
+        return None
     config = config or config_from_env()
     tool = event.get("tool_name")
     tool_input = event.get("tool_input") or {}
@@ -68,6 +82,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     rerank = os.environ.get("SEARCHSLIM_RERANK", DEFAULT_RERANK).lower()
     rerank = rerank if rerank in ("lexical", "claude") else ""
     transcript = event.get("transcript_path") or ""
+    use_session = bool(session_id) and session_enabled()
 
     if tool == "Bash":
         run_args = [f"--max-tokens={config.max_tokens}"]
@@ -75,6 +90,8 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
             run_args.append(f"--rerank={rerank}")
             if transcript:
                 run_args.append(f"--transcript={transcript}")
+        if use_session:
+            run_args.append(f"--session={session_id}")
         new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args, check_path=True)
         if not new_command:
             return None
@@ -108,7 +125,11 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         scorer = make_scorer(rerank)
         pattern = tool_input.get("pattern", "")
         query = query_from_transcript(transcript, pattern) if transcript else Query(pattern=pattern)
-    reduced = slim(raw, kind=kind, config=config, default_path=default_path, scorer=scorer, query=query)
+    session = SessionStore(session_id) if use_session else None
+    reduced = slim(
+        raw, kind=kind, config=config, scorer=scorer, query=query, default_path=default_path,
+        session=session, cwd=run_cwd,
+    )
     header = GLOB_REASON_HEADER if tool == "Glob" else GREP_REASON_HEADER
     if default_path:
         header += f" All lines are from {default_path}."

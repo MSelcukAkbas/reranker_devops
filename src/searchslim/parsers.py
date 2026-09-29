@@ -191,14 +191,19 @@ def parse_rg_json(raw: str) -> SearchResult:
 
 
 def _split_context(ln: str, known_paths: set[str]) -> Line | None:
-    # Longest known path first, so "a-1-b.py" beats "a" when both are known.
-    for path in sorted(known_paths, key=len, reverse=True):
-        prefix = path + "-"
-        if ln.startswith(prefix):
-            rest = ln[len(prefix):]
-            num, sep, text = rest.partition("-")
+    # Longest known path first, so "a-1-b.py" beats "a" when both are known:
+    # try each "-" as the path/number separator, rightmost first. (A set lookup
+    # per "-" keeps this linear; scanning all known paths per line was the
+    # parser's hot spot on big outputs.)
+    i = len(ln)
+    while known_paths:
+        i = ln.rfind("-", 0, i)
+        if i <= 0:
+            break
+        if ln[:i] in known_paths:
+            num, sep, text = ln[i + 1:].partition("-")
             if sep and num.isdigit():
-                return Line(path, int(num), text, False)
+                return Line(ln[:i], int(num), text, False)
     m = _CONTEXT.match(ln)
     if m and _looks_like_path(m["path"]):
         return Line(m["path"], int(m["num"]), m["text"], False)

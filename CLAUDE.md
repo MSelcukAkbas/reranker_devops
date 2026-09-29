@@ -45,6 +45,7 @@ an agent that must decide from it whether to search again.
                                `prepare` adds anchor flags at run time
 - `src/searchslim/hooks.py`    PreToolUse hook for Bash, Grep, Glob
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
+- `src/searchslim/session.py`  session memory: lines already shown in this agent session (lock-free store)
 - `src/searchslim/install.py`  `searchslim install [--user|DIR]` merges the hook into Claude Code settings
 - `src/searchslim/cli.py`      `searchslim filter` (stdin), `searchslim run -- <cmd>`, `searchslim hook`,
                                `searchslim bench-model` (the benchmark's `--model-cmd` contract)
@@ -74,6 +75,20 @@ an agent that must decide from it whether to search again.
   as a command prefix) disables it; `SEARCHSLIM_MAX_TOKENS` sets the budget.
 - Hook stdin is the event JSON: any subprocess the hook starts must get
   `stdin=DEVNULL` and an explicit path, or `rg` will search the JSON.
+
+## Session memory (session.py)
+
+- Only for content results over budget: lines an earlier search in the same session showed
+  (same absolute path, line number and text) are left out and referenced as `path:line`
+  ranges in the note; new context lines keep the run up to their nearest match. Repeating a
+  search therefore pages forward. Small outputs still pass through unchanged.
+- Store: one directory per session (`session_id`, plus `.agent_id` inside subagents), one
+  atomically written file per call, readers take the union; merged past 64 files. No locks.
+  Every race can only make a line look unseen (shown again), never hide one.
+- `PreCompact` clears the session. Bash rewrites pass `--session=<id>` to `searchslim run`.
+  Grep/Glob calls the hook lets through are not recorded (their output is the real tool's).
+- `SEARCHSLIM_SESSION=off` disables; `SEARCHSLIM_CACHE_DIR` moves the store.
+  Benchmark: `benchmark/sessions.py` (`run`, `latency`).
 
 ## rules+model (rerank.py)
 
