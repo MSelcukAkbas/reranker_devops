@@ -1,0 +1,116 @@
+121:def pytest_sessionstart(session: Session) -> None:
+125:def get_scope_package(
+137:def get_scope_node(node: nodes.Node, scope: Scope) -> nodes.Node | None:
+156:def getfixturemarker(obj: object) -> FixtureFunctionMarker | None:
+183:def get_parametrized_fixture_argkeys(
+216:def reorder_items(items: Sequence[nodes.Item]) -> list[nodes.Item]:
+239:def reorder_items_atscope(
+327:    def prune_dependency_tree(self) -> None:
+362:    def __init__(
+394:    def _fixturemanager(self) -> FixtureManager:
+399:    def _scope(self) -> Scope:
+403:    def scope(self) -> _ScopeName:
+408:    def _check_scope(
+416:    def fixturenames(self) -> list[str]:
+424:    def node(self):
+429:    def config(self) -> Config:
+434:    def function(self):
+443:    def cls(self):
+452:    def instance(self):
+459:    def module(self):
+468:    def path(self) -> Path:
+475:    def keywords(self) -> MutableMapping[str, Any]:
+481:    def session(self) -> Session:
+486:    def addfinalizer(self, finalizer: Callable[[], object]) -> None:
+491:    def applymarker(self, marker: str | MarkDecorator) -> None:
+502:    def raiseerror(self, msg: str | None) -> NoReturn:
+510:    def getfixturevalue(self, argname: str) -> Any:
+532:        fixturedef = self._get_active_fixturedef(argname)
+539:    def _iter_chain(self) -> Iterator[SubRequest]:
+549:    def _get_active_fixturedef(
+558:        fixturedef = self._fixture_defs.get(argname)
+559:        if fixturedef is not None:
+594:        fixturedef = fixturedefs[index]
+622:    def _check_fixturedef_without_param(self, fixturedef: FixtureDef[object]) -> None:
+623:        """Check that this request is allowed to execute this fixturedef without
+655:    def _get_fixturestack(self) -> list[FixtureDef[Any]]:
+656:        values = [request._fixturedef for request in self._iter_chain()]
+665:    def __init__(self, pyfuncitem: Function, *, _ispytest: bool = False) -> None:
+675:    def _scope(self) -> Scope:
+678:    def _check_scope(
+687:    def node(self):
+690:    def __repr__(self) -> str:
+693:    def _fillfixtures(self) -> None:
+699:    def addfinalizer(self, finalizer: Callable[[], object]) -> None:
+708:    def __init__(
+732:    def __repr__(self) -> str:
+736:    def _scope(self) -> Scope:
+740:    def node(self):
+755:    def _check_scope(
+767:                for fixturedef in self._get_fixturestack()
+778:    def _format_fixturedef_line(self, fixturedef: FixtureDef[object]) -> str:
+784:        return f"{path}:{lineno + 1}:  def {factory.__name__}{signature}"
+786:    def addfinalizer(self, finalizer: Callable[[], object]) -> None:
+794:    def __init__(
+802:    def formatrepr(self) -> FixtureLookupErrorRepr:
+849:    def __init__(
+863:    def toterminal(self, tw: TerminalWriter) -> None:
+882:def call_fixture_func(
+902:def _teardown_yield_fixture(fixturefunc, it) -> None:
+920:def _eval_scope_callable(
+951:    def __init__(
+1009:    def scope(self) -> _ScopeName:
+1013:    def addfinalizer(self, finalizer: Callable[[], object]) -> None:
+1016:    def finish(self, request: SubRequest) -> None:
+1037:    def execute(self, request: SubRequest) -> FixtureValue:
+1047:            fixturedef = request._get_active_fixturedef(argname)
+1098:    def cache_key(self, request: SubRequest) -> object:
+1101:    def __repr__(self) -> str:
+1105:def resolve_fixture_function(
+1129:def pytest_fixture_setup(
+1153:def wrap_function_to_error_out_if_called_directly(
+1168:    def result(*args, **kwargs):
+1189:    def __post_init__(self, _ispytest: bool) -> None:
+1192:    def __call__(self, function: FixtureFunction) -> FixtureFunction:
+1220:def fixture(
+1232:def fixture(
+1243:def fixture(
+1318:def yield_fixture(
+1345:def pytestconfig(request: FixtureRequest) -> Config:
+1351:        def test_foo(pytestconfig):
+1359:def pytest_addoption(parser: Parser) -> None:
+1385:def pytest_cmdline_main(config: Config) -> int | ExitCode | None:
+1395:def _get_direct_parametrize_args(node: nodes.Node) -> set[str]:
+1414:def deduplicate_names(*seqs: Iterable[str]) -> tuple[str, ...]:
+1451:    def __init__(self, session: Session) -> None:
+1466:    def getfixtureinfo(
+1502:    def pytest_plugin_registered(self, plugin: _PluggyPlugin, plugin_name: str) -> None:
+1526:    def _getautousenames(self, node: nodes.Node) -> Iterator[str]:
+1533:    def _getusefixturesnames(self, node: nodes.Item) -> Iterator[str]:
+1538:    def getfixtureclosure(
+1569:        def sort_by_scope(arg_name: str) -> Scope:
+1580:    def pytest_generate_tests(self, metafunc: Metafunc) -> None:
+1583:        def get_parametrize_mark_argnames(mark: Mark) -> Sequence[str]:
+1603:            # In the common case we only look at the fixture def with the
+1607:            for fixturedef in reversed(fixture_defs):
+1625:    def pytest_collection_modifyitems(self, items: list[nodes.Item]) -> None:
+1629:    def _register_fixture(
+1660:        fixture_def = FixtureDef(
+1676:            # so this inserts the current fixturedef after the
+1685:    def parsefactories(
+1692:    def parsefactories(
+1699:    def parsefactories(
+1767:    def getfixturedefs(
+1787:    def _matchfactories(
+1791:        for fixturedef in fixturedefs:
+1796:def show_fixtures_per_test(config: Config) -> int | ExitCode:
+1805:def _pretty_fixture_path(invocation_dir: Path, func) -> str:
+1814:def _show_fixtures_per_test(config: Config, session: Session) -> None:
+1822:    def get_best_relpath(func) -> str:
+1826:    def write_fixture(fixture_def: FixtureDef[object]) -> None:
+1845:    def write_item(item: nodes.Item) -> None:
+1867:def showfixtures(config: Config) -> int | ExitCode:
+1873:def _showfixtures_main(config: Config, session: Session) -> None:
+1890:        for fixturedef in fixturedefs:
+1907:    for baseid, module, prettypath, argname, fixturedef in available:
+1930:def write_docstring(tw: TerminalWriter, doc: str, indent: str = "    ") -> None:

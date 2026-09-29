@@ -1,0 +1,335 @@
+lib/router/index.js-37- *
+lib/router/index.js-38- * @param {Object} [options]
+lib/router/index.js:39: * @return {Router} which is a callable function
+lib/router/index.js-40- * @public
+lib/router/index.js-41- */
+lib/router/index.js-42-
+lib/router/index.js:43:var proto = module.exports = function(options) {
+lib/router/index.js-44-  var opts = options || {};
+lib/router/index.js-45-
+lib/router/index.js:46:  function router(req, res, next) {
+lib/router/index.js-47-    router.handle(req, res, next);
+lib/router/index.js-48-  }
+lib/router/index.js-49-
+lib/router/index.js:50:  // mixin Router class functions
+lib/router/index.js-51-  setPrototypeOf(router, proto)
+lib/router/index.js-52-
+--
+lib/router/index.js-71- * The callback uses the same signature as middleware, the only difference
+lib/router/index.js-72- * being that the value of the placeholder is passed, in this case the _id_
+lib/router/index.js:73: * of the user. Once the `next()` function is invoked, just like middleware
+lib/router/index.js:74: * it will continue on to execute the route, or subsequent parameter functions.
+lib/router/index.js-75- *
+lib/router/index.js-76- * Just like in middleware, you must either respond to the request or call next
+lib/router/index.js-77- * to avoid stalling the request.
+lib/router/index.js-78- *
+lib/router/index.js:79: *  app.param('user_id', function(req, res, next, id){
+lib/router/index.js:80: *    User.find(id, function(err, user){
+lib/router/index.js-81- *      if (err) {
+lib/router/index.js-82- *        return next(err);
+--
+lib/router/index.js-95- */
+lib/router/index.js-96-
+lib/router/index.js:97:proto.param = function param(name, fn) {
+lib/router/index.js-98-  // param logic
+lib/router/index.js:99:  if (typeof name === 'function') {
+lib/router/index.js-100-    deprecate('router.param(fn): Refactor to use path params');
+lib/router/index.js-101-    this._params.push(name);
+--
+lib/router/index.js-103-  }
+lib/router/index.js-104-
+lib/router/index.js:105:  // apply param functions
+lib/router/index.js-106-  var params = this._params;
+lib/router/index.js-107-  var len = params.length;
+--
+lib/router/index.js-120-
+lib/router/index.js-121-  // ensure we end up with a
+lib/router/index.js:122:  // middleware function
+lib/router/index.js:123:  if ('function' !== typeof fn) {
+lib/router/index.js-124-    throw new Error('invalid param() call for ' + name + ', got ' + fn);
+lib/router/index.js-125-  }
+--
+lib/router/index.js-134- */
+lib/router/index.js-135-
+lib/router/index.js:136:proto.handle = function handle(req, res, out) {
+lib/router/index.js-137-  var self = this;
+lib/router/index.js-138-
+--
+lib/router/index.js-163-  // for options requests, respond with a default if nothing else responds
+lib/router/index.js-164-  if (req.method === 'OPTIONS') {
+lib/router/index.js:165:    done = wrap(done, function(old, err) {
+lib/router/index.js-166-      if (err || options.length === 0) return old(err);
+lib/router/index.js-167-      sendOptionsResponse(res, options, old);
+--
+lib/router/index.js-175-  next();
+lib/router/index.js-176-
+lib/router/index.js:177:  function next(err) {
+lib/router/index.js-178-    var layerError = err === 'route'
+lib/router/index.js-179-      ? null
+--
+lib/router/index.js-278-
+lib/router/index.js-279-    // this should be done for the layer
+lib/router/index.js:280:    self.process_params(layer, paramcalled, req, res, function (err) {
+lib/router/index.js-281-      if (err) {
+lib/router/index.js-282-        next(layerError || err)
+--
+lib/router/index.js-291-  }
+lib/router/index.js-292-
+lib/router/index.js:293:  function trim_prefix(layer, layerError, layerPath, path) {
+lib/router/index.js-294-    if (layerPath.length !== 0) {
+lib/router/index.js-295-      // Validate path is a prefix match
+--
+lib/router/index.js-336- */
+lib/router/index.js-337-
+lib/router/index.js:338:proto.process_params = function process_params(layer, called, req, res, done) {
+lib/router/index.js-339-  var params = this.params;
+lib/router/index.js-340-
+--
+lib/router/index.js-357-  // process params in order
+lib/router/index.js-358-  // param callbacks can be async
+lib/router/index.js:359:  function param(err) {
+lib/router/index.js-360-    if (err) {
+lib/router/index.js-361-      return done(err);
+--
+lib/router/index.js-397-
+lib/router/index.js-398-  // single param callbacks
+lib/router/index.js:399:  function paramCallback(err) {
+lib/router/index.js-400-    var fn = paramCallbacks[paramIndex++];
+lib/router/index.js-401-
+--
+lib/router/index.js-423-
+lib/router/index.js-424-/**
+lib/router/index.js:425: * Use the given middleware function, with optional path, defaulting to "/".
+lib/router/index.js-426- *
+lib/router/index.js-427- * Use (like `.all`) will run for any http METHOD, but it will not add
+lib/router/index.js-428- * handlers for those methods so OPTIONS requests will not consider `.use`
+lib/router/index.js:429: * functions even if they could respond.
+lib/router/index.js-430- *
+lib/router/index.js-431- * The other difference is that _route_ path is stripped and not visible
+lib/router/index.js:432: * to the handler function. The main effect of this feature is that mounted
+lib/router/index.js-433- * handlers can operate without any code changes regardless of the "prefix"
+lib/router/index.js-434- * pathname.
+--
+lib/router/index.js-437- */
+lib/router/index.js-438-
+lib/router/index.js:439:proto.use = function use(fn) {
+lib/router/index.js-440-  var offset = 0;
+lib/router/index.js-441-  var path = '/';
+--
+lib/router/index.js-443-  // default path to '/'
+lib/router/index.js-444-  // disambiguate router.use([fn])
+lib/router/index.js:445:  if (typeof fn !== 'function') {
+lib/router/index.js-446-    var arg = fn;
+lib/router/index.js-447-
+--
+lib/router/index.js-451-
+lib/router/index.js-452-    // first arg is the path
+lib/router/index.js:453:    if (typeof arg !== 'function') {
+lib/router/index.js-454-      offset = 1;
+lib/router/index.js-455-      path = fn;
+--
+lib/router/index.js-460-
+lib/router/index.js-461-  if (callbacks.length === 0) {
+lib/router/index.js:462:    throw new TypeError('Router.use() requires a middleware function')
+lib/router/index.js-463-  }
+lib/router/index.js-464-
+--
+lib/router/index.js-466-    var fn = callbacks[i];
+lib/router/index.js-467-
+lib/router/index.js:468:    if (typeof fn !== 'function') {
+lib/router/index.js:469:      throw new TypeError('Router.use() requires a middleware function but got a ' + gettype(fn))
+lib/router/index.js-470-    }
+lib/router/index.js-471-
+--
+lib/router/index.js-500- */
+lib/router/index.js-501-
+lib/router/index.js:502:proto.route = function route(path) {
+lib/router/index.js-503-  var route = new Route(path);
+lib/router/index.js-504-
+--
+lib/router/index.js-515-};
+lib/router/index.js-516-
+lib/router/index.js:517:// create Router#VERB functions
+lib/router/index.js:518:methods.concat('all').forEach(function(method){
+lib/router/index.js:519:  proto[method] = function(path){
+lib/router/index.js-520-    var route = this.route(path)
+lib/router/index.js-521-    route[method].apply(route, slice.call(arguments, 1));
+--
+lib/router/index.js-525-
+lib/router/index.js-526-// append methods to a list of methods
+lib/router/index.js:527:function appendMethods(list, addition) {
+lib/router/index.js-528-  for (var i = 0; i < addition.length; i++) {
+lib/router/index.js-529-    var method = addition[i];
+--
+lib/router/index.js-535-
+lib/router/index.js-536-// get pathname of request
+lib/router/index.js:537:function getPathname(req) {
+lib/router/index.js-538-  try {
+lib/router/index.js-539-    return parseUrl(req).pathname;
+--
+lib/router/index.js-544-
+lib/router/index.js-545-// Get get protocol + host for a URL
+lib/router/index.js:546:function getProtohost(url) {
+lib/router/index.js-547-  if (typeof url !== 'string' || url.length === 0 || url[0] === '/') {
+lib/router/index.js-548-    return undefined
+--
+lib/router/index.js-561-
+lib/router/index.js-562-// get type for error message
+lib/router/index.js:563:function gettype(obj) {
+lib/router/index.js-564-  var type = typeof obj;
+lib/router/index.js-565-
+--
+lib/router/index.js-581- */
+lib/router/index.js-582-
+lib/router/index.js:583:function matchLayer(layer, path) {
+lib/router/index.js-584-  try {
+lib/router/index.js-585-    return layer.match(path);
+--
+lib/router/index.js-590-
+lib/router/index.js-591-// merge params with parent params
+lib/router/index.js:592:function mergeParams(params, parent) {
+lib/router/index.js-593-  if (typeof parent !== 'object' || !parent) {
+lib/router/index.js-594-    return params;
+--
+lib/router/index.js-628-}
+lib/router/index.js-629-
+lib/router/index.js:630:// restore obj props after function
+lib/router/index.js:631:function restore(fn, obj) {
+lib/router/index.js-632-  var props = new Array(arguments.length - 2);
+lib/router/index.js-633-  var vals = new Array(arguments.length - 2);
+--
+lib/router/index.js-638-  }
+lib/router/index.js-639-
+lib/router/index.js:640:  return function () {
+lib/router/index.js-641-    // restore vals
+lib/router/index.js-642-    for (var i = 0; i < props.length; i++) {
+--
+lib/router/index.js-649-
+lib/router/index.js-650-// send an OPTIONS response
+lib/router/index.js:651:function sendOptionsResponse(res, options, next) {
+lib/router/index.js-652-  try {
+lib/router/index.js-653-    var body = options.join(',');
+--
+lib/router/index.js-659-}
+lib/router/index.js-660-
+lib/router/index.js:661:// wrap a function
+lib/router/index.js:662:function wrap(old, fn) {
+lib/router/index.js:663:  return function proxy() {
+lib/router/index.js-664-    var args = new Array(arguments.length + 1);
+lib/router/index.js-665-
+--
+lib/router/layer.js-31-module.exports = Layer;
+lib/router/layer.js-32-
+lib/router/layer.js:33:function Layer(path, options, fn) {
+lib/router/layer.js-34-  if (!(this instanceof Layer)) {
+lib/router/layer.js-35-    return new Layer(path, options, fn);
+--
+lib/router/layer.js-56- * @param {Request} req
+lib/router/layer.js-57- * @param {Response} res
+lib/router/layer.js:58: * @param {function} next
+lib/router/layer.js-59- * @api private
+lib/router/layer.js-60- */
+lib/router/layer.js-61-
+lib/router/layer.js:62:Layer.prototype.handle_error = function handle_error(error, req, res, next) {
+lib/router/layer.js-63-  var fn = this.handle;
+lib/router/layer.js-64-
+--
+lib/router/layer.js-80- * @param {Request} req
+lib/router/layer.js-81- * @param {Response} res
+lib/router/layer.js:82: * @param {function} next
+lib/router/layer.js-83- * @api private
+lib/router/layer.js-84- */
+lib/router/layer.js-85-
+lib/router/layer.js:86:Layer.prototype.handle_request = function handle(req, res, next) {
+lib/router/layer.js-87-  var fn = this.handle;
+lib/router/layer.js-88-
+--
+lib/router/layer.js-108- */
+lib/router/layer.js-109-
+lib/router/layer.js:110:Layer.prototype.match = function match(path) {
+lib/router/layer.js-111-  var match
+lib/router/layer.js-112-
+--
+lib/router/layer.js-164- */
+lib/router/layer.js-165-
+lib/router/layer.js:166:function decode_param(val) {
+lib/router/layer.js-167-  if (typeof val !== 'string' || val.length === 0) {
+lib/router/layer.js-168-    return val;
+--
+lib/router/route.js-41- */
+lib/router/route.js-42-
+lib/router/route.js:43:function Route(path) {
+lib/router/route.js-44-  this.path = path;
+lib/router/route.js-45-  this.stack = [];
+--
+lib/router/route.js-56- */
+lib/router/route.js-57-
+lib/router/route.js:58:Route.prototype._handles_method = function _handles_method(method) {
+lib/router/route.js-59-  if (this.methods._all) {
+lib/router/route.js-60-    return true;
+--
+lib/router/route.js-78- */
+lib/router/route.js-79-
+lib/router/route.js:80:Route.prototype._options = function _options() {
+lib/router/route.js-81-  var methods = Object.keys(this.methods);
+lib/router/route.js-82-
+--
+lib/router/route.js-99- */
+lib/router/route.js-100-
+lib/router/route.js:101:Route.prototype.dispatch = function dispatch(req, res, done) {
+lib/router/route.js-102-  var idx = 0;
+lib/router/route.js-103-  var stack = this.stack;
+--
+lib/router/route.js-119-  next();
+lib/router/route.js-120-
+lib/router/route.js:121:  function next(err) {
+lib/router/route.js-122-    // signal to exit route
+lib/router/route.js-123-    if (err && err === 'route') {
+--
+lib/router/route.js-162- * You can use multiple `.all` call to add multiple handlers.
+lib/router/route.js-163- *
+lib/router/route.js:164: *   function check_something(req, res, next){
+lib/router/route.js-165- *     next();
+lib/router/route.js-166- *   };
+lib/router/route.js-167- *
+lib/router/route.js:168: *   function validate_user(req, res, next){
+lib/router/route.js-169- *     next();
+lib/router/route.js-170- *   };
+--
+lib/router/route.js-173- *   .all(validate_user)
+lib/router/route.js-174- *   .all(check_something)
+lib/router/route.js:175: *   .get(function(req, res, next){
+lib/router/route.js-176- *     res.send('hello world');
+lib/router/route.js-177- *   });
+lib/router/route.js-178- *
+lib/router/route.js:179: * @param {function} handler
+lib/router/route.js-180- * @return {Route} for chaining
+lib/router/route.js-181- * @api public
+lib/router/route.js-182- */
+lib/router/route.js-183-
+lib/router/route.js:184:Route.prototype.all = function all() {
+lib/router/route.js-185-  var handles = flatten(slice.call(arguments));
+lib/router/route.js-186-
+--
+lib/router/route.js-188-    var handle = handles[i];
+lib/router/route.js-189-
+lib/router/route.js:190:    if (typeof handle !== 'function') {
+lib/router/route.js-191-      var type = toString.call(handle);
+lib/router/route.js:192:      var msg = 'Route.all() requires a callback function but got a ' + type
+lib/router/route.js-193-      throw new TypeError(msg);
+lib/router/route.js-194-    }
+--
+lib/router/route.js-204-};
+lib/router/route.js-205-
+lib/router/route.js:206:methods.forEach(function(method){
+lib/router/route.js:207:  Route.prototype[method] = function(){
+lib/router/route.js-208-    var handles = flatten(slice.call(arguments));
+lib/router/route.js-209-
+--
+lib/router/route.js-211-      var handle = handles[i];
+lib/router/route.js-212-
+lib/router/route.js:213:      if (typeof handle !== 'function') {
+lib/router/route.js-214-        var type = toString.call(handle);
+lib/router/route.js:215:        var msg = 'Route.' + method + '() requires a callback function but got a ' + type
+lib/router/route.js-216-        throw new Error(msg);
+lib/router/route.js-217-      }

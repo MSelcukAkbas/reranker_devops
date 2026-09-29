@@ -24,7 +24,7 @@ hash'ini doğrular.
 
 ## 2. Görevler
 
-Her görev, ajanın gerçekten yapacağı bir alt işe karşılık gelir ve 14 görev
+Her görev, ajanın gerçekten yapacağı bir alt işe karşılık gelir ve 21 görev
 bütün çıktı şekillerini kapsar: `content` (`-n`, `-C2/-C3`), dosya listesi
 (`rg -l`, `rg --files`, `find`), sayım (`rg -c`), tek dosyada arama. Küçük
 çıktılar da bilerek var: pass-through davranışını ölçmek için.
@@ -85,15 +85,23 @@ Metrikler, görev başına:
 Toplu rapor: toplam token ve azalma yüzdesi, `kept/recoverable/lost` oranları,
 görev başına ortalama `extra_searches`, `lost > 0` olan görev sayısı.
 
-### B. Ajan döngüsü
+### B. Ajan döngüsü (`benchmark/live.py`)
 
-Claude Code headless (`claude -p`) her görevin `intent`'i ile pinli repoda
-koşar: hook kapalı (raw), hook açık (rules), hook açık + model. Ajanın cevabı
-kritik kanıtların `path:line`'ını anmak zorunda; kontrol otomatik. Her hücre
-3 kez koşar (ajan varyansı). Oturum kaydından: toplam girdi token'ı, maliyet,
-süre, Grep/Glob/Bash arama çağrısı sayısı (gerçek `extra_searches`) ve
-cevabın doğruluğu. A'daki tahmini ek arama sayısı burada gerçeğiyle
-karşılaştırılır; ikisi ayrışıyorsa A'nın tanımı düzeltilir.
+Claude Code headless (`claude -p`, stream-json) her görevin `intent`'i ile pinli
+repoda koşar; hook kapalı (`off`) ve `--settings` ile açık (`on`), modlar
+sırayla, `--repeat` kez. Araçlar salt okuma: Grep, Glob, Read, Bash (Edit/Write
+kapalı), MCP ve oturum kaydı kapalı. Kayıttan çıkanlar:
+
+- `success`: cevap her kritik kanıtı `path:line` olarak anıyor (±2 satır).
+- `search_calls`: Grep, Glob ve rg/grep/find/fd çalıştıran Bash çağrıları
+  (gerçek ek arama ölçüsü); `read_calls`: Read çağrıları.
+- `search_result_tokens`: ajanın okuduğu arama sonuçlarının token'ı (chars/4);
+  `hook_answered`: hook'un Grep/Glob'u kendisi cevapladığı çağrılar.
+- toplam girdi token'ı (önbellek dahil), maliyet, tur sayısı, süre.
+
+A'daki tahmini ek arama sayısı burada gerçeğiyle karşılaştırılır; ikisi
+ayrışıyorsa A'nın tanımı düzeltilir. `rules+model` modu, reranker hook'a
+bağlanınca buraya üçüncü mod olarak eklenir.
 
 ### Kabul kriterleri
 
@@ -123,11 +131,18 @@ karşılaştırılır; ikisi ayrışıyorsa A'nın tanımı düzeltilir.
 | express-req-query | 303 | 303 | 0.1 | 1/1 | 0 | 0 |
 | cobra-persistent-flags | 5844 | 1255 | 2.3 | 0/1 | 1 | 0 |
 | cobra-execute | 2820 | 1119 | 1.0 | 0/2 | 2 | 0 |
-| **toplam** | **56552** | **14064 (%25)** | p95 11.2 | **16/22** | **6** | **0** |
+| pytest-fixture-defs | 1451 | 201 | 0.9 | 0/2 | 2 | 0 |
+| pytest-addoption-hooks | 1530 | 1529 | 0.6 | 1/1 | 0 | 0 |
+| pytest-fixture-mentions | 1686 | 1686 | 0.2 | 2/2 | 0 | 0 |
+| ripgrep-standard-fns | 1965 | 220 | 1.2 | 0/2 | 2 | 0 |
+| ripgrep-crate-files | 950 | 950 | 0.1 | 1/1 | 0 | 0 |
+| express-router-handle | 3569 | 1204 | 1.3 | 2/2 | 0 | 0 |
+| cobra-command-funcs | 1683 | 173 | 1.8 | 0/2 | 2 | 0 |
+| **toplam** | **69386** | **20027 (%29)** | p95 2.3 | **22/34** | **12** | **0** |
 
-Maliyet (Opus 5.5 girdi fiyatıyla, `k=1`): raw $0.226, rules $0.056. Token
-tarafı hedefin üstünde, sıralı girdide kayıp yok; ama kritik kanıtların 6/22'si
-ek arama gerektiriyor (tahmini 4 ek arama). Bulgular:
+Maliyet (Opus 5.5 girdi fiyatıyla, `k=1`): raw $0.278, rules $0.080. Token
+tarafı hedefin üstünde, sıralı girdide kayıp yok; ama kritik kanıtların
+12/34'ü ek arama gerektiriyor (tahmini 7 ek arama). Bulgular:
 
 1. **Sıra kararsızlığı gerçek kayba yol açıyor.** `bench.py stability --runs 10`:
    sırasız `rg` ile 11 görevin 11'inde rules çıktısı koşudan koşuya değişiyor ve
@@ -138,8 +153,11 @@ ek arama gerektiriyor (tahmini 4 ek arama). Bulgular:
 2. **Tek dosya aramasında format ve bütçe sorunu.** `rg -n scope file.py`
    çıktısında yol yok. `--default-path` olmadan parser 0 satır görüp çıktıyı
    aynen geçiriyor; verilince her satıra yol ekleniyor (aracın formatı
-   değişiyor), bu da 1827 token'lık çıktıyı bütçenin üstüne itiyor ve 133
-   eşleşmeden 8'i kalıyor. Not "aramayı daralt" diyor ama arama zaten tek
+   değişiyor), bu da bütçenin altındaki çıktıyı bütçenin üstüne itiyor ve
+   dosyada yalnızca 8 eşleşme kalıyor. Dört tek dosya görevinin dördü de
+   (1451-1965 token, hepsi 2000 bütçesinin altında) 170-220 token'a iniyor ve
+   8 kritik kanıtın hiçbiri görünmüyor: "küçük çıktı aynen geçer" kuralı
+   bozuluyor. Not "aramayı daralt" diyor ama arama zaten tek
    dosyada. Öneri: bütçe orijinal metin üzerinden hesaplansın, yol eklenmesin,
    tek dosyada dosya başı sınır uygulanmasın.
 3. **Dosya başı 8 eşleşme sınırı büyük dosyayı cezalandırıyor.** `cobra-execute`'ta
@@ -169,4 +187,7 @@ python3 benchmark/bench.py stability --runs 10
   satırına `{"input_tokens": N, "output_tokens": M}` yazarsa maliyeti Haiku 4.5
   fiyatıyla sayılır. Gövdede ham girdide olmayan satır varsa koşu geçersiz
   sayılır. Kuralların hiçbir şey atmadığı görevlerde model çağrılmaz.
-- Katman B, adım 3'teki Claude Code hook'u birleşince eklenir.
+- Katman B: `python3 benchmark/live.py --repeat 3 --jsonl live.jsonl`. Hook
+  bu dalda yoksa `--searchslim-src` hook'u içeren bir checkout'un `src`'sini
+  göstermeli. Her koşu gerçek API harcar (görev başına ~$0.05-0.15);
+  `--dry-run` yalnızca komutları yazar.

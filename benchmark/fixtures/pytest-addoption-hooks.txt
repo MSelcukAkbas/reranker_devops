@@ -1,0 +1,119 @@
+src/_pytest/assertion/__init__.py:25:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/assertion/__init__.py-26-    group = parser.getgroup("debugconfig")
+src/_pytest/assertion/__init__.py-27-    group.addoption(
+src/_pytest/assertion/__init__.py-28-        "--assert",
+--
+src/_pytest/cacheprovider.py:478:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/cacheprovider.py-479-    group = parser.getgroup("general")
+src/_pytest/cacheprovider.py-480-    group.addoption(
+src/_pytest/cacheprovider.py-481-        "--lf",
+--
+src/_pytest/capture.py:48:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/capture.py-49-    group = parser.getgroup("general")
+src/_pytest/capture.py-50-    group._addoption(
+src/_pytest/capture.py-51-        "--capture",
+--
+src/_pytest/debugging.py:41:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/debugging.py-42-    group = parser.getgroup("general")
+src/_pytest/debugging.py-43-    group._addoption(
+src/_pytest/debugging.py-44-        "--pdb",
+--
+src/_pytest/doctest.py:70:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/doctest.py-71-    parser.addini(
+src/_pytest/doctest.py-72-        "doctest_optionflags",
+src/_pytest/doctest.py-73-        "Option flags for doctests",
+--
+src/_pytest/faulthandler.py:18:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/faulthandler.py-19-    help = (
+src/_pytest/faulthandler.py-20-        "Dump the traceback of all threads if a test takes "
+src/_pytest/faulthandler.py-21-        "more than TIMEOUT seconds to finish"
+--
+src/_pytest/fixtures.py:1359:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/fixtures.py-1360-    parser.addini(
+src/_pytest/fixtures.py-1361-        "usefixtures",
+src/_pytest/fixtures.py-1362-        type="args",
+--
+src/_pytest/helpconfig.py:47:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/helpconfig.py-48-    group = parser.getgroup("debugconfig")
+src/_pytest/helpconfig.py-49-    group.addoption(
+src/_pytest/helpconfig.py-50-        "--version",
+--
+src/_pytest/hookspec.py:100:def pytest_addoption(parser: Parser, pluginmanager: PytestPluginManager) -> None:
+src/_pytest/hookspec.py-101-    """Register argparse-style options and ini-style config values,
+src/_pytest/hookspec.py-102-    called once at the beginning of a test run.
+src/_pytest/hookspec.py-103-
+--
+src/_pytest/junitxml.py:379:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/junitxml.py-380-    group = parser.getgroup("terminal reporting")
+src/_pytest/junitxml.py-381-    group.addoption(
+src/_pytest/junitxml.py-382-        "--junitxml",
+--
+src/_pytest/logging.py:240:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/logging.py-241-    """Add options to control log capturing."""
+src/_pytest/logging.py-242-    group = parser.getgroup("logging")
+src/_pytest/logging.py-243-
+--
+src/_pytest/main.py:57:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/main.py-58-    parser.addini(
+src/_pytest/main.py-59-        "norecursedirs",
+src/_pytest/main.py-60-        "Directory patterns to avoid for recursion",
+--
+src/_pytest/mark/__init__.py:75:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/mark/__init__.py-76-    group = parser.getgroup("general")
+src/_pytest/mark/__init__.py-77-    group._addoption(
+src/_pytest/mark/__init__.py-78-        "-k",
+--
+src/_pytest/pastebin.py:21:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/pastebin.py-22-    group = parser.getgroup("terminal reporting")
+src/_pytest/pastebin.py-23-    group._addoption(
+src/_pytest/pastebin.py-24-        "--pastebin",
+--
+src/_pytest/pytester.py:83:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/pytester.py-84-    parser.addoption(
+src/_pytest/pytester.py-85-        "--lsof",
+src/_pytest/pytester.py-86-        action="store_true",
+--
+src/_pytest/python.py:84:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/python.py-85-    parser.addini(
+src/_pytest/python.py-86-        "python_files",
+src/_pytest/python.py-87-        type="args",
+--
+src/_pytest/python_path.py:10:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/python_path.py-11-    parser.addini("pythonpath", type="paths", help="Add paths to sys.path", default=[])
+src/_pytest/python_path.py-12-
+src/_pytest/python_path.py-13-
+--
+src/_pytest/runner.py:50:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/runner.py-51-    group = parser.getgroup("terminal reporting", "Reporting", after="general")
+src/_pytest/runner.py-52-    group.addoption(
+src/_pytest/runner.py-53-        "--durations",
+--
+src/_pytest/setuponly.py:15:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/setuponly.py-16-    group = parser.getgroup("debugconfig")
+src/_pytest/setuponly.py-17-    group.addoption(
+src/_pytest/setuponly.py-18-        "--setuponly",
+--
+src/_pytest/setupplan.py:11:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/setupplan.py-12-    group = parser.getgroup("debugconfig")
+src/_pytest/setupplan.py-13-    group.addoption(
+src/_pytest/setupplan.py-14-        "--setupplan",
+--
+src/_pytest/skipping.py:29:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/skipping.py-30-    group = parser.getgroup("general")
+src/_pytest/skipping.py-31-    group.addoption(
+src/_pytest/skipping.py-32-        "--runxfail",
+--
+src/_pytest/stepwise.py:14:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/stepwise.py-15-    group = parser.getgroup("general")
+src/_pytest/stepwise.py-16-    group.addoption(
+src/_pytest/stepwise.py-17-        "--sw",
+--
+src/_pytest/terminal.py:133:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/terminal.py-134-    group = parser.getgroup("terminal reporting", "Reporting", after="general")
+src/_pytest/terminal.py-135-    group._addoption(
+src/_pytest/terminal.py-136-        "-v",
+--
+src/_pytest/tmpdir.py:226:def pytest_addoption(parser: Parser) -> None:
+src/_pytest/tmpdir.py-227-    parser.addini(
+src/_pytest/tmpdir.py-228-        "tmp_path_retention_count",
+src/_pytest/tmpdir.py-229-        help="How many sessions should we keep the `tmp_path` directories, according to `tmp_path_retention_policy`.",
