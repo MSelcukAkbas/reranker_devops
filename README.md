@@ -6,9 +6,9 @@ kritik kod kanıtını kaybetmeden küçülten drop-in katman. Yeni bir tool ekl
 
 ## Durum
 
-Phase 1'in ilk iki adımı hazır: ortak veri modeli ve ayrıştırıcılar, ve
-deterministik kural katmanı. Sırada drop-in entegrasyon, benchmark ve
-opsiyonel model ile sıralama var. Ayrıntılar ve değişmez kurallar için
+Phase 1'in ilk üç adımı hazır: ortak veri modeli ve ayrıştırıcılar,
+deterministik kural katmanı ve Claude Code hook'u ile drop-in entegrasyon.
+Sırada benchmark ve opsiyonel model ile sıralama var. Ayrıntılar ve değişmez kurallar için
 [CLAUDE.md](CLAUDE.md).
 
 ## Kullanım
@@ -31,3 +31,29 @@ dosya/dizin bazında sayılır, böylece ajan aramayı daraltıp tekrar çalış
 Örnek: pytest kaynak kodunda `rg -n -C2 "raise "` 171 KB çıktı üretiyor;
 varsayılan 2000 token bütçesiyle 7,8 KB'a iniyor ve atlanan 281 eşleşme
 dosya bazında notta listeleniyor.
+
+## Claude Code'a bağlama
+
+Bu repo kendi hook'unu `.claude/settings.json` ile zaten kullanıyor. Başka bir
+projede kullanmak için paketi kurup o projenin `.claude/settings.json`
+dosyasına şunu ekle:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Grep|Glob",
+        "hooks": [{ "type": "command", "command": "python3 -m searchslim hook", "timeout": 30 }]
+      }
+    ]
+  }
+}
+```
+
+- **Bash:** düz `rg`/`grep`/`fd`/`find` komutları `searchslim run --` ile sarılır.
+  Pipe, yönlendirme veya yan etkili bayrak içeren komutlara dokunulmaz.
+- **Grep/Glob:** hook aynı aramayı `rg` ile kendisi yapar. Sonuç bütçeye
+  sığıyorsa hiçbir şey yapmaz, gerçek araç çalışır. Sığmıyorsa küçültülmüş
+  sonucu modele verir.
+- Kapatmak için `SEARCHSLIM=off`, bütçe için `SEARCHSLIM_MAX_TOKENS`.

@@ -2,6 +2,7 @@
 
   searchslim filter [opts] < raw_output     reduce output read from stdin
   searchslim run [opts] -- rg -n foo src    run a search command, reduce its stdout
+  searchslim hook < event.json              Claude Code PreToolUse hook (see hooks.py)
 
 `run` keeps the command's exit code and stderr untouched, so it can stand in
 for rg/fd/grep/find in scripts and agent shells.
@@ -60,7 +61,14 @@ def main(argv: list[str] | None = None) -> int:
     _add_common(p_run)
     p_run.add_argument("command", nargs=argparse.REMAINDER, help="command to run, after --")
 
+    sub.add_parser("hook", help="Claude Code PreToolUse hook: JSON event on stdin")
+
     args = parser.parse_args(argv)
+
+    if args.cmd == "hook":
+        from .hooks import main as hook_main
+
+        return hook_main()
 
     if args.cmd == "filter":
         _emit(sys.stdin.read(), args)
