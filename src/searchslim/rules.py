@@ -18,11 +18,9 @@ from .models import Block, Kind, Line, PathCount, SearchResult
 
 NOTE_PREFIX = "[searchslim]"
 DEFAULT_TRIGGER_TOKENS = 6000
-# Note endings. They say what to do if something left out is needed, without
-# inviting a search for its own sake: the kept part is usually enough.
-ASK_PATH = "Search again with a narrower path/glob only if you need something specific from these."
-ASK_PATTERN = "Refine the pattern only if you need a specific line from these."
-ASK_LIST = "Search again only if you need a specific file from these."
+# The note is a neutral count of what is not shown, with no advice: in live
+# runs any wording about truncation or narrowing ("see them", "only if you
+# need") led agents to search again for the rest, costing more than it saved.
 
 
 @dataclass
@@ -277,17 +275,14 @@ def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_
         items = list(omitted.items())
         listed = items[: config.note_max_files]
         names = ", ".join(f"{p or default_path or 'this file'} ({n})" for p, n in listed)
-        note += f" Left out: {names}"
+        note += f" Not shown: {names}"
         rest = items[len(listed):]
         if rest:
             # Every omitted file stays covered by a named directory, so an
             # agent can always tell where to narrow the search.
             dirs = format_dirs(rollup_dirs(rest, config.note_max_files))
             note += f"; {len(rest)} more files by directory: {dirs}"
-        if files_total == 1:  # the search already targets one file
-            note += ". " + ASK_PATTERN
-        else:
-            note += ". " + ASK_PATH
+        note += "."
     return note
 
 
@@ -388,7 +383,7 @@ def _reduce_paths(result: SearchResult, config: Config) -> Reduced:
         dirs = format_dirs(rollup_dirs([(p, 1) for p in rest], config.note_max_files))
         note = (
             f"{NOTE_PREFIX} {len(kept)}/{len(unique)} paths shown. Not shown, by directory: {dirs}"
-            + ". " + ASK_LIST
+            + "."
         )
     elif len(unique) < len(result.paths):
         note = f"{NOTE_PREFIX} {len(result.paths) - len(unique)} duplicate paths removed."
@@ -447,7 +442,7 @@ def _reduce_lines(result: SearchResult, config: Config) -> Reduced:
         kept = _prefix_fitting(rows, budget)
         shown = sum(1 for r in kept if r.strip())
         total = sum(1 for r in rows if r.strip())
-        note = f"{NOTE_PREFIX} {shown}/{total} lines shown; the last {total - shown} lines not shown. Run a narrower command only if you need them."
+        note = f"{NOTE_PREFIX} {shown}/{total} lines shown; the last {total - shown} lines not shown."
         reduced = (kept, note, "prefix")
     kept, note, how = reduced
     kept_count = sum(1 for r in kept if r.strip())

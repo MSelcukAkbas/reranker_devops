@@ -365,3 +365,113 @@ def _flags(argv: list[str]) -> set[str]:
 
 if __name__ == "__main__":  # pragma: no cover
     print(rewrite_command(" ".join(sys.argv[1:])))
+
+
+# --- PowerShell (Claude Code's PowerShell tool on Windows) --------------------
+
+_PS_GCI = {"get-childitem", "gci", "ls", "dir"}
+_PS_SLS = {"select-string", "sls"}
+# `$(...)`, script blocks, redirects, statement separators, call operators and
+# backtick escapes: anything that could run more than a plain search.
+_PS_UNSAFE_CHARS = set(";&<>`$(){}@\n")
+# Make PowerShell hand native commands UTF-8 and decode their UTF-8 output, so
+# rg/searchslim bytes survive a cp1254/cp1252 console.
+PS_UTF8 = "$OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); "
+
+
+def ps_quote(s: str) -> str:
+    return "'" + s.replace("'", "''") + "'"
+
+
+def rewrite_powershell(command: str, python: str | None = None, run_args: list[str] | None = None, check_path: bool = False) -> str | None:
+    """Wrap a PowerShell search command, or return None to leave it unchanged.
+
+    `rg ...`                                 -> searchslim run (same as Bash)
+    `Get-ChildItem -Recurse ... [| Select-String ...]`, `Select-String ...`
+                                             -> formatted output piped into searchslim filter
+    Only plain commands are touched: no variables, subexpressions, script
+    blocks, redirects, `;`/`&&` or pipeline stages other than these cmdlets.
+    """
+    stripped = command.strip()
+    if not stripped or "SEARCHSLIM" in stripped:
+        return None
+    if not _ps_unquoted(stripped)[1]:
+        return None
+    stages = _ps_split(stripped)
+    if not stages:
+        return None
+    argvs = [_ps_argv(s) for s in stages]
+    if any(not a for a in argvs):
+        return None
+    runner = f"& {ps_quote((python or sys.executable).replace(chr(92), '/'))} -m searchslim"
+    opts = "".join(f" {ps_quote(a)}" for a in run_args or [])
+
+    first = argvs[0][0].lower()
+    if first in ("rg", "rg.exe") and len(argvs) == 1:
+        argv = ["rg"] + argvs[0][1:]
+        if search_kind(argv) is None or (check_path and shutil.which("rg") is None):
+            return None
+        # No `--` before the command: some PowerShell versions drop it on the way to
+        # a native program; `run` takes everything from the first positional on.
+        return f"{PS_UTF8}{runner} run{opts} {stripped}"
+
+    names = [a[0].lower() for a in argvs]
+    if not all(n in _PS_GCI | _PS_SLS for n in names):
+        return None
+    has_sls = any(n in _PS_SLS for n in names)
+    recurse = any(n in _PS_GCI and any(x.lower().startswith("-rec") for x in a[1:]) for n, a in zip(names, argvs))
+    if not (has_sls or recurse):
+        return None  # a plain directory listing is small
+    if has_sls:
+        kind = ""  # MatchInfo prints path:line:text; let the parser detect it
+    elif any(x.lower() == "-name" for a in argvs for x in a[1:]):
+        kind = " --kind=paths"
+    else:
+        kind = " --kind=lines"  # Get-ChildItem's table format
+    return f"{PS_UTF8}{stripped} | Out-String -Stream -Width 4096 | {runner} filter{opts}{kind}"
+
+
+def _ps_unquoted(s: str) -> tuple[str, bool]:
+    """Text outside quotes, and whether quoting is balanced and free of unsafe characters.
+    PowerShell has no backslash escapes, and `$` inside double quotes interpolates."""
+    out, quote = [], None
+    for ch in s:
+        if quote:
+            if ch == quote:
+                quote = None
+            elif quote == '"' and ch in "$`":
+                return "", False
+        elif ch in "'\"":
+            quote = ch
+        else:
+            if ch in _PS_UNSAFE_CHARS:
+                return "", False
+            out.append(ch)
+    return "".join(out), quote is None
+
+
+def _ps_split(s: str) -> list[str] | None:
+    parts, cur, quote = [], [], None
+    for ch in s:
+        if quote:
+            if ch == quote:
+                quote = None
+        elif ch in "'\"":
+            quote = ch
+        elif ch == "|":
+            parts.append("".join(cur).strip())
+            cur = []
+            continue
+        cur.append(ch)
+    parts.append("".join(cur).strip())
+    return parts if all(parts) else None
+
+
+def _ps_argv(stage: str) -> list[str]:
+    lex = shlex.shlex(stage, posix=True)
+    lex.whitespace_split = True
+    lex.escape = ""  # backslashes are path separators in PowerShell
+    try:
+        return list(lex)
+    except ValueError:
+        return []

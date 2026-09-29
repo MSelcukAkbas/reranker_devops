@@ -1,5 +1,9 @@
 """Claude Code PreToolUse hook: route search output through searchslim.
 
+  PowerShell `rg`, `Get-ChildItem -Recurse` and `Select-String` commands are
+             wrapped the same way (see rewrite.rewrite_powershell); on Windows
+             agents often search with the PowerShell tool instead of Grep.
+
   Bash       Plain rg/grep/fd/find commands are rewritten to
              `python -m searchslim run -- <cmd>` via `updatedInput`, so the
              command still runs as the Bash tool call, only its stdout is reduced.
@@ -38,7 +42,7 @@ from pathlib import Path
 
 from . import slim
 from .models import Kind
-from .rewrite import rewrite_command
+from .rewrite import rewrite_command, rewrite_powershell
 from .rules import DEFAULT_TRIGGER_TOKENS, NOTE_PREFIX, Config, estimate_tokens
 from .session import SessionStore, enabled as session_enabled
 
@@ -96,7 +100,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     event_name = event.get("hook_event_name") or "PreToolUse"
     grep_mode = os.environ.get("SEARCHSLIM_GREP_MODE", "post").lower()
 
-    if tool == "Bash" and event_name == "PreToolUse":
+    if tool in ("Bash", "PowerShell") and event_name == "PreToolUse":
         run_args = [f"--max-tokens={config.max_tokens}", f"--trigger-tokens={config.trigger_tokens}"]
         if rerank:
             run_args.append(f"--rerank={rerank}")
@@ -104,7 +108,10 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
                 run_args.append(f"--transcript={transcript}")
         if use_session:
             run_args.append(f"--session={session_id}")
-        new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args, check_path=True)
+        if tool == "PowerShell":
+            new_command = rewrite_powershell(tool_input.get("command", ""), run_args=run_args, check_path=True)
+        else:
+            new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args, check_path=True)
         if not new_command:
             return None
         return {

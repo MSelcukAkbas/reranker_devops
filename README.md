@@ -44,6 +44,11 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   en derin seviyeye kadar her şey kalır, daha derindekiler dizin dizin sayılır.
   Diğer yönlendirmeler, `$(...)`, `find -exec` gibi yan etkili komutlar ve
   sistemde kurulu olmayan araçlar (ör. yalnızca alias olan `rg`) değişmez.
+- **PowerShell (Windows):** Claude Code'un PowerShell aracıyla yapılan `rg`,
+  `Get-ChildItem -Recurse` ve `Select-String` aramaları da sarılır (`rg` için
+  `searchslim run`, diğerleri için `| Out-String -Stream | searchslim filter`).
+  Değişken, `$(...)`, script bloğu, yönlendirme, `;` veya başka cmdlet içeren
+  komutlara dokunulmaz.
 - **Grep/Glob:** araç normal çalışır. Ardından PostToolUse hook'u aynı aramayı
   `rg` ile kendisi yapar (Grep'in content, files_with_matches ve count modları,
   -A/-B/-C, multiline, glob/type, head_limit/offset). Sonuç bütçeye sığıyorsa
@@ -176,6 +181,17 @@ python3 benchmark/sessions.py run        # çoklu arama oturumları
 python3 benchmark/sessions.py latency    # paralel hook gecikmesi
 python3 benchmark/live.py --repeat 3 --jobs 6   # canlı Claude Code koşusu (gerçek API harcar)
 ```
+
+### Canlı Windows testinden çıkan sonuç (2026-09-29)
+
+arvis_code üzerinde headless Claude Code ile yapılan testlerde (0.3.0–0.3.2) net kazanç
+yalnızca çok büyük çıktılarda görülüyor. Claude'un Grep çağrıları çoğunlukla 4k tokenın
+altında kalıyor. Bunları kırpmak bağlamı küçültse bile ajan eksik kısmı ek aramalarla
+(Grep, PowerShell ile dosya okuma) geri almaya çalıştı: 2000 eşiğinde tur ve maliyet
+arttı (ör. 4 → 5 tur, $0.283 → $0.288). Not metnini "gerekirse daralt" yerine
+yönlendirici olmayacak şekilde değiştirmek bunu tam önlemedi. Bu yüzden varsayılan eşik
+6000 token (`SEARCHSLIM_TRIGGER_TOKENS`): orta boy sonuçlar olduğu gibi geçer, not da
+yalnızca tarafsız bir sayım içerir (ne gösterilmedi, kaç tane, nerede).
 
 ## Geliştirme
 
