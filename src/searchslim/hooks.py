@@ -194,7 +194,7 @@ def _run(argv: list[str], cwd: str) -> str | None:
         return None
     try:
         proc = subprocess.run(
-            argv, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True, errors="replace", timeout=RG_TIMEOUT_S
+            argv, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, encoding="utf-8", errors="replace", timeout=RG_TIMEOUT_S
         )
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -206,7 +206,7 @@ def _run(argv: list[str], cwd: str) -> str | None:
 
 def main() -> int:
     try:
-        event = json.load(sys.stdin)
+        event = json.loads(sys.stdin.buffer.read().decode("utf-8", errors="replace"))
         out = handle(event)
     except Exception:  # never block the agent because of this hook
         return 0

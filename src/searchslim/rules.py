@@ -261,7 +261,7 @@ def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_
         if rest:
             # Every omitted file stays covered by a named directory, so an
             # agent can always tell where to narrow the search.
-            dirs = _format_dirs(rollup_dirs(rest, config.note_max_files))
+            dirs = format_dirs(rollup_dirs(rest, config.note_max_files))
             note += f"; {len(rest)} more files by directory: {dirs}"
         if files_total == 1:  # the search already targets one file
             note += ". Narrow the pattern to see them."
@@ -276,7 +276,7 @@ def rollup_dirs(path_counts, limit: int) -> list[tuple[str, int]]:
     in some group, so no omitted file goes unmentioned."""
     groups: OrderedDict[str, int] = OrderedDict()
     for p, n in path_counts:
-        d = posixpath.dirname(p) or "."
+        d = posixpath.dirname(group_path(p)) or "."
         groups[d] = groups.get(d, 0) + n
     limit = max(limit, 2)
     while len(groups) > limit:
@@ -295,7 +295,19 @@ def rollup_dirs(path_counts, limit: int) -> list[tuple[str, int]]:
     return list(groups.items())
 
 
-def _format_dirs(groups) -> str:
+def group_path(p: str) -> str:
+    """Path as used for directory grouping: `/` separators, no leading `./`.
+
+    Windows tools print `.\\dir\\file.py`; without this every such path would
+    land in one `.` group. Shown lines keep the tool's own spelling.
+    """
+    p = p.replace("\\", "/")
+    while p.startswith("./"):
+        p = p[2:].lstrip("/")
+    return p
+
+
+def format_dirs(groups) -> str:
     return ", ".join(f"{d} ({n})" if d.startswith("+") else f"{d}/ ({n})" for d, n in groups)
 
 
@@ -328,7 +340,7 @@ def _reduce_paths(result: SearchResult, config: Config) -> Reduced:
     body = "\n".join(kept)
     note = ""
     if rest:
-        dirs = _format_dirs(rollup_dirs([(p, 1) for p in rest], config.note_max_files))
+        dirs = format_dirs(rollup_dirs([(p, 1) for p in rest], config.note_max_files))
         note = (
             f"{NOTE_PREFIX} {len(kept)}/{len(unique)} paths shown. Not shown, by directory: {dirs}"
             + ". Narrow the pattern to see them."
