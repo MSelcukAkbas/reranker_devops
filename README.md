@@ -85,22 +85,23 @@ searchslim run --rerank lexical --intent "res.redirect varsayılan status'u değ
 
 ## Sonuçlar
 
-4 sabit sürümlü repoda (pytest, ripgrep, express, cobra) 21 arama görevi,
-34 kritik kanıt satırı. "Görünen": kanıt satırı çıktıda doğrudan var.
+4 sabit sürümlü repoda (pytest, ripgrep, express, cobra) 27 arama görevi
+(içerik aramaları, tek dosya aramaları, Glob/`find` listeleri, sayımlar, iki
+adımlı aramalar), 36 kritik kanıt satırı. "Görünen": kanıt satırı çıktıda doğrudan var.
 "Notta": satır yok ama dosyası notta adıyla geçiyor, bir ek aramayla bulunur.
 Token sayımı chars/4 tahmini. Tam tablo:
-[benchmark/results/2026-09-29.md](benchmark/results/2026-09-29.md), yöntem:
+[benchmark/results/2026-09-29-tasks27.md](benchmark/results/2026-09-29-tasks27.md), yöntem:
 [docs/benchmark-design.md](docs/benchmark-design.md).
 
 Varsayılan bütçe (2000 token):
 
 | mod | token | ham çıktıya göre | görünen | notta | kayıp | ek arama |
 |---|---|---|---|---|---|---|
-| raw | 69.4k | %100 | 34/34 | 0 | 0 | 0 |
-| rules | 27.5k | %40 | 30/34 | 4 | 0 | 3 |
-| rules + sıralama | 29.1k | %42 | 34/34 | 0 | 0 | 0 |
+| raw | 76.6k | %100 | 36/36 | 0 | 0 | 0 |
+| rules | 30.6k | %40 | 32/36 | 4 | 0 | 3 |
+| rules + sözcüksel sıralama | 32.3k | %42 | 36/36 | 0 | 0 | 0 |
 
-Daha küçük bütçelerde fark büyüyor:
+Daha küçük bütçelerde fark büyüyor (ilk 21 görev, 34 satır):
 
 | bütçe | rules token | rules görünen | sıralama token | sıralama görünen |
 |---|---|---|---|---|
@@ -126,12 +127,43 @@ Aynı token ile ajan %48 daha fazla farklı kod satırı görüyor; yeni satır 
 maliyet 41 tokendan 28 tokena iniyor. 8 paralel büyük Grep çağrısında hook
 en fazla ~1 sn sürüyor (öncesinde parser darboğazıyla ~1.6 sn).
 
+### Canlı Claude Code koşusu
+
+Claude Code'u (`claude -p`) her görevin amacıyla 3 kez koşturduk: hook yok, hook
+yalnızca kurallarla, hook kurallar + sözcüksel sıralamayla (varsayılan). Tam tablo:
+[benchmark/results/2026-09-29-live.md](benchmark/results/2026-09-29-live.md).
+
+| mod | doğru cevap | arama çağrısı | okunan arama sonucu | ortalama girdi token | toplam $ |
+|---|---|---|---|---|---|
+| hook yok | 70/81 | 138 | 49.6k | 101k | 4.68 |
+| rules | 74/81 | 133 | 42.3k | 105k | 4.66 |
+| rules + sıralama | 72/81 | 133 | 42.9k | 103k | 4.73 |
+
+- Ajanın okuduğu arama sonucu %14 azalıyor; doğruluk ve arama sayısı değişmiyor
+  (70-74/81 farkı gürültü aralığında).
+- Toplam girdi token'ı ve maliyet değişmiyor, çünkü bu görevlerde bir oturumun
+  ~95k token'ı sistem istemi ve araç tanımları; arama çıktısı küçük bir pay.
+- Claude kendi aramalarını zaten dar tutuyor: ~135 aramanın yalnızca 6-7'si
+  bütçeyi aştı ve hook'a düştü. Kazanç, geniş aramaların (`raise `, tüm repo
+  `find`, büyük dosyada `rg`) sık olduğu uzun oturumlarda ortaya çıkar;
+  yukarıdaki çevrimdışı tablo bu durumu ölçüyor.
+
+### Faz 2: model ile sıralama
+
+Faz 1 modelsizdir: kurallar ve sözcüksel (BM25) sıralama, bağımlılık yok. Faz 2'de
+kuralların eleyeceği metin ve aranan şey (kullanıcı amacı, alt görev, sorgu) hafif
+bir sıralama modeline (Jev benzeri) verilecek; model yalnızca mevcut blokları
+sıralayıp seçecek, kod yazmayacak. Benchmark buna hazır: `bench.py run --model-cmd`
+herhangi bir sıralayıcıyı aynı görevlerde raw, rules ve rules + sözcüksel ile
+karşılaştırır ve ham girdide olmayan satır üreten çıktıyı geçersiz sayar.
+
 Benchmark'ı yeniden koşturmak için:
 
 ```sh
-python3 benchmark/bench.py run --model-cmd "python3 -m searchslim bench-model"
+python3 benchmark/bench.py run --model-cmd "python3 -m searchslim bench-model --scorer lexical"
 python3 benchmark/sessions.py run        # çoklu arama oturumları
 python3 benchmark/sessions.py latency    # paralel hook gecikmesi
+python3 benchmark/live.py --repeat 3 --jobs 6   # canlı Claude Code koşusu (gerçek API harcar)
 ```
 
 ## Geliştirme

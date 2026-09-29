@@ -230,6 +230,24 @@ başarı off 17/21, on 16/21 oluyor (önce 11/21 ve 11/21); kalan farklar
 gerçek cevap farkı. Yeni canlı koşu, arama araçlarının tamamı ve çoklu istek
 desteği main'e girince yapılacak.
 
+### Canlı koşu, main `eaf6556` (27 görev, 3 tekrar, 3 mod)
+
+`live.py --repeat 3 --jobs 6` ve `--modes rules`; tablo
+`benchmark/results/2026-09-29-live.md`:
+
+| mod | başarı | arama | okunan arama sonucu tok | ort. girdi tok | $ |
+|---|---|---|---|---|---|
+| off | 70/81 | 138 | 49564 | 101398 | 4.68 |
+| rules | 74/81 | 133 | 42321 | 105392 | 4.66 |
+| on (rules + lexical) | 72/81 | 133 | 42867 | 103364 | 4.73 |
+
+Okunan arama sonucu %14 azalıyor; başarı, arama sayısı, girdi token'ı ve
+maliyet gürültü içinde aynı. İlk tek tekrarlı koşudaki "%23 daha az girdi
+token'ı" gürültüydü: bir oturumun ~95k token'ı sabit (sistem istemi, araçlar)
+ve arama çıktısı bunun yanında küçük. Hook ~135 aramanın yalnızca 6-7'sinde
+devreye girdi; ajan bu görevlerde dar arıyor. Canlı kazancı görmek için daha
+uzun, geniş aramalı görevler gerekiyor.
+
 ## 6. Kullanım
 
 ```sh
