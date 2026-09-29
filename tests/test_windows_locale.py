@@ -45,11 +45,11 @@ def test_run_keeps_turkish_output_under_cp1254(repo):
 
 
 def _hook(repo, pattern):
-    event = {"tool_name": "Grep", "tool_input": {"pattern": pattern, "path": "services/gateway/src", "output_mode": "content", "-n": True}, "cwd": str(repo)}
+    event = {"hook_event_name": "PostToolUse", "tool_name": "Grep", "tool_input": {"pattern": pattern, "path": "services/gateway/src", "output_mode": "content", "-n": True}, "cwd": str(repo)}
     proc = _searchslim(["hook"], repo, json.dumps(event, ensure_ascii=False).encode("utf-8"), SEARCHSLIM_MAX_TOKENS="60", SEARCHSLIM_RERANK="off")
     assert proc.returncode == 0
     assert proc.stdout, "hook skipped the event"
-    return json.loads(proc.stdout)["hookSpecificOutput"]["permissionDecisionReason"]
+    return json.loads(proc.stdout)["hookSpecificOutput"]["updatedToolOutput"]
 
 
 @needs_rg

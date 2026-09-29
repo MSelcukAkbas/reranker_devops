@@ -136,10 +136,10 @@ def repo(tmp_path):
 
 def _grep(repo, session_id="sess"):
     event = {
-        "tool_name": "Grep", "cwd": str(repo), "session_id": session_id,
+        "hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(repo), "session_id": session_id,
         "tool_input": {"pattern": "target", "output_mode": "content"},
     }
-    return handle(event, Config(max_tokens=800))["hookSpecificOutput"]["permissionDecisionReason"]
+    return handle(event, Config(max_tokens=800))["hookSpecificOutput"]["updatedToolOutput"]
 
 
 @needs_rg
@@ -165,7 +165,7 @@ def test_bash_run_uses_the_session_across_tools(repo):
 def test_parallel_hook_processes(repo, tmp_path):
     """Many hook processes at once on one session: all answer, none fail, all fast."""
     event = json.dumps({
-        "tool_name": "Grep", "cwd": str(repo), "session_id": "par",
+        "hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(repo), "session_id": "par",
         "tool_input": {"pattern": "target", "output_mode": "content"},
     })
     env = {**os.environ, "SEARCHSLIM_MAX_TOKENS": "800"}
@@ -179,7 +179,7 @@ def test_parallel_hook_processes(repo, tmp_path):
         results = list(pool.map(call, range(12)))
     for proc, _ in results:
         assert proc.returncode == 0
-        assert json.loads(proc.stdout)["hookSpecificOutput"]["permissionDecision"] == "deny"
+        assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedToolOutput"]
     assert max(t for _, t in results) < 10  # generous: CI machines vary; see benchmark for real numbers
 
 
