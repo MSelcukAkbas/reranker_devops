@@ -44,7 +44,9 @@ Görev alanları:
     kanıttır, ayrı raporlanır.
 
 Yeni görev eklerken kural: kanıt, görevin cevabı için gerçekten gerekli
-satırdır; "eşleşen ilk satır" değil.
+satırdır; "eşleşen ilk satır" değil. Kritik kanıt ham çıktıda bulunmak
+zorunda: `bench.py fetch` ve testler bunu kontrol eder (ham çıktıda olmayan
+bir satır için hiçbir mod suçlanamaz).
 
 ## 3. Modlar
 
@@ -64,7 +66,7 @@ satırdır; "eşleşen ilk satır" değil.
 
 ### A. Çevrimdışı replay
 
-Her görevin ham çıktısı bir kez alınır ve `benchmark/fixtures/<id>.raw` olarak
+Her görevin ham çıktısı bir kez alınır ve `benchmark/fixtures/<id>.txt` olarak
 saklanır; üç mod da aynı girdiyle koşar. Bu şart: `rg` dosya sırası paralel
 çalıştığı için koşudan koşuya değişiyor (bkz. bulgu 1). Yakalama `rg --sort path`
 ile yapılır; sırasız davranış ayrı bir kararlılık testiyle ölçülür (aynı
@@ -77,7 +79,7 @@ Metrikler, görev başına:
 | `tokens` | ajanın okuyacağı metnin token sayısı. Gerçek tokenizer: Anthropic `count_tokens` API. Ağ yoksa chars/4 tahmini, ayrı kolonda. |
 | `latency_ms` | katmanın eklediği süre. `rules`: süreç içi 20 koşunun medyanı, ayrıca `searchslim run -- <cmd>` ile ham komut arasındaki uçtan uca fark. `rules+model`: model çağrısının p50/p95'i. |
 | `cost_usd` | `tokens × ajan modelinin girdi fiyatı` + (model modunda) `reranker girdi/çıktı token × fiyatı`. Fiyatlar tek bir config dosyasında. Arama çıktısı bağlamda kaldığı için sonraki her turda tekrar okunur; `k` kalan tur sayısı parametresiyle `k=1` ve `k=10` raporlanır. |
-| `evidence` | her kritik kanıt için bir durum: **kept**: tam `path:line` gövdede eşleşme veya bağlam satırı olarak var (liste görevlerinde yol var). **recoverable**: gövdede yok ama dosya (liste görevlerinde dizin) sondaki `[searchslim]` notunda adıyla geçiyor; ajan tek bir daraltılmış aramayla bulur. **lost**: ikisi de değil. |
+| `evidence` | her kritik kanıt için bir durum: **kept**: tam `path:line` gövdede eşleşme veya bağlam satırı olarak var (liste görevlerinde yol var). **recoverable**: satır gövdede yok ama dosya gövdede başka bir satırla ya da sondaki `[searchslim]` notunda adıyla (liste görevlerinde üst dizinle) geçiyor; ajan tek bir daraltılmış aramayla bulur. **lost**: hiçbiri değil. |
 | `extra_searches` | tahmini ek arama: recoverable kritik kanıtların bulunduğu farklı dosya sayısı. `lost` kanıt ek aramayla da garanti bulunamayacağı için ayrıca sayılır. |
 
 Toplu rapor: toplam token ve azalma yüzdesi, `kept/recoverable/lost` oranları,
@@ -101,57 +103,70 @@ karşılaştırılır; ikisi ayrışıyorsa A'nın tanımı düzeltilir.
   `extra_searches`'i düşürüyorsa ve kazandırdığı token maliyeti modelin
   maliyetinden fazlaysa (`k=1`'de) tutulur.
 
-## 5. Pilot (rules, katman A, chars/4)
+## 5. İlk sonuçlar (rules, katman A, chars/4)
 
-Bu tasarımı sınamak için 14 görev `rules` modunda koşturuldu
-(`rg --sort path`, varsayılan `Config`, tek dosya aramasında `--default-path`).
+`python3 benchmark/bench.py run --tokenizer chars`, varsayılan `Config`:
 
-| görev | raw tok | rules tok | azalma | ms | kritik kept | recoverable | lost |
-|---|---|---|---|---|---|---|---|
-| pytest-usage-error-p-option | 24214 | 1872 | 93% | 12.9 | 1/1 | 0 | 0 |
-| pytest-raises-impl | 4581 | 1352 | 71% | 1.7 | 1/2 | 1 | 0 |
-| pytest-fixture-scope | 1827 | 173 | 91% | 1.4 | 0/2 | 2 | 0 |
-| pytest-warnings-importers | 266 | 266 | 0% | 0.1 | 2/2 | 0 | 0 |
-| pytest-fixture-tests-file | 1866 | 1806 | 4% | 0.3 | 1/1 | 0 | 0 |
-| pytest-src-files-find | 460 | 459 | 1% | 0.1 | 2/2 | 0 | 0 |
-| pytest-test-counts | 1413 | 1412 | 1% | 0.3 | 2/2 | 0 | 0 |
-| ripgrep-max-columns | 6603 | 1624 | 76% | 2.1 | 2/2 | 0 | 0 |
-| ripgrep-search-fns | 447 | 447 | 0% | 0.2 | 1/1 | 0 | 0 |
-| ripgrep-unwrap-counts | 374 | 374 | 0% | 0.1 | 1/1 | 0 | 0 |
-| express-redirect-status | 3340 | 1260 | 63% | 1.5 | 1/2 | 1 | 0 |
-| express-req-query | 303 | 303 | 0% | 0.2 | 1/1 | 0 | 0 |
-| cobra-persistent-flags | 5844 | 1255 | 79% | 2.5 | 0/1 | 1 | 0 |
-| cobra-execute | 2820 | 1119 | 61% | 1.2 | 0/2 | 2 | 0 |
-| **toplam** | **54358** | **13722** | **75%** | | **13/21** | **8** | **0** |
+| görev | raw tok | rules tok | ms | kritik kept | recoverable | lost |
+|---|---|---|---|---|---|---|
+| pytest-usage-error-p-option | 24214 | 1872 | 11.2 | 1/1 | 0 | 0 |
+| pytest-raises-impl | 5558 | 1694 | 2.1 | 2/2 | 0 | 0 |
+| pytest-fixture-scope | 1827 | 173 | 1.0 | 0/2 | 2 | 0 |
+| pytest-warnings-importers | 266 | 266 | 0.0 | 2/2 | 0 | 0 |
+| pytest-fixture-tests-file | 1866 | 1806 | 0.2 | 1/1 | 0 | 0 |
+| pytest-src-files-find | 460 | 459 | 0.1 | 2/2 | 0 | 0 |
+| pytest-test-counts | 1413 | 1412 | 0.2 | 2/2 | 0 | 0 |
+| ripgrep-max-columns | 6603 | 1624 | 1.9 | 2/2 | 0 | 0 |
+| ripgrep-search-fns | 447 | 447 | 0.1 | 1/1 | 0 | 0 |
+| ripgrep-unwrap-counts | 374 | 374 | 0.1 | 1/1 | 0 | 0 |
+| express-redirect-status | 4557 | 1260 | 1.7 | 1/2 | 1 | 0 |
+| express-req-query | 303 | 303 | 0.1 | 1/1 | 0 | 0 |
+| cobra-persistent-flags | 5844 | 1255 | 2.3 | 0/1 | 1 | 0 |
+| cobra-execute | 2820 | 1119 | 1.0 | 0/2 | 2 | 0 |
+| **toplam** | **56552** | **14064 (%25)** | p95 11.2 | **16/22** | **6** | **0** |
 
-Token tarafı hedefin üstünde, kayıp yok; ama kritik kanıtların 8/21'i ek
-arama gerektiriyor (7 görevde). Pilotta çıkan bulgular:
+Maliyet (Opus 5.5 girdi fiyatıyla, `k=1`): raw $0.226, rules $0.056. Token
+tarafı hedefin üstünde, sıralı girdide kayıp yok; ama kritik kanıtların 6/22'si
+ek arama gerektiriyor (tahmini 4 ek arama). Bulgular:
 
-1. **Sıra kararsızlığı gerçek kayba yol açıyor.** `--sort path` olmadan
-   `pytest-usage-error-p-option` 5 koşunun 5'inde kanıtı göstermedi ve bir
-   koşuda kanıt `lost` oldu: dosya, notta adı yazılan ilk 10 dosyanın
-   dışında kaldı ("+15 more files"). Kurallar deterministik ama girdi değil.
-   Öneri: nottaki dosya listesi kesilince kalanlar dizin bazında özetlensin.
+1. **Sıra kararsızlığı gerçek kayba yol açıyor.** `bench.py stability --runs 10`:
+   sırasız `rg` ile 11 görevin 11'inde rules çıktısı koşudan koşuya değişiyor ve
+   `pytest-usage-error-p-option`'da kritik kanıt 10 koşunun 8'inde `lost`:
+   dosya, notta adı yazılan ilk 10 dosyanın dışında kalıyor ("+15 more files").
+   Kurallar deterministik ama girdi değil. Öneri: dosya listesi kesilince
+   kalanlar dizin bazında özetlensin; hook `rg`'ye `--sort path` eklemeyi düşünsün.
 2. **Tek dosya aramasında format ve bütçe sorunu.** `rg -n scope file.py`
    çıktısında yol yok. `--default-path` olmadan parser 0 satır görüp çıktıyı
    aynen geçiriyor; verilince her satıra yol ekleniyor (aracın formatı
-   değişiyor), bu da 1827 token'lık çıktıyı bütçenin üstüne itiyor ve tek
-   dosyada 133 eşleşmeden 8'i kalıyor. Not "aramayı daralt" diyor ama arama
-   zaten tek dosyada. Öneri: bütçe orijinal metin üzerinden hesaplansın,
-   yol eklenmesin, tek dosyada dosya başı sınır uygulanmasın.
+   değişiyor), bu da 1827 token'lık çıktıyı bütçenin üstüne itiyor ve 133
+   eşleşmeden 8'i kalıyor. Not "aramayı daralt" diyor ama arama zaten tek
+   dosyada. Öneri: bütçe orijinal metin üzerinden hesaplansın, yol eklenmesin,
+   tek dosyada dosya başı sınır uygulanmasın.
 3. **Dosya başı 8 eşleşme sınırı büyük dosyayı cezalandırıyor.** `cobra-execute`'ta
    küçük dosyaların tüm eşleşmeleri kalırken `command.go`'nun 113 eşleşmesinden
-   8'i kaldı; `Execute()` ve `ExecuteC()` gitti. Bu, kuralların sıralama
-   tahmini yapmadan çözemeyeceği durum; `rules+model` modunun kapatması
-   gereken boşluk tam olarak bu, benchmark bunu ölçmeli.
+   8'i kaldı; `Execute()` ve `ExecuteC()` gitti. Kuralların sıralama tahmini
+   yapmadan çözemeyeceği durum; `rules+model` modunun kapatması gereken boşluk bu.
 
-Bulgular bu PR'da düzeltilmedi; kural katmanı için ayrı iş.
+Bulgular burada düzeltilmedi; kural katmanı için ayrı iş.
 
-## 6. Dosyalar ve sonraki adım
+## 6. Kullanım
 
-- `benchmark/tasks.json`: korpus ve görev seti (bu PR).
-- `benchmark/run.py` (adım 4): repoları çeker, fixture'ları yakalar, modları
-  koşar, `benchmark/results/<tarih>.jsonl` ve markdown özet tablo yazar.
-  Kural katmanı gibi runtime bağımlılığı yok; `count_tokens` için
-  `ANTHROPIC_API_KEY` opsiyonel.
-- Katman B, adım 3'teki Claude Code hook'u hazır olunca eklenir.
+```sh
+python3 benchmark/bench.py fetch          # repoları çek, fixture'ları yakala, çapaları doğrula
+python3 benchmark/bench.py run            # modları fixture'lar üzerinde koştur (ağ gerekmez)
+python3 benchmark/bench.py run --jsonl results.jsonl --model-cmd "python3 my_reranker.py"
+python3 benchmark/bench.py stability --runs 10
+```
+
+- `benchmark/tasks.json`: korpus ve görevler. `benchmark/fixtures/`: `rg --sort path`
+  ile yakalanmış ham çıktılar (commit'li, `run` bunlarla çevrimdışı çalışır).
+  Repolar `~/.cache/searchslim-bench` altına klonlanır (`SEARCHSLIM_BENCH_CACHE`).
+- Token: `anthropic` paketi ve kimlik bilgisi varsa `count_tokens`, yoksa
+  chars/4; tablo hangisinin kullanıldığını yazar. Kural katmanı gibi harness'ın
+  da zorunlu bağımlılığı yok.
+- `rules+model`: `--model-cmd` stdin'den JSON (`intent`, `subtask`, `cmd`, `raw`,
+  `rules`, `max_tokens`) alır, küçültülmüş çıktıyı stdout'a yazar; stderr'in son
+  satırına `{"input_tokens": N, "output_tokens": M}` yazarsa maliyeti Haiku 4.5
+  fiyatıyla sayılır. Gövdede ham girdide olmayan satır varsa koşu geçersiz
+  sayılır. Kuralların hiçbir şey atmadığı görevlerde model çağrılmaz.
+- Katman B, adım 3'teki Claude Code hook'u birleşince eklenir.

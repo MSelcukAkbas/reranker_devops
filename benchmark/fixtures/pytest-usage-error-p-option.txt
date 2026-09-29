@@ -1,0 +1,1631 @@
+src/_pytest/_code/code.py-96-            # maybe don't try this checking
+src/_pytest/_code/code.py-97-            if not p.exists():
+src/_pytest/_code/code.py:98:                raise OSError("path check failed.")
+src/_pytest/_code/code.py-99-            return p
+src/_pytest/_code/code.py-100-        except OSError:
+--
+src/_pytest/_code/code.py-1005-        locals of a previous frame (see ``recursionindex()``).
+src/_pytest/_code/code.py-1006-
+src/_pytest/_code/code.py:1007:        Handle the situation where the recursion process might raise an
+src/_pytest/_code/code.py-1008-        exception (for example comparing numpy arrays using equality raises a
+src/_pytest/_code/code.py-1009-        TypeError), in which case we do our best to warn the user of the
+--
+src/_pytest/_code/code.py-1097-
+src/_pytest/_code/code.py-1098-    def toterminal(self, tw: TerminalWriter) -> None:
+src/_pytest/_code/code.py:1099:        raise NotImplementedError()
+src/_pytest/_code/code.py-1100-
+src/_pytest/_code/code.py-1101-
+--
+src/_pytest/_code/source.py-56-        else:
+src/_pytest/_code/source.py-57-            if key.step not in (None, 1):
+src/_pytest/_code/source.py:58:                raise IndexError("cannot slice a Source with a step")
+src/_pytest/_code/source.py-59-            newsource = Source()
+src/_pytest/_code/source.py-60-            newsource.lines = self.lines[key.start : key.stop]
+--
+src/_pytest/_code/source.py-95-        which containing the given lineno."""
+src/_pytest/_code/source.py-96-        if not (0 <= lineno < len(self)):
+src/_pytest/_code/source.py:97:            raise IndexError("lineno out of range")
+src/_pytest/_code/source.py-98-        ast, start, end = getstatementrange_ast(lineno, self)
+src/_pytest/_code/source.py-99-        return start, end
+--
+src/_pytest/_code/source.py-134-        if call and not isinstance(obj, type):
+src/_pytest/_code/source.py-135-            return getrawcode(call, trycall=False)
+src/_pytest/_code/source.py:136:    raise TypeError(f"could not get code object for {obj!r}")
+src/_pytest/_code/source.py-137-
+src/_pytest/_code/source.py-138-
+--
+src/_pytest/_io/pprint.py-78-        """
+src/_pytest/_io/pprint.py-79-        if indent < 0:
+src/_pytest/_io/pprint.py:80:            raise ValueError("indent must be >= 0")
+src/_pytest/_io/pprint.py-81-        if depth is not None and depth <= 0:
+src/_pytest/_io/pprint.py:82:            raise ValueError("depth must be > 0")
+src/_pytest/_io/pprint.py-83-        if not width:
+src/_pytest/_io/pprint.py:84:            raise ValueError("width must be != 0")
+src/_pytest/_io/pprint.py-85-        self._depth = depth
+src/_pytest/_io/pprint.py-86-        self._indent_per_level = indent
+--
+src/_pytest/_io/saferepr.py-104-    Failing __repr__ functions of user instances will be represented
+src/_pytest/_io/saferepr.py-105-    with a short exception info and 'saferepr' generally takes
+src/_pytest/_io/saferepr.py:106:    care to never raise exceptions itself.
+src/_pytest/_io/saferepr.py-107-
+src/_pytest/_io/saferepr.py-108-    This function is a wrapper around the Repr/reprlib functionality of the
+--
+src/_pytest/_io/terminalwriter.py-108-        for name in markup:
+src/_pytest/_io/terminalwriter.py-109-            if name not in self._esctable:
+src/_pytest/_io/terminalwriter.py:110:                raise ValueError(f"unknown markup: {name!r}")
+src/_pytest/_io/terminalwriter.py-111-        if self.hasmarkup:
+src/_pytest/_io/terminalwriter.py-112-            esc = [self._esctable[name] for name, on in markup.items() if on]
+--
+src/_pytest/_io/terminalwriter.py-192-        """
+src/_pytest/_io/terminalwriter.py-193-        if indents and len(indents) != len(lines):
+src/_pytest/_io/terminalwriter.py:194:            raise ValueError(
+src/_pytest/_io/terminalwriter.py-195-                f"indents size ({len(indents)}) should have same size as lines ({len(lines)})"
+src/_pytest/_io/terminalwriter.py-196-            )
+--
+src/_pytest/_io/terminalwriter.py-234-
+src/_pytest/_io/terminalwriter.py-235-        except pygments.util.ClassNotFound as e:
+src/_pytest/_io/terminalwriter.py:236:            raise UsageError(
+src/_pytest/_io/terminalwriter.py-237-                f"PYTEST_THEME environment variable has an invalid value: '{theme}'. "
+src/_pytest/_io/terminalwriter.py-238-                "Hint: See available pygments styles with `pygmentize -L styles`."
+src/_pytest/_io/terminalwriter.py-239-            ) from e
+src/_pytest/_io/terminalwriter.py-240-        except pygments.util.OptionError as e:
+src/_pytest/_io/terminalwriter.py:241:            raise UsageError(
+src/_pytest/_io/terminalwriter.py-242-                f"PYTEST_THEME_MODE environment variable has an invalid value: '{theme_mode}'. "
+src/_pytest/_io/terminalwriter.py-243-                "The allowed values are 'dark' (default) and 'light'."
+--
+src/_pytest/_py/error.py-60-    def __getattr__(self, name: str) -> type[Error]:
+src/_pytest/_py/error.py-61-        if name[0] == "_":
+src/_pytest/_py/error.py:62:            raise AttributeError(name)
+src/_pytest/_py/error.py-63-        eno = getattr(errno, name)
+src/_pytest/_py/error.py-64-        cls = self._geterrnoclass(eno)
+--
+src/_pytest/_py/error.py-82-        self, func: Callable[P, R], *args: P.args, **kwargs: P.kwargs
+src/_pytest/_py/error.py-83-    ) -> R:
+src/_pytest/_py/error.py:84:        """Call a function and raise an errno-exception if applicable."""
+src/_pytest/_py/error.py-85-        __tracebackhide__ = True
+src/_pytest/_py/error.py-86-        try:
+--
+src/_pytest/_py/error.py-96-                    cls = self._geterrnoclass(_winerrnomap[errno])
+src/_pytest/_py/error.py-97-                except KeyError:
+src/_pytest/_py/error.py:98:                    raise value
+src/_pytest/_py/error.py-99-            else:
+src/_pytest/_py/error.py-100-                # we are not on Windows, or we got a proper OSError
+src/_pytest/_py/error.py-101-                cls = self._geterrnoclass(errno)
+src/_pytest/_py/error.py-102-
+src/_pytest/_py/error.py:103:            raise cls(f"{func.__name__}{args!r}")
+src/_pytest/_py/error.py-104-
+src/_pytest/_py/error.py-105-
+--
+src/_pytest/_py/path.py-84-                        pass
+src/_pytest/_py/path.py-85-            if meth is None:
+src/_pytest/_py/path.py:86:                raise TypeError(f"no {name!r} checker available for {self.path!r}")
+src/_pytest/_py/path.py-87-            try:
+src/_pytest/_py/path.py-88-                if getrawcode(meth).co_argcount > 1:
+--
+src/_pytest/_py/path.py-220-    def owner(self):
+src/_pytest/_py/path.py-221-        if iswin32:
+src/_pytest/_py/path.py:222:            raise NotImplementedError("XXX win32")
+src/_pytest/_py/path.py-223-        import pwd
+src/_pytest/_py/path.py-224-
+--
+src/_pytest/_py/path.py-230-        """Return group name of file."""
+src/_pytest/_py/path.py-231-        if iswin32:
+src/_pytest/_py/path.py:232:            raise NotImplementedError("XXX win32")
+src/_pytest/_py/path.py-233-        import grp
+src/_pytest/_py/path.py-234-
+--
+src/_pytest/_py/path.py-289-                path = os.fspath(path)
+src/_pytest/_py/path.py-290-            except TypeError:
+src/_pytest/_py/path.py:291:                raise ValueError(
+src/_pytest/_py/path.py-292-                    "can only pass None, Path instances "
+src/_pytest/_py/path.py-293-                    "or non-empty strings to LocalPath"
+--
+src/_pytest/_py/path.py-403-        """Move this path to target."""
+src/_pytest/_py/path.py-404-        if target.relto(self):
+src/_pytest/_py/path.py:405:            raise error.EINVAL(target, "cannot move path into a subdirectory of itself")
+src/_pytest/_py/path.py-406-        try:
+src/_pytest/_py/path.py-407-            self.rename(target)
+--
+src/_pytest/_py/path.py-434-        """
+src/_pytest/_py/path.py-435-        if not isinstance(relpath, (str, LocalPath)):
+src/_pytest/_py/path.py:436:            raise TypeError(f"{relpath!r}: not a string or path object")
+src/_pytest/_py/path.py-437-        strrelpath = str(relpath)
+src/_pytest/_py/path.py-438-        if strrelpath and strrelpath[-1] != self.sep:
+--
+src/_pytest/_py/path.py-627-            hash = getattr(mod, hashtype)()
+src/_pytest/_py/path.py-628-        except (AttributeError, ImportError):
+src/_pytest/_py/path.py:629:            raise ValueError(f"Don't know how to compute {hashtype!r} hash")
+src/_pytest/_py/path.py-630-        f = self.open("rb")
+src/_pytest/_py/path.py-631-        try:
+--
+src/_pytest/_py/path.py-658-        if "basename" in kw:
+src/_pytest/_py/path.py-659-            if "purebasename" in kw or "ext" in kw:
+src/_pytest/_py/path.py:660:                raise ValueError(f"invalid specification {kw!r}")
+src/_pytest/_py/path.py-661-        else:
+src/_pytest/_py/path.py-662-            pb = kw.setdefault("purebasename", purebasename)
+--
+src/_pytest/_py/path.py-704-                        res.append(ext)
+src/_pytest/_py/path.py-705-                    else:
+src/_pytest/_py/path.py:706:                        raise ValueError(f"invalid part specification {name!r}")
+src/_pytest/_py/path.py-707-        return res
+src/_pytest/_py/path.py-708-
+--
+src/_pytest/_py/path.py-916-        if "b" in mode:
+src/_pytest/_py/path.py-917-            if not isinstance(data, bytes):
+src/_pytest/_py/path.py:918:                raise ValueError("can only process bytes")
+src/_pytest/_py/path.py-919-        else:
+src/_pytest/_py/path.py-920-            if not isinstance(data, str):
+--
+src/_pytest/_py/path.py-1037-        """
+src/_pytest/_py/path.py-1038-        if not isinstance(mode, int):
+src/_pytest/_py/path.py:1039:            raise TypeError(f"mode {mode!r} must be an integer")
+src/_pytest/_py/path.py-1040-        if rec:
+src/_pytest/_py/path.py-1041-            for x in self.visit(rec=rec):
+--
+src/_pytest/_py/path.py-1090-        """
+src/_pytest/_py/path.py-1091-        if not self.check():
+src/_pytest/_py/path.py:1092:            raise error.ENOENT(self)
+src/_pytest/_py/path.py-1093-
+src/_pytest/_py/path.py-1094-        if ensuresyspath == "importlib":
+--
+src/_pytest/_py/path.py-1097-            spec = importlib.util.spec_from_file_location(modname, str(self))
+src/_pytest/_py/path.py-1098-            if spec is None or spec.loader is None:
+src/_pytest/_py/path.py:1099:                raise ImportError(f"Can't find module {modname} at location {self!s}")
+src/_pytest/_py/path.py-1100-            mod = importlib.util.module_from_spec(spec)
+src/_pytest/_py/path.py-1101-            spec.loader.exec_module(mod)
+--
+src/_pytest/_py/path.py-1137-                ignore = os.getenv("PY_IGNORE_IMPORTMISMATCH")
+src/_pytest/_py/path.py-1138-                if ignore != "1":
+src/_pytest/_py/path.py:1139:                    raise self.ImportMismatchError(modname, modfile, self)
+src/_pytest/_py/path.py-1140-            return mod
+src/_pytest/_py/path.py-1141-        else:
+--
+src/_pytest/_py/path.py-1181-            if isinstance(stderr, bytes):
+src/_pytest/_py/path.py-1182-                stderr = stderr.decode(sys.getdefaultencoding())
+src/_pytest/_py/path.py:1183:            raise RuntimeError(
+src/_pytest/_py/path.py-1184-                ret,
+src/_pytest/_py/path.py-1185-                ret,
+--
+src/_pytest/assertion/__init__.py-70-        if not isinstance(name, str):
+src/_pytest/assertion/__init__.py-71-            msg = "expected module names as *args, got {0} instead"  # type: ignore[unreachable]
+src/_pytest/assertion/__init__.py:72:            raise TypeError(msg.format(repr(names)))
+src/_pytest/assertion/__init__.py-73-    for hook in sys.meta_path:
+src/_pytest/assertion/__init__.py-74-        if isinstance(hook, rewrite.AssertionRewritingHook):
+--
+src/_pytest/assertion/__init__.py-99-
+src/_pytest/assertion/__init__.py-100-def install_importhook(config: Config) -> rewrite.AssertionRewritingHook:
+src/_pytest/assertion/__init__.py:101:    """Try to install the rewrite hook, raise SystemError if it fails."""
+src/_pytest/assertion/__init__.py-102-    config.stash[assertstate_key] = AssertionState(config, "rewrite")
+src/_pytest/assertion/__init__.py-103-    config.stash[assertstate_key].hook = hook = rewrite.AssertionRewritingHook(config)
+--
+src/_pytest/cacheprovider.py-143-        path = Path(name)
+src/_pytest/cacheprovider.py-144-        if len(path.parts) > 1:
+src/_pytest/cacheprovider.py:145:            raise ValueError("name is not allowed to contain path separators")
+src/_pytest/cacheprovider.py-146-        res = self._cachedir.joinpath(self._CACHE_PREFIX_DIRS, path)
+src/_pytest/cacheprovider.py-147-        self._mkdir(res)
+--
+src/_pytest/capture.py-207-
+src/_pytest/capture.py-208-    def read(self, size: int = -1) -> str:
+src/_pytest/capture.py:209:        raise OSError(
+src/_pytest/capture.py-210-            "pytest: reading from stdin while output is captured!  Consider using `-s`."
+src/_pytest/capture.py-211-        )
+--
+src/_pytest/capture.py-217-
+src/_pytest/capture.py-218-    def readlines(self, hint: int | None = -1) -> list[str]:
+src/_pytest/capture.py:219:        raise OSError(
+src/_pytest/capture.py-220-            "pytest: reading from stdin while output is captured!  Consider using `-s`."
+src/_pytest/capture.py-221-        )
+--
+src/_pytest/capture.py-225-
+src/_pytest/capture.py-226-    def fileno(self) -> int:
+src/_pytest/capture.py:227:        raise UnsupportedOperation("redirected stdin is pseudofile, has no fileno()")
+src/_pytest/capture.py-228-
+src/_pytest/capture.py-229-    def flush(self) -> None:
+src/_pytest/capture.py:230:        raise UnsupportedOperation("redirected stdin is pseudofile, has no flush()")
+src/_pytest/capture.py-231-
+src/_pytest/capture.py-232-    def isatty(self) -> bool:
+--
+src/_pytest/capture.py-240-
+src/_pytest/capture.py-241-    def seek(self, offset: int, whence: int = 0) -> int:
+src/_pytest/capture.py:242:        raise UnsupportedOperation("redirected stdin is pseudofile, has no seek(int)")
+src/_pytest/capture.py-243-
+src/_pytest/capture.py-244-    def seekable(self) -> bool:
+--
+src/_pytest/capture.py-246-
+src/_pytest/capture.py-247-    def tell(self) -> int:
+src/_pytest/capture.py:248:        raise UnsupportedOperation("redirected stdin is pseudofile, has no tell()")
+src/_pytest/capture.py-249-
+src/_pytest/capture.py-250-    def truncate(self, size: int | None = None) -> int:
+src/_pytest/capture.py:251:        raise UnsupportedOperation("cannot truncate stdin")
+src/_pytest/capture.py-252-
+src/_pytest/capture.py-253-    def write(self, data: str) -> int:
+src/_pytest/capture.py:254:        raise UnsupportedOperation("cannot write to stdin")
+src/_pytest/capture.py-255-
+src/_pytest/capture.py-256-    def writelines(self, lines: Iterable[str]) -> None:
+src/_pytest/capture.py:257:        raise UnsupportedOperation("Cannot write to stdin")
+src/_pytest/capture.py-258-
+src/_pytest/capture.py-259-    def writable(self) -> bool:
+--
+src/_pytest/capture.py-285-    @abc.abstractmethod
+src/_pytest/capture.py-286-    def __init__(self, fd: int) -> None:
+src/_pytest/capture.py:287:        raise NotImplementedError()
+src/_pytest/capture.py-288-
+src/_pytest/capture.py-289-    @abc.abstractmethod
+src/_pytest/capture.py-290-    def start(self) -> None:
+src/_pytest/capture.py:291:        raise NotImplementedError()
+src/_pytest/capture.py-292-
+src/_pytest/capture.py-293-    @abc.abstractmethod
+src/_pytest/capture.py-294-    def done(self) -> None:
+src/_pytest/capture.py:295:        raise NotImplementedError()
+src/_pytest/capture.py-296-
+src/_pytest/capture.py-297-    @abc.abstractmethod
+src/_pytest/capture.py-298-    def suspend(self) -> None:
+src/_pytest/capture.py:299:        raise NotImplementedError()
+src/_pytest/capture.py-300-
+src/_pytest/capture.py-301-    @abc.abstractmethod
+src/_pytest/capture.py-302-    def resume(self) -> None:
+src/_pytest/capture.py:303:        raise NotImplementedError()
+src/_pytest/capture.py-304-
+src/_pytest/capture.py-305-    @abc.abstractmethod
+src/_pytest/capture.py-306-    def writeorg(self, data: AnyStr) -> None:
+src/_pytest/capture.py:307:        raise NotImplementedError()
+src/_pytest/capture.py-308-
+src/_pytest/capture.py-309-    @abc.abstractmethod
+src/_pytest/capture.py-310-    def snap(self) -> AnyStr:
+src/_pytest/capture.py:311:        raise NotImplementedError()
+src/_pytest/capture.py-312-
+src/_pytest/capture.py-313-
+--
+src/_pytest/capture.py-670-        """Stop capturing and reset capturing streams."""
+src/_pytest/capture.py-671-        if self._state == "stopped":
+src/_pytest/capture.py:672:            raise ValueError("was already stopped")
+src/_pytest/capture.py-673-        self._state = "stopped"
+src/_pytest/capture.py-674-        if self.out:
+--
+src/_pytest/capture.py-701-            in_=None, out=SysCapture(1, tee=True), err=SysCapture(2, tee=True)
+src/_pytest/capture.py-702-        )
+src/_pytest/capture.py:703:    raise ValueError(f"unknown capturing method: {method!r}")
+src/_pytest/capture.py-704-
+src/_pytest/capture.py-705-
+--
+src/_pytest/compat.py-242-        from _pytest._io.saferepr import saferepr
+src/_pytest/compat.py-243-
+src/_pytest/compat.py:244:        raise ValueError(
+src/_pytest/compat.py-245-            f"could not find real function of {saferepr(start_obj)}\nstopped at {saferepr(obj)}"
+src/_pytest/compat.py-246-        )
+--
+src/_pytest/compat.py-329-#             return 2
+src/_pytest/compat.py-330-#         else:
+src/_pytest/compat.py:331:#             raise Exception('unreachable')
+src/_pytest/compat.py-332-#
+src/_pytest/compat.py-333-# Now suppose we add a new variant:
+--
+src/_pytest/compat.py-340-# With `assert_never` we can do better:
+src/_pytest/compat.py-341-#
+src/_pytest/compat.py:342:#     // raise Exception('unreachable')
+src/_pytest/compat.py-343-#     return assert_never(x)
+src/_pytest/compat.py-344-#
+--
+src/_pytest/config/__init__.py-221-    """
+src/_pytest/config/__init__.py-222-    if os.path.isdir(path):
+src/_pytest/config/__init__.py:223:        raise UsageError(f"{optname} must be a filename, given: {path}")
+src/_pytest/config/__init__.py-224-    return path
+src/_pytest/config/__init__.py-225-
+--
+src/_pytest/config/__init__.py-232-    """
+src/_pytest/config/__init__.py-233-    if not os.path.isdir(path):
+src/_pytest/config/__init__.py:234:        raise UsageError(f"{optname} must be a directory, given: {path}")
+src/_pytest/config/__init__.py-235-    return path
+src/_pytest/config/__init__.py-236-
+--
+src/_pytest/config/__init__.py-328-            "`args` parameter expected to be a list of strings, got: {!r} (type: {})"
+src/_pytest/config/__init__.py-329-        )
+src/_pytest/config/__init__.py:330:        raise TypeError(msg.format(args, type(args)))
+src/_pytest/config/__init__.py-331-
+src/_pytest/config/__init__.py-332-    config = get_config(args, plugins)
+--
+src/_pytest/config/__init__.py-681-            except AttributeError:
+src/_pytest/config/__init__.py-682-                continue
+src/_pytest/config/__init__.py:683:        raise KeyError(name)
+src/_pytest/config/__init__.py-684-
+src/_pytest/config/__init__.py-685-    def _importconftest(
+--
+src/_pytest/config/__init__.py-716-        except Exception as e:
+src/_pytest/config/__init__.py-717-            assert e.__traceback__ is not None
+src/_pytest/config/__init__.py:718:            raise ConftestImportFailure(conftestpath, cause=e) from e
+src/_pytest/config/__init__.py-719-
+src/_pytest/config/__init__.py-720-        self._check_non_top_pytest_plugins(mod, conftestpath)
+--
+src/_pytest/config/__init__.py-726-                if dirpath in path.parents or path == dirpath:
+src/_pytest/config/__init__.py-727-                    if mod in mods:
+src/_pytest/config/__init__.py:728:                        raise AssertionError(
+src/_pytest/config/__init__.py-729-                            f"While trying to load conftest path {conftestpath!s}, "
+src/_pytest/config/__init__.py-730-                            f"found that the module {mod} is already loaded with path {mod.__file__}. "
+--
+src/_pytest/config/__init__.py-792-            name = arg[3:]
+src/_pytest/config/__init__.py-793-            if name in essential_plugins:
+src/_pytest/config/__init__.py:794:                raise UsageError(f"plugin {name} cannot be disabled")
+src/_pytest/config/__init__.py-795-
+src/_pytest/config/__init__.py-796-            # PR #4304: remove stepwise if cacheprovider is blocked.
+--
+src/_pytest/config/__init__.py-858-            __import__(importspec)
+src/_pytest/config/__init__.py-859-        except ImportError as e:
+src/_pytest/config/__init__.py:860:            raise ImportError(
+src/_pytest/config/__init__.py-861-                f'Error importing plugin "{modname}": {e.args[0]}'
+src/_pytest/config/__init__.py-862-            ).with_traceback(e.__traceback__) from e
+--
+src/_pytest/config/__init__.py-885-    if isinstance(specs, collections.abc.Sequence):
+src/_pytest/config/__init__.py-886-        return list(specs)
+src/_pytest/config/__init__.py:887:    raise UsageError(
+src/_pytest/config/__init__.py-888-        f"Plugins may be specified as a sequence or a ','-separated string of plugin names. Got: {specs!r}"
+src/_pytest/config/__init__.py-889-    )
+--
+src/_pytest/config/__init__.py-1428-
+src/_pytest/config/__init__.py-1429-            if not isinstance(minver, str):
+src/_pytest/config/__init__.py:1430:                raise pytest.UsageError(
+src/_pytest/config/__init__.py-1431-                    f"{self.inipath}: 'minversion' must be a single value"
+src/_pytest/config/__init__.py-1432-                )
+src/_pytest/config/__init__.py-1433-
+src/_pytest/config/__init__.py-1434-            if Version(minver) > Version(pytest.__version__):
+src/_pytest/config/__init__.py:1435:                raise pytest.UsageError(
+src/_pytest/config/__init__.py-1436-                    f"{self.inipath}: 'minversion' requires pytest-{minver}, actual pytest-{pytest.__version__}'"
+src/_pytest/config/__init__.py-1437-                )
+--
+src/_pytest/config/__init__.py-1470-
+src/_pytest/config/__init__.py-1471-        if missing_plugins:
+src/_pytest/config/__init__.py:1472:            raise UsageError(
+src/_pytest/config/__init__.py-1473-                "Missing required plugins: {}".format(", ".join(missing_plugins)),
+src/_pytest/config/__init__.py-1474-            )
+--
+src/_pytest/config/__init__.py-1476-    def _warn_or_fail_if_strict(self, message: str) -> None:
+src/_pytest/config/__init__.py-1477-        if self.known_args_namespace.strict_config:
+src/_pytest/config/__init__.py:1478:            raise UsageError(message)
+src/_pytest/config/__init__.py-1479-
+src/_pytest/config/__init__.py-1480-        self.issue_config_time_warning(PytestConfigWarning(message), stacklevel=3)
+--
+src/_pytest/config/__init__.py-1590-    def _getini_unknown_type(self, name: str, type: str, value: str | list[str]):
+src/_pytest/config/__init__.py-1591-        msg = f"unknown configuration type: {type}"
+src/_pytest/config/__init__.py:1592:        raise ValueError(msg, value)  # pragma: no cover
+src/_pytest/config/__init__.py-1593-
+src/_pytest/config/__init__.py-1594-    def _getini(self, name: str):
+--
+src/_pytest/config/__init__.py-1596-            description, type, default = self._parser._inidict[name]
+src/_pytest/config/__init__.py-1597-        except KeyError as e:
+src/_pytest/config/__init__.py:1598:            raise ValueError(f"unknown configuration value: {name!r}") from e
+src/_pytest/config/__init__.py-1599-        override_value = self._get_override_ini_value(name)
+src/_pytest/config/__init__.py-1600-        if override_value is None:
+--
+src/_pytest/config/__init__.py-1672-                key, user_ini_value = ini_config.split("=", 1)
+src/_pytest/config/__init__.py-1673-            except ValueError as e:
+src/_pytest/config/__init__.py:1674:                raise UsageError(
+src/_pytest/config/__init__.py-1675-                    f"-o/--override-ini expects option=value style (got: {ini_config!r})."
+src/_pytest/config/__init__.py-1676-                ) from e
+--
+src/_pytest/config/__init__.py-1686-            the literal ``--OPT`` option instead of the "dest" option name.
+src/_pytest/config/__init__.py-1687-        :param default: Default value if no option of that name exists.
+src/_pytest/config/__init__.py:1688:        :param skip: If True, raise pytest.skip if option does not exists
+src/_pytest/config/__init__.py-1689-            or has a None value.
+src/_pytest/config/__init__.py-1690-        """
+--
+src/_pytest/config/__init__.py-1693-            val = getattr(self.option, name)
+src/_pytest/config/__init__.py-1694-            if val is None and skip:
+src/_pytest/config/__init__.py:1695:                raise AttributeError(name)
+src/_pytest/config/__init__.py-1696-            return val
+src/_pytest/config/__init__.py-1697-        except AttributeError as e:
+--
+src/_pytest/config/__init__.py-1702-
+src/_pytest/config/__init__.py-1703-                pytest.skip(f"no {name!r} option found")
+src/_pytest/config/__init__.py:1704:            raise ValueError(f"no option named {name!r}") from e
+src/_pytest/config/__init__.py-1705-
+src/_pytest/config/__init__.py-1706-    def getvalue(self, name: str, path=None):
+--
+src/_pytest/config/__init__.py-1863-        return False
+src/_pytest/config/__init__.py-1864-    else:
+src/_pytest/config/__init__.py:1865:        raise ValueError(f"invalid truth value {val!r}")
+src/_pytest/config/__init__.py-1866-
+src/_pytest/config/__init__.py-1867-
+--
+src/_pytest/config/__init__.py-1905-            """
+src/_pytest/config/__init__.py-1906-        )
+src/_pytest/config/__init__.py:1907:        raise UsageError(error_template.format(error=error))
+src/_pytest/config/__init__.py-1908-
+src/_pytest/config/__init__.py-1909-    while len(parts) < 5:
+--
+src/_pytest/config/__init__.py-1913-        action: warnings._ActionKind = warnings._getaction(action_)  # type: ignore[attr-defined]
+src/_pytest/config/__init__.py-1914-    except warnings._OptionError as e:
+src/_pytest/config/__init__.py:1915:        raise UsageError(error_template.format(error=str(e))) from None
+src/_pytest/config/__init__.py-1916-    try:
+src/_pytest/config/__init__.py-1917-        category: type[Warning] = _resolve_warning_category(category_)
+--
+src/_pytest/config/__init__.py-1919-        exc_info = ExceptionInfo.from_current()
+src/_pytest/config/__init__.py-1920-        exception_text = exc_info.getrepr(style="native")
+src/_pytest/config/__init__.py:1921:        raise UsageError(error_template.format(error=exception_text)) from None
+src/_pytest/config/__init__.py-1922-    if message and escape:
+src/_pytest/config/__init__.py-1923-        message = re.escape(message)
+--
+src/_pytest/config/__init__.py-1928-            lineno = int(lineno_)
+src/_pytest/config/__init__.py-1929-            if lineno < 0:
+src/_pytest/config/__init__.py:1930:                raise ValueError("number is negative")
+src/_pytest/config/__init__.py-1931-        except ValueError as e:
+src/_pytest/config/__init__.py:1932:            raise UsageError(
+src/_pytest/config/__init__.py-1933-                error_template.format(error=f"invalid lineno {lineno_!r}: {e}")
+src/_pytest/config/__init__.py-1934-            ) from None
+--
+src/_pytest/config/__init__.py-1956-    cat = getattr(m, klass)
+src/_pytest/config/__init__.py-1957-    if not issubclass(cat, Warning):
+src/_pytest/config/__init__.py:1958:        raise UsageError(f"{cat} is not a Warning subclass")
+src/_pytest/config/__init__.py-1959-    return cast(Type[Warning], cat)
+src/_pytest/config/__init__.py-1960-
+--
+src/_pytest/config/argparsing.py-287-            except IndexError as e:
+src/_pytest/config/argparsing.py-288-                self.dest = "???"  # Needed for the error repr.
+src/_pytest/config/argparsing.py:289:                raise ArgumentError("need a long or short option", self) from e
+src/_pytest/config/argparsing.py-290-
+src/_pytest/config/argparsing.py-291-    def names(self) -> list[str]:
+--
+src/_pytest/config/argparsing.py-310-        for opt in opts:
+src/_pytest/config/argparsing.py-311-            if len(opt) < 2:
+src/_pytest/config/argparsing.py:312:                raise ArgumentError(
+src/_pytest/config/argparsing.py-313-                    f"invalid option string {opt!r}: "
+src/_pytest/config/argparsing.py-314-                    "must be at least two characters long",
+--
+src/_pytest/config/argparsing.py-317-            elif len(opt) == 2:
+src/_pytest/config/argparsing.py-318-                if not (opt[0] == "-" and opt[1] != "-"):
+src/_pytest/config/argparsing.py:319:                    raise ArgumentError(
+src/_pytest/config/argparsing.py-320-                        f"invalid short option string {opt!r}: "
+src/_pytest/config/argparsing.py-321-                        "must be of the form -x, (x any non-dash char)",
+--
+src/_pytest/config/argparsing.py-325-            else:
+src/_pytest/config/argparsing.py-326-                if not (opt[0:2] == "--" and opt[2] != "-"):
+src/_pytest/config/argparsing.py:327:                    raise ArgumentError(
+src/_pytest/config/argparsing.py-328-                        f"invalid long option string {opt!r}: "
+src/_pytest/config/argparsing.py-329-                        "must start with --, followed by non-dash",
+--
+src/_pytest/config/argparsing.py-381-        )
+src/_pytest/config/argparsing.py-382-        if conflict:
+src/_pytest/config/argparsing.py:383:            raise ValueError(f"option names {conflict} already added")
+src/_pytest/config/argparsing.py-384-        option = Argument(*opts, **attrs)
+src/_pytest/config/argparsing.py-385-        self._addoption_instance(option, shortupper=False)
+--
+src/_pytest/config/argparsing.py-393-            for opt in option._short_opts:
+src/_pytest/config/argparsing.py-394-                if opt[0] == "-" and opt[1].islower():
+src/_pytest/config/argparsing.py:395:                    raise ValueError("lowercase shortoptions reserved")
+src/_pytest/config/argparsing.py-396-        if self.parser:
+src/_pytest/config/argparsing.py-397-            self.parser.processoption(option)
+--
+src/_pytest/config/argparsing.py-426-            msg = f"{msg} ({self._parser._config_source_hint})"
+src/_pytest/config/argparsing.py-427-
+src/_pytest/config/argparsing.py:428:        raise UsageError(self.format_usage() + msg)
+src/_pytest/config/argparsing.py-429-
+src/_pytest/config/argparsing.py-430-    # Type ignored because typeshed has a very complex type in the superclass.
+--
+src/_pytest/config/argparsing.py-519-                continue
+src/_pytest/config/argparsing.py-520-            if not option.startswith("--"):
+src/_pytest/config/argparsing.py:521:                raise ArgumentError(
+src/_pytest/config/argparsing.py-522-                    f'long optional argument without "--": [{option}]', option
+src/_pytest/config/argparsing.py-523-                )
+--
+src/_pytest/config/compat.py-26-def _check_path(path: Path, fspath: LEGACY_PATH) -> None:
+src/_pytest/config/compat.py-27-    if Path(fspath) != path:
+src/_pytest/config/compat.py:28:        raise ValueError(
+src/_pytest/config/compat.py-29-            f"Path({fspath!r}) != {path!r}\n"
+src/_pytest/config/compat.py-30-            "if both path and fspath are given they need to be equal"
+--
+src/_pytest/config/findpaths.py-25-        return iniconfig.IniConfig(str(path))
+src/_pytest/config/findpaths.py-26-    except iniconfig.ParseError as exc:
+src/_pytest/config/findpaths.py:27:        raise UsageError(str(exc)) from exc
+src/_pytest/config/findpaths.py-28-
+src/_pytest/config/findpaths.py-29-
+--
+src/_pytest/config/findpaths.py-53-            return dict(iniconfig["tool:pytest"].items())
+src/_pytest/config/findpaths.py-54-        elif "pytest" in iniconfig.sections:
+src/_pytest/config/findpaths.py:55:            # If a setup.cfg contains a "[pytest]" section, we raise a failure to indicate users that
+src/_pytest/config/findpaths.py-56-            # plain "[pytest]" sections in setup.cfg files is no longer supported (#3086).
+src/_pytest/config/findpaths.py-57-            fail(CFG_PYTEST_SECTION.format(filename="setup.cfg"), pytrace=False)
+--
+src/_pytest/config/findpaths.py-68-            config = tomllib.loads(toml_text)
+src/_pytest/config/findpaths.py-69-        except tomllib.TOMLDecodeError as exc:
+src/_pytest/config/findpaths.py:70:            raise UsageError(f"{filepath}: {exc}") from exc
+src/_pytest/config/findpaths.py-71-
+src/_pytest/config/findpaths.py-72-        result = config.get("tool", {}).get("pytest", {}).get("ini_options", None)
+--
+src/_pytest/config/findpaths.py-214-        rootdir = absolutepath(os.path.expandvars(rootdir_cmd_arg))
+src/_pytest/config/findpaths.py-215-        if not rootdir.is_dir():
+src/_pytest/config/findpaths.py:216:            raise UsageError(
+src/_pytest/config/findpaths.py-217-                f"Directory '{rootdir}' not found. Check your '--rootdir' option."
+src/_pytest/config/findpaths.py-218-            )
+--
+src/_pytest/debugging.py-33-        modname, classname = value.split(":")
+src/_pytest/debugging.py-34-    except ValueError as e:
+src/_pytest/debugging.py:35:        raise argparse.ArgumentTypeError(
+src/_pytest/debugging.py-36-            f"{value!r} is not in the format 'modname:classname'"
+src/_pytest/debugging.py-37-        ) from e
+--
+src/_pytest/debugging.py-134-            except Exception as exc:
+src/_pytest/debugging.py-135-                value = ":".join((modname, classname))
+src/_pytest/debugging.py:136:                raise UsageError(
+src/_pytest/debugging.py-137-                    f"--pdbcls: could not import {value!r}: {exc}"
+src/_pytest/debugging.py-138-                ) from exc
+--
+src/_pytest/doctest.py-207-                out.append(failure)
+src/_pytest/doctest.py-208-            else:
+src/_pytest/doctest.py:209:                raise failure
+src/_pytest/doctest.py-210-
+src/_pytest/doctest.py-211-        def report_unexpected_exception(
+--
+src/_pytest/doctest.py-217-        ) -> None:
+src/_pytest/doctest.py-218-            if isinstance(exc_info[1], OutcomeException):
+src/_pytest/doctest.py:219:                raise exc_info[1]
+src/_pytest/doctest.py-220-            if isinstance(exc_info[1], bdb.BdbQuit):
+src/_pytest/doctest.py-221-                outcomes.exit("Quitting debugger")
+--
+src/_pytest/doctest.py-224-                out.append(failure)
+src/_pytest/doctest.py-225-            else:
+src/_pytest/doctest.py:226:                raise failure
+src/_pytest/doctest.py-227-
+src/_pytest/doctest.py-228-    return PytestDoctestRunner
+--
+src/_pytest/doctest.py-301-        self.runner.run(self.dtest, out=failures)  # type: ignore[arg-type]
+src/_pytest/doctest.py-302-        if failures:
+src/_pytest/doctest.py:303:            raise MultipleDoctestFailures(failures)
+src/_pytest/doctest.py-304-
+src/_pytest/doctest.py-305-    def _disable_output_capturing_for_darwin(self) -> None:
+--
+src/_pytest/faulthandler.py-59-        # by an FD. So, let's also forward this to the same code path as with pytest-xdist.
+src/_pytest/faulthandler.py-60-        if fileno == -1:
+src/_pytest/faulthandler.py:61:            raise AttributeError()
+src/_pytest/faulthandler.py-62-        return fileno
+src/_pytest/faulthandler.py-63-    except (AttributeError, ValueError):
+--
+src/_pytest/fixtures.py-398-    @abc.abstractmethod
+src/_pytest/fixtures.py-399-    def _scope(self) -> Scope:
+src/_pytest/fixtures.py:400:        raise NotImplementedError()
+src/_pytest/fixtures.py-401-
+src/_pytest/fixtures.py-402-    @property
+--
+src/_pytest/fixtures.py-411-        requested_scope: Scope,
+src/_pytest/fixtures.py-412-    ) -> None:
+src/_pytest/fixtures.py:413:        raise NotImplementedError()
+src/_pytest/fixtures.py-414-
+src/_pytest/fixtures.py-415-    @property
+--
+src/_pytest/fixtures.py-424-    def node(self):
+src/_pytest/fixtures.py-425-        """Underlying collection node (depends on current request scope)."""
+src/_pytest/fixtures.py:426:        raise NotImplementedError()
+src/_pytest/fixtures.py-427-
+src/_pytest/fixtures.py-428-    @property
+--
+src/_pytest/fixtures.py-435-        """Test function object if the request has a per-function scope."""
+src/_pytest/fixtures.py-436-        if self.scope != "function":
+src/_pytest/fixtures.py:437:            raise AttributeError(
+src/_pytest/fixtures.py-438-                f"function not available in {self.scope}-scoped context"
+src/_pytest/fixtures.py-439-            )
+--
+src/_pytest/fixtures.py-444-        """Class (can be None) where the test function was collected."""
+src/_pytest/fixtures.py-445-        if self.scope not in ("class", "function"):
+src/_pytest/fixtures.py:446:            raise AttributeError(f"cls not available in {self.scope}-scoped context")
+src/_pytest/fixtures.py-447-        clscol = self._pyfuncitem.getparent(_pytest.python.Class)
+src/_pytest/fixtures.py-448-        if clscol:
+--
+src/_pytest/fixtures.py-460-        """Python module object where the test function was collected."""
+src/_pytest/fixtures.py-461-        if self.scope not in ("function", "class", "module"):
+src/_pytest/fixtures.py:462:            raise AttributeError(f"module not available in {self.scope}-scoped context")
+src/_pytest/fixtures.py-463-        mod = self._pyfuncitem.getparent(_pytest.python.Module)
+src/_pytest/fixtures.py-464-        assert mod is not None
+--
+src/_pytest/fixtures.py-469-        """Path where the test function was collected."""
+src/_pytest/fixtures.py-470-        if self.scope not in ("function", "class", "module", "package"):
+src/_pytest/fixtures.py:471:            raise AttributeError(f"path not available in {self.scope}-scoped context")
+src/_pytest/fixtures.py-472-        return self._pyfuncitem.path
+src/_pytest/fixtures.py-473-
+--
+src/_pytest/fixtures.py-487-        """Add finalizer/teardown function to be called without arguments after
+src/_pytest/fixtures.py-488-        the last test within the requesting test context finished execution."""
+src/_pytest/fixtures.py:489:        raise NotImplementedError()
+src/_pytest/fixtures.py-490-
+src/_pytest/fixtures.py-491-    def applymarker(self, marker: str | MarkDecorator) -> None:
+--
+src/_pytest/fixtures.py-506-            An optional custom error message.
+src/_pytest/fixtures.py-507-        """
+src/_pytest/fixtures.py:508:        raise FixtureLookupError(None, self, msg)
+src/_pytest/fixtures.py-509-
+src/_pytest/fixtures.py-510-    def getfixturevalue(self, argname: str) -> Any:
+--
+src/_pytest/fixtures.py-572-        # No fixtures defined with this name.
+src/_pytest/fixtures.py-573-        if fixturedefs is None:
+src/_pytest/fixtures.py:574:            raise FixtureLookupError(argname, self)
+src/_pytest/fixtures.py-575-        # The are no fixtures with this name applicable for the function.
+src/_pytest/fixtures.py-576-        if not fixturedefs:
+src/_pytest/fixtures.py:577:            raise FixtureLookupError(argname, self)
+src/_pytest/fixtures.py-578-        # A fixture may override another fixture with the same name, e.g. a
+src/_pytest/fixtures.py-579-        # fixture in a module can override a fixture in a conftest, a fixture in
+--
+src/_pytest/fixtures.py-591-        # If already consumed all of the available levels, fail.
+src/_pytest/fixtures.py-592-        if -index > len(fixturedefs):
+src/_pytest/fixtures.py:593:            raise FixtureLookupError(argname, self)
+src/_pytest/fixtures.py-594-        fixturedef = fixturedefs[index]
+src/_pytest/fixtures.py-595-
+--
+src/_pytest/fixtures.py-807-        msg = self.msg
+src/_pytest/fixtures.py-808-        if msg is not None:
+src/_pytest/fixtures.py:809:            # The last fixture raise an error, let's present
+src/_pytest/fixtures.py-810-            # it at the requesting side.
+src/_pytest/fixtures.py-811-            stack = stack[:-1]
+--
+src/_pytest/fixtures.py-891-            fixture_result = next(generator)
+src/_pytest/fixtures.py-892-        except StopIteration:
+src/_pytest/fixtures.py:893:            raise ValueError(f"{request.fixturename} did not yield a value") from None
+src/_pytest/fixtures.py-894-        finalizer = functools.partial(_teardown_yield_fixture, fixturefunc, generator)
+src/_pytest/fixtures.py-895-        request.addfinalizer(finalizer)
+--
+src/_pytest/fixtures.py-928-        result = scope_callable(fixture_name=fixture_name, config=config)  # type: ignore[call-arg]
+src/_pytest/fixtures.py-929-    except Exception as e:
+src/_pytest/fixtures.py:930:        raise TypeError(
+src/_pytest/fixtures.py-931-            f"Error evaluating {scope_callable} while defining fixture '{fixture_name}'.\n"
+src/_pytest/fixtures.py-932-            "Expected a function with the signature (*, fixture_name, config)"
+--
+src/_pytest/fixtures.py-1030-        self._finalizers.clear()
+src/_pytest/fixtures.py-1031-        if len(exceptions) == 1:
+src/_pytest/fixtures.py:1032:            raise exceptions[0]
+src/_pytest/fixtures.py-1033-        elif len(exceptions) > 1:
+src/_pytest/fixtures.py-1034-            msg = f'errors while tearing down fixture "{self.argname}" of {node}'
+src/_pytest/fixtures.py:1035:            raise BaseExceptionGroup(msg, exceptions[::-1])
+src/_pytest/fixtures.py-1036-
+src/_pytest/fixtures.py-1037-    def execute(self, request: SubRequest) -> FixtureValue:
+--
+src/_pytest/fixtures.py-1069-                if self.cached_result[2] is not None:
+src/_pytest/fixtures.py-1070-                    exc, exc_tb = self.cached_result[2]
+src/_pytest/fixtures.py:1071:                    raise exc.with_traceback(exc_tb)
+src/_pytest/fixtures.py-1072-                else:
+src/_pytest/fixtures.py-1073-                    result = self.cached_result[0]
+--
+src/_pytest/fixtures.py-1155-    fixture_marker: FixtureFunctionMarker,
+src/_pytest/fixtures.py-1156-) -> FixtureFunction:
+src/_pytest/fixtures.py:1157:    """Wrap the given fixture function so we can raise an error about it being called directly,
+src/_pytest/fixtures.py-1158-    instead of used as an argument in a test function."""
+src/_pytest/fixtures.py-1159-    name = fixture_marker.name or function.__name__
+--
+src/_pytest/fixtures.py-1192-    def __call__(self, function: FixtureFunction) -> FixtureFunction:
+src/_pytest/fixtures.py-1193-        if inspect.isclass(function):
+src/_pytest/fixtures.py:1194:            raise ValueError("class fixtures not supported (maybe in the future)")
+src/_pytest/fixtures.py-1195-
+src/_pytest/fixtures.py-1196-        if getattr(function, "_pytestfixturefunction", False):
+src/_pytest/fixtures.py:1197:            raise ValueError(
+src/_pytest/fixtures.py-1198-                f"@pytest.fixture is being applied more than once to the same function {function.__name__!r}"
+src/_pytest/fixtures.py-1199-            )
+--
+src/_pytest/fixtures.py-1589-            fixture_defs = metafunc._arg2fixturedefs.get(argname)
+src/_pytest/fixtures.py-1590-            if not fixture_defs:
+src/_pytest/fixtures.py:1591:                # Will raise FixtureLookupError at setup time if not parametrized somewhere
+src/_pytest/fixtures.py-1592-                # else (e.g @pytest.mark.parametrize)
+src/_pytest/fixtures.py-1593-                continue
+--
+src/_pytest/fixtures.py-1687-        node_or_obj: nodes.Node,
+src/_pytest/fixtures.py-1688-    ) -> None:
+src/_pytest/fixtures.py:1689:        raise NotImplementedError()
+src/_pytest/fixtures.py-1690-
+src/_pytest/fixtures.py-1691-    @overload
+--
+src/_pytest/fixtures.py-1695-        nodeid: str | None,
+src/_pytest/fixtures.py-1696-    ) -> None:
+src/_pytest/fixtures.py:1697:        raise NotImplementedError()
+src/_pytest/fixtures.py-1698-
+src/_pytest/fixtures.py-1699-    def parsefactories(
+--
+src/_pytest/helpconfig.py-18-
+src/_pytest/helpconfig.py-19-class HelpAction(Action):
+src/_pytest/helpconfig.py:20:    """An argparse Action that will raise an exception in order to skip the
+src/_pytest/helpconfig.py-21-    rest of the argument parsing when --help is passed.
+src/_pytest/helpconfig.py-22-
+--
+src/_pytest/helpconfig.py-42-        # We should only skip the rest of the parsing after preparse is done.
+src/_pytest/helpconfig.py-43-        if getattr(parser._parser, "after_preparse", False):
+src/_pytest/helpconfig.py:44:            raise PrintHelp
+src/_pytest/helpconfig.py-45-
+src/_pytest/helpconfig.py-46-
+--
+src/_pytest/helpconfig.py-183-            type = "string"
+src/_pytest/helpconfig.py-184-        if help is None:
+src/_pytest/helpconfig.py:185:            raise TypeError(f"help argument cannot be None for {name}")
+src/_pytest/helpconfig.py-186-        spec = f"{name} ({type}):"
+src/_pytest/helpconfig.py-187-        tw.write(f"  {spec}")
+--
+src/_pytest/junitxml.py-70-        for kr, vr in right.items():
+src/_pytest/junitxml.py-71-            if not isinstance(vl, list):
+src/_pytest/junitxml.py:72:                raise TypeError(type(vl))
+src/_pytest/junitxml.py-73-            result[kl] = vl + vr
+src/_pytest/junitxml.py-74-    left.update(result)
+--
+src/_pytest/junitxml.py-335-    if not isinstance(v, str):
+src/_pytest/junitxml.py-336-        msg = "{param} parameter needs to be a string, but {g} given"  # type: ignore[unreachable]
+src/_pytest/junitxml.py:337:        raise TypeError(msg.format(param=param, g=type(v).__name__))
+src/_pytest/junitxml.py-338-
+src/_pytest/junitxml.py-339-
+--
+src/_pytest/legacypath.py-398-        return [legacy_path(str(dp / x)) for x in input_values]
+src/_pytest/legacypath.py-399-    else:
+src/_pytest/legacypath.py:400:        raise ValueError(f"unknown configuration type: {type}", value)
+src/_pytest/legacypath.py-401-
+src/_pytest/legacypath.py-402-
+--
+src/_pytest/logging.py-400-            # to stderr with the call stack and some extra details.
+src/_pytest/logging.py-401-            # pytest wants to make such mistakes visible during testing.
+src/_pytest/logging.py:402:            raise  # noqa: PLE0704
+src/_pytest/logging.py-403-
+src/_pytest/logging.py-404-
+--
+src/_pytest/logging.py-628-    except ValueError as e:
+src/_pytest/logging.py-629-        # Python logging does not recognise this as a logging level
+src/_pytest/logging.py:630:        raise UsageError(
+src/_pytest/logging.py-631-            f"'{log_level}' is not recognized as a logging level name for "
+src/_pytest/logging.py-632-            f"'{setting_name}'. Please consider passing the "
+--
+src/_pytest/main.py-115-        action="store_true",
+src/_pytest/main.py-116-        help="Any warnings encountered while parsing the `pytest` section of the "
+src/_pytest/main.py:117:        "configuration file raise errors",
+src/_pytest/main.py-118-    )
+src/_pytest/main.py-119-    group._addoption(
+--
+src/_pytest/main.py-121-        action="store_true",
+src/_pytest/main.py-122-        help="Markers not registered in the `markers` section of the configuration "
+src/_pytest/main.py:123:        "file raise errors",
+src/_pytest/main.py-124-    )
+src/_pytest/main.py-125-    group._addoption(
+--
+src/_pytest/main.py-249-    # empty path
+src/_pytest/main.py-250-    if not path:
+src/_pytest/main.py:251:        raise argparse.ArgumentTypeError(msg)
+src/_pytest/main.py-252-
+src/_pytest/main.py-253-    def is_ancestor(base: Path, query: Path) -> bool:
+--
+src/_pytest/main.py-259-    # check if path is an ancestor of cwd
+src/_pytest/main.py-260-    if is_ancestor(Path.cwd(), Path(path).absolute()):
+src/_pytest/main.py:261:        raise argparse.ArgumentTypeError(msg)
+src/_pytest/main.py-262-
+src/_pytest/main.py-263-    # check symlinks for ancestors
+src/_pytest/main.py-264-    if is_ancestor(Path.cwd().resolve(), Path(path).resolve()):
+src/_pytest/main.py:265:        raise argparse.ArgumentTypeError(msg)
+src/_pytest/main.py-266-
+src/_pytest/main.py-267-    return path
+--
+src/_pytest/main.py-350-def pytest_runtestloop(session: Session) -> bool:
+src/_pytest/main.py-351-    if session.testsfailed and not session.config.option.continue_on_collection_errors:
+src/_pytest/main.py:352:        raise session.Interrupted(
+src/_pytest/main.py-353-            "%d error%s during collection"
+src/_pytest/main.py-354-            % (session.testsfailed, "s" if session.testsfailed != 1 else "")
+--
+src/_pytest/main.py-362-        item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+src/_pytest/main.py-363-        if session.shouldfail:
+src/_pytest/main.py:364:            raise session.Failed(session.shouldfail)
+src/_pytest/main.py-365-        if session.shouldstop:
+src/_pytest/main.py:366:            raise session.Interrupted(session.shouldstop)
+src/_pytest/main.py-367-    return True
+src/_pytest/main.py-368-
+--
+src/_pytest/main.py-646-    def pytest_collectstart(self) -> None:
+src/_pytest/main.py-647-        if self.shouldfail:
+src/_pytest/main.py:648:            raise self.Failed(self.shouldfail)
+src/_pytest/main.py-649-        if self.shouldstop:
+src/_pytest/main.py:650:            raise self.Interrupted(self.shouldstop)
+src/_pytest/main.py-651-
+src/_pytest/main.py-652-    @hookimpl(tryfirst=True)
+--
+src/_pytest/main.py-800-                        errors.append(f"found no collectors for {arg}")
+src/_pytest/main.py-801-
+src/_pytest/main.py:802:                raise UsageError(*errors)
+src/_pytest/main.py-803-
+src/_pytest/main.py-804-            if not genitems:
+--
+src/_pytest/main.py-1037-        )
+src/_pytest/main.py-1038-
+src/_pytest/main.py:1039:    If the path doesn't exist, raise UsageError.
+src/_pytest/main.py:1040:    If the path is a directory and selection parts are present, raise UsageError.
+src/_pytest/main.py-1041-    """
+src/_pytest/main.py-1042-    base, squacket, rest = str(arg).partition("[")
+--
+src/_pytest/main.py-1058-            else "file or directory not found: {arg}"
+src/_pytest/main.py-1059-        )
+src/_pytest/main.py:1060:        raise UsageError(msg.format(arg=arg))
+src/_pytest/main.py-1061-    if parts and fspath.is_dir():
+src/_pytest/main.py-1062-        msg = (
+--
+src/_pytest/main.py-1065-            else "directory argument cannot contain :: selection parts: {arg}"
+src/_pytest/main.py-1066-        )
+src/_pytest/main.py:1067:        raise UsageError(msg.format(arg=arg))
+src/_pytest/main.py-1068-    return CollectionArgument(
+src/_pytest/main.py-1069-        path=fspath,
+--
+src/_pytest/mark/__init__.py-187-    def __call__(self, subname: str, /, **kwargs: str | int | bool | None) -> bool:
+src/_pytest/mark/__init__.py-188-        if kwargs:
+src/_pytest/mark/__init__.py:189:            raise UsageError("Keyword expressions do not support call parameters.")
+src/_pytest/mark/__init__.py-190-        subname = subname.lower()
+src/_pytest/mark/__init__.py-191-        names = (name.lower() for name in self._names)
+--
+src/_pytest/mark/__init__.py-268-        return Expression.compile(expr)
+src/_pytest/mark/__init__.py-269-    except ParseError as e:
+src/_pytest/mark/__init__.py:270:        raise UsageError(f"{exc_message}: {expr}: {e}") from None
+src/_pytest/mark/__init__.py-271-
+src/_pytest/mark/__init__.py-272-
+--
+src/_pytest/mark/__init__.py-283-
+src/_pytest/mark/__init__.py-284-    if empty_parameterset not in ("skip", "xfail", "fail_at_collect", None, ""):
+src/_pytest/mark/__init__.py:285:        raise UsageError(
+src/_pytest/mark/__init__.py-286-            f"{EMPTY_PARAMETERSET_OPTION!s} must be one of skip, xfail or fail_at_collect"
+src/_pytest/mark/__init__.py-287-            f" but it is {empty_parameterset!r}"
+--
+src/_pytest/mark/expression.py-107-                end_quote_pos = input.find(quote_char, pos + 1)
+src/_pytest/mark/expression.py-108-                if end_quote_pos == -1:
+src/_pytest/mark/expression.py:109:                    raise ParseError(
+src/_pytest/mark/expression.py-110-                        pos + 1,
+src/_pytest/mark/expression.py-111-                        f'closing quote "{quote_char}" is missing',
+--
+src/_pytest/mark/expression.py-113-                value = input[pos : end_quote_pos + 1]
+src/_pytest/mark/expression.py-114-                if (backslash_pos := input.find("\\")) != -1:
+src/_pytest/mark/expression.py:115:                    raise ParseError(
+src/_pytest/mark/expression.py-116-                        backslash_pos + 1,
+src/_pytest/mark/expression.py-117-                        r'escaping with "\" not supported in marker expression',
+--
+src/_pytest/mark/expression.py-133-                    pos += len(value)
+src/_pytest/mark/expression.py-134-                else:
+src/_pytest/mark/expression.py:135:                    raise ParseError(
+src/_pytest/mark/expression.py-136-                        pos + 1,
+src/_pytest/mark/expression.py-137-                        f'unexpected character "{input[pos]}"',
+--
+src/_pytest/mark/expression.py-158-
+src/_pytest/mark/expression.py-159-    def reject(self, expected: Sequence[TokenType]) -> NoReturn:
+src/_pytest/mark/expression.py:160:        raise ParseError(
+src/_pytest/mark/expression.py-161-            self.current.pos + 1,
+src/_pytest/mark/expression.py-162-            "expected {}; got {}".format(
+--
+src/_pytest/mark/expression.py-224-    keyword_name = s.accept(TokenType.IDENT, reject=True)
+src/_pytest/mark/expression.py-225-    if not keyword_name.value.isidentifier():
+src/_pytest/mark/expression.py:226:        raise ParseError(
+src/_pytest/mark/expression.py-227-            keyword_name.pos + 1,
+src/_pytest/mark/expression.py-228-            f"not a valid python identifier {keyword_name.value}",
+src/_pytest/mark/expression.py-229-        )
+src/_pytest/mark/expression.py-230-    if keyword.iskeyword(keyword_name.value):
+src/_pytest/mark/expression.py:231:        raise ParseError(
+src/_pytest/mark/expression.py-232-            keyword_name.pos + 1,
+src/_pytest/mark/expression.py-233-            f"unexpected reserved python keyword `{keyword_name.value}`",
+--
+src/_pytest/mark/expression.py-248-            value = BUILTIN_MATCHERS[value_token.value]
+src/_pytest/mark/expression.py-249-        else:
+src/_pytest/mark/expression.py:250:            raise ParseError(
+src/_pytest/mark/expression.py-251-                value_token.pos + 1,
+src/_pytest/mark/expression.py-252-                f'unexpected character/s "{value_token.value}"',
+--
+src/_pytest/mark/expression.py-290-
+src/_pytest/mark/expression.py-291-    def __iter__(self) -> Iterator[str]:
+src/_pytest/mark/expression.py:292:        raise NotImplementedError()
+src/_pytest/mark/expression.py-293-
+src/_pytest/mark/expression.py-294-    def __len__(self) -> int:
+src/_pytest/mark/expression.py:295:        raise NotImplementedError()
+src/_pytest/mark/expression.py-296-
+src/_pytest/mark/expression.py-297-
+--
+src/_pytest/mark/structures.py-65-        f_name = func.__name__
+src/_pytest/mark/structures.py-66-        _, lineno = getfslineno(func)
+src/_pytest/mark/structures.py:67:        raise Collector.CollectError(
+src/_pytest/mark/structures.py-68-            "Empty parameter set in '%s' at line %d" % (f_name, lineno + 1)
+src/_pytest/mark/structures.py-69-        )
+src/_pytest/mark/structures.py-70-    else:
+src/_pytest/mark/structures.py:71:        raise LookupError(requested_mark)
+src/_pytest/mark/structures.py-72-    return mark
+src/_pytest/mark/structures.py-73-
+--
+src/_pytest/mark/structures.py-92-        if id is not None:
+src/_pytest/mark/structures.py-93-            if not isinstance(id, str):
+src/_pytest/mark/structures.py:94:                raise TypeError(f"Expected id to be a string, got {type(id)}: {id!r}")
+src/_pytest/mark/structures.py-95-            id = ascii_escaped(id)
+src/_pytest/mark/structures.py-96-        return cls(values, marks, id)
+--
+src/_pytest/mark/structures.py-405-        mark_obj = getattr(mark, "mark", mark)
+src/_pytest/mark/structures.py-406-        if not isinstance(mark_obj, Mark):
+src/_pytest/mark/structures.py:407:            raise TypeError(f"got {mark_obj!r} instead of Mark")
+src/_pytest/mark/structures.py-408-        yield mark_obj
+src/_pytest/mark/structures.py-409-
+--
+src/_pytest/mark/structures.py-516-        """Generate a new :class:`MarkDecorator` with the given name."""
+src/_pytest/mark/structures.py-517-        if name[0] == "_":
+src/_pytest/mark/structures.py:518:            raise AttributeError("Marker name must NOT start with underscore")
+src/_pytest/mark/structures.py-519-
+src/_pytest/mark/structures.py-520-        if self._config is not None:
+--
+src/_pytest/mark/structures.py-597-
+src/_pytest/mark/structures.py-598-    def __delitem__(self, key: str) -> None:
+src/_pytest/mark/structures.py:599:        raise ValueError("cannot delete key in keywords dict")
+src/_pytest/mark/structures.py-600-
+src/_pytest/mark/structures.py-601-    def __iter__(self) -> Iterator[str]:
+--
+src/_pytest/monkeypatch.py-81-                raise
+src/_pytest/monkeypatch.py-82-            else:
+src/_pytest/monkeypatch.py:83:                raise ImportError(f"import error in {used}: {ex}") from ex
+src/_pytest/monkeypatch.py-84-        found = annotated_getattr(found, part, used)
+src/_pytest/monkeypatch.py-85-    return found
+--
+src/_pytest/monkeypatch.py-90-        obj = getattr(obj, name)
+src/_pytest/monkeypatch.py-91-    except AttributeError as e:
+src/_pytest/monkeypatch.py:92:        raise AttributeError(
+src/_pytest/monkeypatch.py-93-            f"{type(obj).__name__!r} object at {ann} has no attribute {name!r}"
+src/_pytest/monkeypatch.py-94-        ) from e
+--
+src/_pytest/monkeypatch.py-98-def derive_importpath(import_path: str, raising: bool) -> tuple[str, object]:
+src/_pytest/monkeypatch.py-99-    if not isinstance(import_path, str) or "." not in import_path:
+src/_pytest/monkeypatch.py:100:        raise TypeError(f"must be absolute import path string, not {import_path!r}")
+src/_pytest/monkeypatch.py-101-    module, attr = import_path.rsplit(".", 1)
+src/_pytest/monkeypatch.py-102-    target = resolve(module)
+--
+src/_pytest/monkeypatch.py-226-        if isinstance(value, Notset):
+src/_pytest/monkeypatch.py-227-            if not isinstance(target, str):
+src/_pytest/monkeypatch.py:228:                raise TypeError(
+src/_pytest/monkeypatch.py-229-                    "use setattr(target, name, value) or "
+src/_pytest/monkeypatch.py-230-                    "setattr(target, value) with target being a dotted "
+--
+src/_pytest/monkeypatch.py-235-        else:
+src/_pytest/monkeypatch.py-236-            if not isinstance(name, str):
+src/_pytest/monkeypatch.py:237:                raise TypeError(
+src/_pytest/monkeypatch.py-238-                    "use setattr(target, name, value) with name being a string or "
+src/_pytest/monkeypatch.py-239-                    "setattr(target, value) with target being a dotted "
+--
+src/_pytest/monkeypatch.py-243-        oldval = getattr(target, name, notset)
+src/_pytest/monkeypatch.py-244-        if raising and oldval is notset:
+src/_pytest/monkeypatch.py:245:            raise AttributeError(f"{target!r} has no attribute {name!r}")
+src/_pytest/monkeypatch.py-246-
+src/_pytest/monkeypatch.py-247-        # avoid class descriptors like staticmethod/classmethod
+--
+src/_pytest/monkeypatch.py-271-        if isinstance(name, Notset):
+src/_pytest/monkeypatch.py-272-            if not isinstance(target, str):
+src/_pytest/monkeypatch.py:273:                raise TypeError(
+src/_pytest/monkeypatch.py-274-                    "use delattr(target, name) or "
+src/_pytest/monkeypatch.py-275-                    "delattr(target) with target being a dotted "
+--
+src/_pytest/monkeypatch.py-280-        if not hasattr(target, name):
+src/_pytest/monkeypatch.py-281-            if raising:
+src/_pytest/monkeypatch.py:282:                raise AttributeError(name)
+src/_pytest/monkeypatch.py-283-        else:
+src/_pytest/monkeypatch.py-284-            oldval = getattr(target, name, notset)
+--
+src/_pytest/monkeypatch.py-303-        if name not in dic:
+src/_pytest/monkeypatch.py-304-            if raising:
+src/_pytest/monkeypatch.py:305:                raise KeyError(name)
+src/_pytest/monkeypatch.py-306-        else:
+src/_pytest/monkeypatch.py-307-            self._setitem.append((dic, name, dic.get(name, notset)))
+--
+src/_pytest/nodes.py-175-        else:
+src/_pytest/nodes.py-176-            if not parent:
+src/_pytest/nodes.py:177:                raise TypeError("config or parent must be provided")
+src/_pytest/nodes.py-178-            self.config = parent.config
+src/_pytest/nodes.py-179-
+--
+src/_pytest/nodes.py-183-        else:
+src/_pytest/nodes.py-184-            if not parent:
+src/_pytest/nodes.py:185:                raise TypeError("session or parent must be provided")
+src/_pytest/nodes.py-186-            self.session = parent.session
+src/_pytest/nodes.py-187-
+--
+src/_pytest/nodes.py-206-        else:
+src/_pytest/nodes.py-207-            if not self.parent:
+src/_pytest/nodes.py:208:                raise TypeError("nodeid or parent must be provided")
+src/_pytest/nodes.py-209-            self._nodeid = self.parent.nodeid + "::" + self.name
+src/_pytest/nodes.py-210-
+--
+src/_pytest/nodes.py-228-        """
+src/_pytest/nodes.py-229-        if "config" in kw:
+src/_pytest/nodes.py:230:            raise TypeError("config is not a valid argument for from_parent")
+src/_pytest/nodes.py-231-        if "session" in kw:
+src/_pytest/nodes.py:232:            raise TypeError("session is not a valid argument for from_parent")
+src/_pytest/nodes.py-233-        return cls._create(parent=parent, **kw)
+src/_pytest/nodes.py-234-
+--
+src/_pytest/nodes.py-264-        # enforce type checks here to avoid getting a generic type error later otherwise.
+src/_pytest/nodes.py-265-        if not isinstance(warning, Warning):
+src/_pytest/nodes.py:266:            raise ValueError(
+src/_pytest/nodes.py-267-                f"warning must be an instance of Warning or subclass, got {warning!r}"
+src/_pytest/nodes.py-268-            )
+--
+src/_pytest/nodes.py-329-            marker_ = getattr(MARK_GEN, marker)
+src/_pytest/nodes.py-330-        else:
+src/_pytest/nodes.py:331:            raise ValueError("is not a string or pytest.mark.* Marker")
+src/_pytest/nodes.py-332-        self.keywords[marker_.name] = marker_
+src/_pytest/nodes.py-333-        if append:
+--
+src/_pytest/nodes.py-510-    def collect(self) -> Iterable[Item | Collector]:
+src/_pytest/nodes.py-511-        """Collect children (items and collectors) for this collector."""
+src/_pytest/nodes.py:512:        raise NotImplementedError("abstract")
+src/_pytest/nodes.py-513-
+src/_pytest/nodes.py-514-    # TODO: This omits the style= parameter which breaks Liskov Substitution.
+--
+src/_pytest/nodes.py-721-        .. seealso:: :ref:`non-python tests`
+src/_pytest/nodes.py-722-        """
+src/_pytest/nodes.py:723:        raise NotImplementedError("runtest must be implemented by Item subclass")
+src/_pytest/nodes.py-724-
+src/_pytest/nodes.py-725-    def add_report_section(self, when: str, key: str, content: str) -> None:
+--
+src/_pytest/outcomes.py-26-                "Perhaps you meant to use a mark?"
+src/_pytest/outcomes.py-27-            )
+src/_pytest/outcomes.py:28:            raise TypeError(error_msg.format(type(self).__name__, type(msg).__name__))
+src/_pytest/outcomes.py-29-        super().__init__(msg)
+src/_pytest/outcomes.py-30-        self.msg = msg
+--
+src/_pytest/outcomes.py-121-    """
+src/_pytest/outcomes.py-122-    __tracebackhide__ = True
+src/_pytest/outcomes.py:123:    raise Exit(reason, returncode)
+src/_pytest/outcomes.py-124-
+src/_pytest/outcomes.py-125-
+--
+src/_pytest/outcomes.py-158-    """
+src/_pytest/outcomes.py-159-    __tracebackhide__ = True
+src/_pytest/outcomes.py:160:    raise Skipped(msg=reason, allow_module_level=allow_module_level)
+src/_pytest/outcomes.py-161-
+src/_pytest/outcomes.py-162-
+--
+src/_pytest/outcomes.py-176-    """
+src/_pytest/outcomes.py-177-    __tracebackhide__ = True
+src/_pytest/outcomes.py:178:    raise Failed(msg=reason, pytrace=pytrace)
+src/_pytest/outcomes.py-179-
+src/_pytest/outcomes.py-180-
+--
+src/_pytest/outcomes.py-204-    """
+src/_pytest/outcomes.py-205-    __tracebackhide__ = True
+src/_pytest/outcomes.py:206:    raise XFailed(reason)
+src/_pytest/outcomes.py-207-
+src/_pytest/outcomes.py-208-
+--
+src/_pytest/outcomes.py-231-        If the module can be imported but raises :class:`ImportError`, pytest will
+src/_pytest/outcomes.py-232-        issue a warning to the user, as often users expect the module not to be
+src/_pytest/outcomes.py:233:        found (which would raise :class:`ModuleNotFoundError` instead).
+src/_pytest/outcomes.py-234-
+src/_pytest/outcomes.py-235-        This warning can be suppressed by passing ``exc_type=ImportError`` explicitly.
+--
+src/_pytest/outcomes.py-281-            __import__(modname)
+src/_pytest/outcomes.py-282-        except exc_type as exc:
+src/_pytest/outcomes.py:283:            # Do not raise or issue warnings inside the catch_warnings() block.
+src/_pytest/outcomes.py-284-            if reason is None:
+src/_pytest/outcomes.py-285-                reason = f"could not import {modname!r}: {exc}"
+--
+src/_pytest/outcomes.py-301-        warnings.warn(warning, stacklevel=2)
+src/_pytest/outcomes.py-302-    if skipped:
+src/_pytest/outcomes.py:303:        raise skipped
+src/_pytest/outcomes.py-304-
+src/_pytest/outcomes.py-305-    mod = sys.modules[modname]
+--
+src/_pytest/outcomes.py-312-
+src/_pytest/outcomes.py-313-        if verattr is None or Version(verattr) < Version(minversion):
+src/_pytest/outcomes.py:314:            raise Skipped(
+src/_pytest/outcomes.py-315-                f"module {modname!r} has __version__ {verattr!r}, required is: {minversion!r}",
+src/_pytest/outcomes.py-316-                allow_module_level=True,
+--
+src/_pytest/pathlib.py-233-            return new_path
+src/_pytest/pathlib.py-234-    else:
+src/_pytest/pathlib.py:235:        raise OSError(
+src/_pytest/pathlib.py-236-            "could not create numbered dir with prefix "
+src/_pytest/pathlib.py-237-            f"{prefix} in {root} after 10 tries"
+--
+src/_pytest/pathlib.py-245-        fd = os.open(str(lock_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
+src/_pytest/pathlib.py-246-    except FileExistsError as e:
+src/_pytest/pathlib.py:247:        raise OSError(f"cannot create lockfile in {p}") from e
+src/_pytest/pathlib.py-248-    else:
+src/_pytest/pathlib.py-249-        pid = os.getpid()
+--
+src/_pytest/pathlib.py-252-        os.close(fd)
+src/_pytest/pathlib.py-253-        if not lock_path.is_file():
+src/_pytest/pathlib.py:254:            raise OSError("lock path got renamed after successful creation")
+src/_pytest/pathlib.py-255-        return lock_path
+src/_pytest/pathlib.py-256-
+--
+src/_pytest/pathlib.py-400-            return p
+src/_pytest/pathlib.py-401-    assert e is not None
+src/_pytest/pathlib.py:402:    raise e
+src/_pytest/pathlib.py-403-
+src/_pytest/pathlib.py-404-
+--
+src/_pytest/pathlib.py-526-
+src/_pytest/pathlib.py-527-    if not path.exists():
+src/_pytest/pathlib.py:528:        raise ImportError(path)
+src/_pytest/pathlib.py-529-
+src/_pytest/pathlib.py-530-    if mode is ImportMode.importlib:
+--
+src/_pytest/pathlib.py-558-        )
+src/_pytest/pathlib.py-559-        if mod is None:
+src/_pytest/pathlib.py:560:            raise ImportError(f"Can't find module {module_name} at location {path}")
+src/_pytest/pathlib.py-561-        return mod
+src/_pytest/pathlib.py-562-
+--
+src/_pytest/pathlib.py-590-        module_file = mod.__file__
+src/_pytest/pathlib.py-591-        if module_file is None:
+src/_pytest/pathlib.py:592:            raise ImportPathMismatchError(module_name, module_file, path)
+src/_pytest/pathlib.py-593-
+src/_pytest/pathlib.py-594-        if module_file.endswith((".pyc", ".pyo")):
+--
+src/_pytest/pathlib.py-603-
+src/_pytest/pathlib.py-604-        if not is_same:
+src/_pytest/pathlib.py:605:            raise ImportPathMismatchError(module_name, module_file, path)
+src/_pytest/pathlib.py-606-
+src/_pytest/pathlib.py-607-    return mod
+--
+src/_pytest/pathlib.py-742-                try:
+src/_pytest/pathlib.py-743-                    # If sys.meta_path is empty, calling import_module will issue
+src/_pytest/pathlib.py:744:                    # a warning and raise ModuleNotFoundError. To avoid the
+src/_pytest/pathlib.py:745:                    # warning, we check sys.meta_path explicitly and raise the error
+src/_pytest/pathlib.py-746-                    # ourselves to fall back to creating a dummy module.
+src/_pytest/pathlib.py-747-                    if not sys.meta_path:
+src/_pytest/pathlib.py:748:                        raise ModuleNotFoundError
+src/_pytest/pathlib.py-749-                    parent_module = importlib.import_module(parent_module_name)
+src/_pytest/pathlib.py-750-                except ModuleNotFoundError:
+--
+src/_pytest/pathlib.py-822-            return pkg_root, module_name
+src/_pytest/pathlib.py-823-
+src/_pytest/pathlib.py:824:    raise CouldNotResolvePathError(f"Could not resolve for {path}")
+src/_pytest/pathlib.py-825-
+src/_pytest/pathlib.py-826-
+--
+src/_pytest/pytester.py-371-                values.append(rep)
+src/_pytest/pytester.py-372-        if not values:
+src/_pytest/pytester.py:373:            raise ValueError(
+src/_pytest/pytester.py-374-                f"could not find test report matching {inamepart!r}: "
+src/_pytest/pytester.py-375-                "no test reports at all!"
+src/_pytest/pytester.py-376-            )
+src/_pytest/pytester.py-377-        if len(values) > 1:
+src/_pytest/pytester.py:378:            raise ValueError(
+src/_pytest/pytester.py-379-                f"found 2 or more testreports matching {inamepart!r}: {values}"
+src/_pytest/pytester.py-380-            )
+--
+src/_pytest/pytester.py-580-                break
+src/_pytest/pytester.py-581-        else:
+src/_pytest/pytester.py:582:            raise ValueError("Pytest terminal summary report not found")
+src/_pytest/pytester.py-583-
+src/_pytest/pytester.py-584-        to_plural = {
+--
+src/_pytest/pytester.py-759-
+src/_pytest/pytester.py-760-        if ext is None:
+src/_pytest/pytester.py:761:            raise TypeError("ext must not be None")
+src/_pytest/pytester.py-762-
+src/_pytest/pytester.py-763-        if ext and not ext.startswith("."):
+src/_pytest/pytester.py:764:            raise ValueError(
+src/_pytest/pytester.py-765-                f"pytester.makefile expects a file extension, try .{ext} instead of {ext}"
+src/_pytest/pytester.py-766-            )
+--
+src/_pytest/pytester.py-938-        example_dir_ = self._request.config.getini("pytester_example_dir")
+src/_pytest/pytester.py-939-        if example_dir_ is None:
+src/_pytest/pytester.py:940:            raise ValueError("pytester_example_dir is unset, can't copy examples")
+src/_pytest/pytester.py-941-        example_dir: Path = self._request.config.rootpath / example_dir_
+src/_pytest/pytester.py-942-
+--
+src/_pytest/pytester.py-955-                example_path = maybe_file
+src/_pytest/pytester.py-956-            else:
+src/_pytest/pytester.py:957:                raise LookupError(
+src/_pytest/pytester.py-958-                    f"{func_name} can't be found as module or package in {example_dir}"
+src/_pytest/pytester.py-959-                )
+--
+src/_pytest/pytester.py-969-            return result
+src/_pytest/pytester.py-970-        else:
+src/_pytest/pytester.py:971:            raise LookupError(
+src/_pytest/pytester.py-972-                f'example "{example_path}" is not found as a file or directory'
+src/_pytest/pytester.py-973-            )
+--
+src/_pytest/pytester.py-1088-            Extra plugin instances the ``pytest.main()`` instance should use.
+src/_pytest/pytester.py-1089-        :param no_reraise_ctrlc:
+src/_pytest/pytester.py:1090:            Typically we reraise keyboard interrupts from the child run. If
+src/_pytest/pytester.py-1091-            True, the KeyboardInterrupt exception is captured.
+src/_pytest/pytester.py-1092-        """
+--
+src/_pytest/pytester.py-1129-            reprec.ret = ret
+src/_pytest/pytester.py-1130-
+src/_pytest/pytester.py:1131:            # Typically we reraise keyboard interrupts from the child run
+src/_pytest/pytester.py-1132-            # because it's our user requesting interruption of the testing.
+src/_pytest/pytester.py-1133-            if ret == ExitCode.INTERRUPTED and not no_reraise_ctrlc:
+src/_pytest/pytester.py-1134-                calls = reprec.getcalls("pytest_keyboard_interrupt")
+src/_pytest/pytester.py-1135-                if calls and calls[-1].excinfo.type == KeyboardInterrupt:
+src/_pytest/pytester.py:1136:                    raise KeyboardInterrupt()
+src/_pytest/pytester.py-1137-            return reprec
+src/_pytest/pytester.py-1138-        finally:
+--
+src/_pytest/pytester.py-1192-        elif self._method == "subprocess":
+src/_pytest/pytester.py-1193-            return self.runpytest_subprocess(*new_args, **kwargs)
+src/_pytest/pytester.py:1194:        raise RuntimeError(f"Unrecognized runpytest option: {self._method}")
+src/_pytest/pytester.py-1195-
+src/_pytest/pytester.py-1196-    def _ensure_basetemp(
+--
+src/_pytest/pytester.py-1425-                popen.kill()
+src/_pytest/pytester.py-1426-                popen.wait()
+src/_pytest/pytester.py:1427:                raise self.TimeoutExpired(timeout_message)
+src/_pytest/pytester.py-1428-
+src/_pytest/pytester.py-1429-            if timeout is None:
+--
+src/_pytest/pytester.py-1603-            if fnline == line or fnmatch(line, fnline):
+src/_pytest/pytester.py-1604-                return self.lines[i + 1 :]
+src/_pytest/pytester.py:1605:        raise ValueError(f"line {fnline!r} not found in output")
+src/_pytest/pytester.py-1606-
+src/_pytest/pytester.py-1607-    def _log(self, *args) -> None:
+--
+src/_pytest/pytester.py-1672-        """
+src/_pytest/pytester.py-1673-        if not isinstance(lines2, collections.abc.Sequence):
+src/_pytest/pytester.py:1674:            raise TypeError(f"invalid type for lines2: {type(lines2).__name__}")
+src/_pytest/pytester.py-1675-        lines2 = self._getlines(lines2)
+src/_pytest/pytester.py-1676-        lines1 = self.lines[:]
+--
+src/_pytest/python.py-498-        )
+src/_pytest/python.py-499-    except SyntaxError as e:
+src/_pytest/python.py:500:        raise nodes.Collector.CollectError(
+src/_pytest/python.py-501-            ExceptionInfo.from_current().getrepr(style="short")
+src/_pytest/python.py-502-        ) from e
+src/_pytest/python.py-503-    except ImportPathMismatchError as e:
+src/_pytest/python.py:504:        raise nodes.Collector.CollectError(
+src/_pytest/python.py-505-            "import file mismatch:\n"
+src/_pytest/python.py-506-            "imported module {!r} has this __file__ attribute:\n"
+--
+src/_pytest/python.py-521-        )
+src/_pytest/python.py-522-        formatted_tb = str(exc_repr)
+src/_pytest/python.py:523:        raise nodes.Collector.CollectError(
+src/_pytest/python.py-524-            f"ImportError while importing test module '{path}'.\n"
+src/_pytest/python.py-525-            "Hint: make sure your test modules/packages have valid Python names.\n"
+--
+src/_pytest/python.py-530-        if e.allow_module_level:
+src/_pytest/python.py-531-            raise
+src/_pytest/python.py:532:        raise nodes.Collector.CollectError(
+src/_pytest/python.py-533-            "Using pytest.skip outside of a test will skip the entire module. "
+src/_pytest/python.py-534-            "If that's your intention, pass `allow_module_level=True`. "
+--
+src/_pytest/python.py-959-            msg = "error raised while trying to determine id of parameter '{}' at position {}"
+src/_pytest/python.py-960-            msg = prefix + msg.format(argname, idx)
+src/_pytest/python.py:961:            raise ValueError(msg) from e
+src/_pytest/python.py-962-        if id is None:
+src/_pytest/python.py-963-            return None
+--
+src/_pytest/python.py-1057-        for arg, val in zip(argnames, valset):
+src/_pytest/python.py-1058-            if arg in params:
+src/_pytest/python.py:1059:                raise ValueError(f"duplicate parametrization of {arg!r}")
+src/_pytest/python.py-1060-            params[arg] = val
+src/_pytest/python.py-1061-            indices[arg] = param_index
+--
+src/_pytest/python.py-1073-            return self.params[name]
+src/_pytest/python.py-1074-        except KeyError as e:
+src/_pytest/python.py:1075:            raise ValueError(name) from e
+src/_pytest/python.py-1076-
+src/_pytest/python.py-1077-    @property
+--
+src/_pytest/python.py-1367-                iter(ids)
+src/_pytest/python.py-1368-            except TypeError as e:
+src/_pytest/python.py:1369:                raise TypeError("ids must be a callable or an iterable") from e
+src/_pytest/python.py-1370-            num_ids = len(parametersets)
+src/_pytest/python.py-1371-
+--
+src/_pytest/python.py-1675-
+src/_pytest/python.py-1676-    def runtest(self) -> None:
+src/_pytest/python.py:1677:        raise RuntimeError("function definitions are not supposed to be run as tests")
+src/_pytest/python.py-1678-
+src/_pytest/python.py-1679-    setup = runtest
+--
+src/_pytest/python_api.py-78-
+src/_pytest/python_api.py-79-    def __repr__(self) -> str:
+src/_pytest/python_api.py:80:        raise NotImplementedError
+src/_pytest/python_api.py-81-
+src/_pytest/python_api.py-82-    def _repr_compare(self, other_side: Any) -> list[str]:
+--
+src/_pytest/python_api.py-94-    def __bool__(self):
+src/_pytest/python_api.py-95-        __tracebackhide__ = True
+src/_pytest/python_api.py:96:        raise AssertionError(
+src/_pytest/python_api.py-97-            "approx() is not supported in a boolean context.\nDid you mean: `assert a == approx(b)`?"
+src/_pytest/python_api.py-98-        )
+--
+src/_pytest/python_api.py-114-        This is used to implement the `__eq__` method.
+src/_pytest/python_api.py-115-        """
+src/_pytest/python_api.py:116:        raise NotImplementedError
+src/_pytest/python_api.py-117-
+src/_pytest/python_api.py-118-    def _check_type(self) -> None:
+--
+src/_pytest/python_api.py-122-        # a numeric type.  For this reason, the default is to do nothing.  The
+src/_pytest/python_api.py-123-        # classes that deal with sequences should reimplement this method to
+src/_pytest/python_api.py:124:        # raise if there are any non-numeric elements in the sequence.
+src/_pytest/python_api.py-125-
+src/_pytest/python_api.py-126-
+--
+src/_pytest/python_api.py-218-                actual = np.asarray(actual)
+src/_pytest/python_api.py-219-            except Exception as e:
+src/_pytest/python_api.py:220:                raise TypeError(f"cannot compare '{actual}' to numpy.ndarray") from e
+src/_pytest/python_api.py-221-
+src/_pytest/python_api.py-222-        if not np.isscalar(actual) and actual.shape != self.expected.shape:
+--
+src/_pytest/python_api.py-310-            if isinstance(value, type(self.expected)):
+src/_pytest/python_api.py-311-                msg = "pytest.approx() does not support nested dictionaries: key={!r} value={!r}\n  full mapping={}"
+src/_pytest/python_api.py:312:                raise TypeError(msg.format(key, value, pprint.pformat(self.expected)))
+src/_pytest/python_api.py-313-
+src/_pytest/python_api.py-314-
+--
+src/_pytest/python_api.py-379-            if isinstance(x, type(self.expected)):
+src/_pytest/python_api.py-380-                msg = "pytest.approx() does not support nested data structures: {!r} at index {}\n  full sequence: {}"
+src/_pytest/python_api.py:381:                raise TypeError(msg.format(x, index, pprint.pformat(self.expected)))
+src/_pytest/python_api.py-382-
+src/_pytest/python_api.py-383-
+--
+src/_pytest/python_api.py-405-
+src/_pytest/python_api.py-406-        # If a sensible tolerance can't be calculated, self.tolerance will
+src/_pytest/python_api.py:407:        # raise a ValueError.  In this case, display '???'.
+src/_pytest/python_api.py-408-        try:
+src/_pytest/python_api.py-409-            vetted_tolerance = f"{self.tolerance:.1e}"
+--
+src/_pytest/python_api.py-479-
+src/_pytest/python_api.py-480-        if absolute_tolerance < 0:
+src/_pytest/python_api.py:481:            raise ValueError(
+src/_pytest/python_api.py-482-                f"absolute tolerance can't be negative: {absolute_tolerance}"
+src/_pytest/python_api.py-483-            )
+src/_pytest/python_api.py-484-        if math.isnan(absolute_tolerance):
+src/_pytest/python_api.py:485:            raise ValueError("absolute tolerance can't be NaN.")
+src/_pytest/python_api.py-486-
+src/_pytest/python_api.py-487-        # If the user specified an absolute tolerance but not a relative one,
+--
+src/_pytest/python_api.py-494-        # either None or a value specified by the user.  This is done after
+src/_pytest/python_api.py-495-        # we've made sure the user didn't ask for an absolute tolerance only,
+src/_pytest/python_api.py:496:        # because we don't want to raise errors about the relative tolerance if
+src/_pytest/python_api.py-497-        # we aren't even going to use it.
+src/_pytest/python_api.py-498-        relative_tolerance = set_default(
+--
+src/_pytest/python_api.py-501-
+src/_pytest/python_api.py-502-        if relative_tolerance < 0:
+src/_pytest/python_api.py:503:            raise ValueError(
+src/_pytest/python_api.py-504-                f"relative tolerance can't be negative: {relative_tolerance}"
+src/_pytest/python_api.py-505-            )
+src/_pytest/python_api.py-506-        if math.isnan(relative_tolerance):
+src/_pytest/python_api.py:507:            raise ValueError("relative tolerance can't be NaN.")
+src/_pytest/python_api.py-508-
+src/_pytest/python_api.py-509-        # Return the larger of the relative and absolute tolerances.
+--
+src/_pytest/python_api.py-728-    elif isinstance(expected, Collection) and not isinstance(expected, (str, bytes)):
+src/_pytest/python_api.py-729-        msg = f"pytest.approx() only supports ordered sequences, but got: {expected!r}"
+src/_pytest/python_api.py:730:        raise TypeError(msg)
+src/_pytest/python_api.py-731-    else:
+src/_pytest/python_api.py-732-        cls = ApproxScalar
+--
+src/_pytest/python_api.py-823-        ...    1/0
+src/_pytest/python_api.py-824-
+src/_pytest/python_api.py:825:    If the code block does not raise the expected exception (:class:`ZeroDivisionError` in the example
+src/_pytest/python_api.py-826-    above), or no exception at all, the check will fail instead.
+src/_pytest/python_api.py-827-
+--
+src/_pytest/python_api.py-830-
+src/_pytest/python_api.py-831-        >>> with pytest.raises(ValueError, match='must be 0 or None'):
+src/_pytest/python_api.py:832:        ...     raise ValueError("value must be 0 or None")
+src/_pytest/python_api.py-833-
+src/_pytest/python_api.py-834-        >>> with pytest.raises(ValueError, match=r'must be \d+$'):
+src/_pytest/python_api.py:835:        ...     raise ValueError("value must be 42")
+src/_pytest/python_api.py-836-
+src/_pytest/python_api.py-837-    The ``match`` argument searches the formatted exception string, which includes any
+--
+src/_pytest/python_api.py-841-        ...     e = ValueError("value must be 42")
+src/_pytest/python_api.py-842-        ...     e.add_note("had a note added")
+src/_pytest/python_api.py:843:        ...     raise e
+src/_pytest/python_api.py-844-
+src/_pytest/python_api.py-845-    The context manager produces an :class:`ExceptionInfo` object which can be used to inspect the
+--
+src/_pytest/python_api.py-847-
+src/_pytest/python_api.py-848-        >>> with pytest.raises(ValueError) as exc_info:
+src/_pytest/python_api.py:849:        ...     raise ValueError("value must be 42")
+src/_pytest/python_api.py-850-        >>> assert exc_info.type is ValueError
+src/_pytest/python_api.py-851-        >>> assert exc_info.value.args[0] == "value must be 42"
+--
+src/_pytest/python_api.py-876-           >>> with pytest.raises(ValueError) as exc_info:
+src/_pytest/python_api.py-877-           ...     if value > 10:
+src/_pytest/python_api.py:878:           ...         raise ValueError("value must be <= 10")
+src/_pytest/python_api.py-879-           ...     assert exc_info.type is ValueError  # This will not execute.
+src/_pytest/python_api.py-880-
+--
+src/_pytest/python_api.py-884-           >>> with pytest.raises(ValueError) as exc_info:
+src/_pytest/python_api.py-885-           ...     if value > 10:
+src/_pytest/python_api.py:886:           ...         raise ValueError("value must be <= 10")
+src/_pytest/python_api.py-887-           ...
+src/_pytest/python_api.py-888-           >>> assert exc_info.type is ValueError
+--
+src/_pytest/python_api.py-892-    When using :ref:`pytest.mark.parametrize ref`
+src/_pytest/python_api.py-893-    it is possible to parametrize tests such that
+src/_pytest/python_api.py:894:    some runs raise an exception and others do not.
+src/_pytest/python_api.py-895-
+src/_pytest/python_api.py-896-    See :ref:`parametrizing_conditional_raising` for an example.
+--
+src/_pytest/python_api.py-936-
+src/_pytest/python_api.py-937-    if not expected_exception:
+src/_pytest/python_api.py:938:        raise ValueError(
+src/_pytest/python_api.py-939-            f"Expected an exception type or a tuple of exception types, but got `{expected_exception!r}`. "
+src/_pytest/python_api.py-940-            f"Raising exceptions is already understood as failing the test, so you don't need "
+src/_pytest/python_api.py:941:            f"any special code to say 'this should never raise an exception'."
+src/_pytest/python_api.py-942-        )
+src/_pytest/python_api.py-943-    if isinstance(expected_exception, type):
+--
+src/_pytest/python_api.py-949-            msg = "expected exception must be a BaseException type, not {}"  # type: ignore[unreachable]
+src/_pytest/python_api.py-950-            not_a = exc.__name__ if isinstance(exc, type) else type(exc).__name__
+src/_pytest/python_api.py:951:            raise TypeError(msg.format(not_a))
+src/_pytest/python_api.py-952-
+src/_pytest/python_api.py-953-    message = f"DID NOT RAISE {expected_exception}"
+--
+src/_pytest/python_api.py-959-            msg += ", ".join(sorted(kwargs))
+src/_pytest/python_api.py-960-            msg += "\nUse context-manager form instead?"
+src/_pytest/python_api.py:961:            raise TypeError(msg)
+src/_pytest/python_api.py-962-        return RaisesContext(expected_exception, message, match)
+src/_pytest/python_api.py-963-    else:
+src/_pytest/python_api.py-964-        func = args[0]
+src/_pytest/python_api.py-965-        if not callable(func):
+src/_pytest/python_api.py:966:            raise TypeError(f"{func!r} object (type: {type(func)}) must be callable")
+src/_pytest/python_api.py-967-        try:
+src/_pytest/python_api.py-968-            func(*args[1:], **kwargs)
+--
+src/_pytest/recwarn.py-145-
+src/_pytest/recwarn.py-146-    When using :ref:`pytest.mark.parametrize ref` it is possible to parametrize tests
+src/_pytest/recwarn.py:147:    such that some runs raise a warning and others do not.
+src/_pytest/recwarn.py-148-
+src/_pytest/recwarn.py-149-    This could be achieved in the same way as with exceptions, see
+--
+src/_pytest/recwarn.py-155-        if kwargs:
+src/_pytest/recwarn.py-156-            argnames = ", ".join(sorted(kwargs))
+src/_pytest/recwarn.py:157:            raise TypeError(
+src/_pytest/recwarn.py-158-                f"Unexpected keyword arguments passed to pytest.warns: {argnames}"
+src/_pytest/recwarn.py-159-                "\nUse context-manager form instead?"
+--
+src/_pytest/recwarn.py-163-        func = args[0]
+src/_pytest/recwarn.py-164-        if not callable(func):
+src/_pytest/recwarn.py:165:            raise TypeError(f"{func!r} object (type: {type(func)}) must be callable")
+src/_pytest/recwarn.py-166-        with WarningsChecker(expected_warning, _ispytest=True):
+src/_pytest/recwarn.py-167-            return func(*args[1:], **kwargs)
+--
+src/_pytest/recwarn.py-221-            return self._list.pop(best_idx)
+src/_pytest/recwarn.py-222-        __tracebackhide__ = True
+src/_pytest/recwarn.py:223:        raise AssertionError(f"{cls!r} not found in warning list")
+src/_pytest/recwarn.py-224-
+src/_pytest/recwarn.py-225-    def clear(self) -> None:
+--
+src/_pytest/recwarn.py-230-        if self._entered:
+src/_pytest/recwarn.py-231-            __tracebackhide__ = True
+src/_pytest/recwarn.py:232:            raise RuntimeError(f"Cannot enter {self!r} twice")
+src/_pytest/recwarn.py-233-        _list = super().__enter__()
+src/_pytest/recwarn.py-234-        # record=True means it's None.
+--
+src/_pytest/recwarn.py-246-        if not self._entered:
+src/_pytest/recwarn.py-247-            __tracebackhide__ = True
+src/_pytest/recwarn.py:248:            raise RuntimeError(f"Cannot exit {self!r} without entering first")
+src/_pytest/recwarn.py-249-
+src/_pytest/recwarn.py-250-        super().__exit__(exc_type, exc_val, exc_tb)
+--
+src/_pytest/recwarn.py-271-            for exc in expected_warning:
+src/_pytest/recwarn.py-272-                if not issubclass(exc, Warning):
+src/_pytest/recwarn.py:273:                    raise TypeError(msg % type(exc))
+src/_pytest/recwarn.py-274-            expected_warning_tup = expected_warning
+src/_pytest/recwarn.py-275-        elif isinstance(expected_warning, type) and issubclass(
+--
+src/_pytest/recwarn.py-278-            expected_warning_tup = (expected_warning,)
+src/_pytest/recwarn.py-279-        else:
+src/_pytest/recwarn.py:280:            raise TypeError(msg % type(expected_warning))
+src/_pytest/recwarn.py-281-
+src/_pytest/recwarn.py-282-        self.expected_warning = expected_warning_tup
+--
+src/_pytest/recwarn.py-361-                # its first argument was not a string. But that case can't be
+src/_pytest/recwarn.py-362-                # distinguished from an invalid type.
+src/_pytest/recwarn.py:363:                raise TypeError(
+src/_pytest/recwarn.py-364-                    f"Warning must be str or Warning, got {msg!r} (type {type(msg).__name__})"
+src/_pytest/recwarn.py-365-                )
+--
+src/_pytest/reports.py-249-    pprint(f"Please report this bug at {url}", stream=stream)
+src/_pytest/reports.py-250-    pprint("-" * 100, stream=stream)
+src/_pytest/reports.py:251:    raise RuntimeError(stream.getvalue())
+src/_pytest/reports.py-252-
+src/_pytest/reports.py-253-
+--
+src/_pytest/runner.py-238-    reraise: tuple[type[BaseException], ...] = (Exit,)
+src/_pytest/runner.py-239-    if not item.config.getoption("usepdb", False):
+src/_pytest/runner.py:240:        reraise += (KeyboardInterrupt,)
+src/_pytest/runner.py-241-    call = CallInfo.from_call(
+src/_pytest/runner.py-242-        lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+--
+src/_pytest/runner.py-311-        """
+src/_pytest/runner.py-312-        if self.excinfo is not None:
+src/_pytest/runner.py:313:            raise AttributeError(f"{self!r} has no valid result")
+src/_pytest/runner.py-314-        # The cast is safe because an exception wasn't raised, hence
+src/_pytest/runner.py-315-        # _result has the expected function return type (which may be
+--
+src/_pytest/runner.py-342-        except BaseException:
+src/_pytest/runner.py-343-            excinfo = ExceptionInfo.from_current()
+src/_pytest/runner.py:344:            if reraise is not None and isinstance(excinfo.value, reraise):
+src/_pytest/runner.py-345-                raise
+src/_pytest/runner.py-346-            result = None
+--
+src/_pytest/runner.py-505-            assert col in needed_collectors, "previous item was not torn down properly"
+src/_pytest/runner.py-506-            if exc:
+src/_pytest/runner.py:507:                raise exc[0].with_traceback(exc[1])
+src/_pytest/runner.py-508-
+src/_pytest/runner.py-509-        for col in needed_collectors[len(self.stack) :]:
+--
+src/_pytest/runner.py-555-
+src/_pytest/runner.py-556-        if len(exceptions) == 1:
+src/_pytest/runner.py:557:            raise exceptions[0]
+src/_pytest/runner.py-558-        elif exceptions:
+src/_pytest/runner.py:559:            raise BaseExceptionGroup("errors during test teardown", exceptions[::-1])
+src/_pytest/runner.py-560-        if nextitem is None:
+src/_pytest/runner.py-561-            assert not self.stack
+--
+src/_pytest/scope.py-44-        index = _SCOPE_INDICES[self]
+src/_pytest/scope.py-45-        if index == 0:
+src/_pytest/scope.py:46:            raise ValueError(f"{self} is the lower-most scope")
+src/_pytest/scope.py-47-        return _ALL_SCOPES[index - 1]
+src/_pytest/scope.py-48-
+--
+src/_pytest/scope.py-51-        index = _SCOPE_INDICES[self]
+src/_pytest/scope.py-52-        if index == len(_SCOPE_INDICES) - 1:
+src/_pytest/scope.py:53:            raise ValueError(f"{self} is the upper-most scope")
+src/_pytest/scope.py-54-        return _ALL_SCOPES[index + 1]
+src/_pytest/scope.py-55-
+--
+src/_pytest/skipping.py-106-        ):
+src/_pytest/skipping.py-107-            if not isinstance(dictionary, Mapping):
+src/_pytest/skipping.py:108:                raise ValueError(
+src/_pytest/skipping.py-109-                    f"pytest_markeval_namespace() needs to return a dict, got {dictionary!r}"
+src/_pytest/skipping.py-110-                )
+--
+src/_pytest/skipping.py-188-            return Skip(*mark.args, **mark.kwargs)
+src/_pytest/skipping.py-189-        except TypeError as e:
+src/_pytest/skipping.py:190:            raise TypeError(str(e) + " - maybe you meant pytest.mark.skipif?") from None
+src/_pytest/skipping.py-191-
+src/_pytest/skipping.py-192-    return None
+--
+src/_pytest/skipping.py-238-    skipped = evaluate_skip_marks(item)
+src/_pytest/skipping.py-239-    if skipped:
+src/_pytest/skipping.py:240:        raise skip.Exception(skipped.reason, _use_item_location=True)
+src/_pytest/skipping.py-241-
+src/_pytest/skipping.py-242-    item.stash[xfailed_key] = xfailed = evaluate_xfail_marks(item)
+--
+src/_pytest/tmpdir.py-91-        count = int(config.getini("tmp_path_retention_count"))
+src/_pytest/tmpdir.py-92-        if count < 0:
+src/_pytest/tmpdir.py:93:            raise ValueError(
+src/_pytest/tmpdir.py-94-                f"tmp_path_retention_count must be >= 0. Current input: {count}."
+src/_pytest/tmpdir.py-95-            )
+--
+src/_pytest/tmpdir.py-97-        policy = config.getini("tmp_path_retention_policy")
+src/_pytest/tmpdir.py-98-        if policy not in ("all", "failed", "none"):
+src/_pytest/tmpdir.py:99:            raise ValueError(
+src/_pytest/tmpdir.py-100-                f"tmp_path_retention_policy must be either all, failed, none. Current input: {policy}."
+src/_pytest/tmpdir.py-101-            )
+--
+src/_pytest/tmpdir.py-112-        basename = os.path.normpath(basename)
+src/_pytest/tmpdir.py-113-        if (self.getbasetemp() / basename).resolve().parent != self.getbasetemp():
+src/_pytest/tmpdir.py:114:            raise ValueError(f"{basename} is not a normalized and relative path")
+src/_pytest/tmpdir.py-115-        return basename
+src/_pytest/tmpdir.py-116-
+--
+src/_pytest/tmpdir.py-177-                rootdir_stat = rootdir.stat()
+src/_pytest/tmpdir.py-178-                if rootdir_stat.st_uid != uid:
+src/_pytest/tmpdir.py:179:                    raise OSError(
+src/_pytest/tmpdir.py-180-                        f"The temporary directory {rootdir} is not owned by the current user. "
+src/_pytest/tmpdir.py-181-                        "Fix this and try again."
+--
+src/_pytest/unittest.py-129-                return
+src/_pytest/unittest.py-130-            exceptions = [exc for (_, exc, _) in exc_infos]
+src/_pytest/unittest.py:131:            # If a single exception, raise it directly as this provides a more readable
+src/_pytest/unittest.py-132-            # error (hopefully this will improve in #12255).
+src/_pytest/unittest.py-133-            if len(exceptions) == 1:
+src/_pytest/unittest.py:134:                raise exceptions[0]
+src/_pytest/unittest.py-135-            else:
+src/_pytest/unittest.py:136:                raise ExceptionGroup("Unittest class cleanup errors", exceptions)
+src/_pytest/unittest.py-137-
+src/_pytest/unittest.py-138-        def unittest_setup_class_fixture(
+--
+src/_pytest/unittest.py-142-            if _is_skipped(cls):
+src/_pytest/unittest.py-143-                reason = cls.__unittest_skip_why__
+src/_pytest/unittest.py:144:                raise pytest.skip.Exception(reason, _use_item_location=True)
+src/_pytest/unittest.py-145-            if setup is not None:
+src/_pytest/unittest.py-146-                try:
+--
+src/_pytest/unittest.py-183-            if _is_skipped(self):
+src/_pytest/unittest.py-184-                reason = self.__unittest_skip_why__
+src/_pytest/unittest.py:185:                raise pytest.skip.Exception(reason, _use_item_location=True)
+src/_pytest/unittest.py-186-            if setup is not None:
+src/_pytest/unittest.py-187-                setup(self, request.function)
+--
+src/_pytest/unittest.py-282-    def addSkip(self, testcase: unittest.TestCase, reason: str) -> None:
+src/_pytest/unittest.py-283-        try:
+src/_pytest/unittest.py:284:            raise pytest.skip.Exception(reason, _use_item_location=True)
+src/_pytest/unittest.py-285-        except skip.Exception:
+src/_pytest/unittest.py-286-            self._addexcinfo(sys.exc_info())
+--
+src/_pytest/warning_types.py-164-    except Warning as w:
+src/_pytest/warning_types.py-165-        # If warnings are errors (e.g. -Werror), location information gets lost, so we add it to the message.
+src/_pytest/warning_types.py:166:        raise type(w)(f"{w}\n at {filename}:{lineno}") from None
+--
+src/pytest/__main__.py-7-
+src/pytest/__main__.py-8-if __name__ == "__main__":
+src/pytest/__main__.py:9:    raise SystemExit(pytest.console_main())

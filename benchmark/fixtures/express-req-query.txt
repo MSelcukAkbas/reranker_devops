@@ -1,0 +1,16 @@
+./History.md:854:  * Deprecate `req.param()` -- use `req.params`, `req.body`, or `req.query` instead
+./History.md:3184:  * Changed; allow `req.query` to be pre-defined (via middleware or other parent
+./History.md:3196:  * Allow `req.query` to be pre-defined (via middleware or other parent app)
+./History.md:3238:    or props like `req.query` etc.
+./History.md:3335:    Use _req.params_ for path captures, _req.query_ for GET params.
+./examples/web-service/index.js:31:  var key = req.query['api-key'];
+./lib/middleware/query.js:40:    if (!req.query) {
+./lib/middleware/query.js:42:      req.query = queryparse(val, opts);
+./lib/request.js:243:  deprecate('req.param(' + args + '): Use req.params, req.body, or req.query instead');
+./lib/response.js:315:  var callback = this.req.query[app.get('jsonp callback name')];
+./test/app.request.js:17:        res.end(req.querystring());
+./test/req.param.js:22:    it('should check req.query', function(done){
+./test/req.query.js:93:          res.send(req.query);
+./test/req.query.js:119:    res.send(req.query);
+./test/res.location.js:188:        var host = url.parse(req.query.q, false, true).host;
+./test/res.location.js:194:        res.location(req.query.q).end();

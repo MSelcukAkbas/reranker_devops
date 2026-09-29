@@ -1,0 +1,386 @@
+src/_pytest/_code/code.py-579-    def __repr__(self) -> str:
+src/_pytest/_code/code.py-580-        if self._excinfo is None:
+src/_pytest/_code/code.py:581:            return "<ExceptionInfo for raises contextmanager>"
+src/_pytest/_code/code.py-582-        return f"<{self.__class__.__name__} {saferepr(self._excinfo[1])} tblen={len(self.traceback)}>"
+src/_pytest/_code/code.py-583-
+--
+src/_pytest/_code/code.py-1006-
+src/_pytest/_code/code.py-1007-        Handle the situation where the recursion process might raise an
+src/_pytest/_code/code.py:1008:        exception (for example comparing numpy arrays using equality raises a
+src/_pytest/_code/code.py-1009-        TypeError), in which case we do our best to warn the user of the
+src/_pytest/_code/code.py-1010-        error and show a limited traceback.
+--
+src/_pytest/assertion/rewrite.py-623-    original assert statement: it rewrites the test of an assertion
+src/_pytest/assertion/rewrite.py-624-    to provide intermediate values and replace it with an if statement
+src/_pytest/assertion/rewrite.py:625:    which raises an assertion error with a detailed explanation in
+src/_pytest/assertion/rewrite.py-626-    case the expression is false and calls pytest_assertion_pass hook
+src/_pytest/assertion/rewrite.py-627-    if expression is true.
+--
+src/_pytest/assertion/rewrite.py-866-        This rewrites the test of an assertion to provide
+src/_pytest/assertion/rewrite.py-867-        intermediate values and replace it with an if statement which
+src/_pytest/assertion/rewrite.py:868:        raises an assertion error with a detailed explanation in case
+src/_pytest/assertion/rewrite.py-869-        the expression is false.
+src/_pytest/assertion/rewrite.py-870-        """
+--
+src/_pytest/config/__init__.py-1852-
+src/_pytest/config/__init__.py-1853-    True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
+src/_pytest/config/__init__.py:1854:    are 'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if
+src/_pytest/config/__init__.py-1855-    'val' is anything else.
+src/_pytest/config/__init__.py-1856-
+--
+src/_pytest/config/__init__.py-1876-    * Does not apply the filter.
+src/_pytest/config/__init__.py-1877-    * Escaping is optional.
+src/_pytest/config/__init__.py:1878:    * Raises UsageError so we get nice error messages on failure.
+src/_pytest/config/__init__.py-1879-    """
+src/_pytest/config/__init__.py-1880-    __tracebackhide__ = True
+--
+src/_pytest/debugging.py-79-
+src/_pytest/debugging.py-80-    # NOTE: not using pytest_unconfigure, since it might get called although
+src/_pytest/debugging.py:81:    #       pytest_configure was not (if another plugin raises UsageError).
+src/_pytest/debugging.py-82-    def fin() -> None:
+src/_pytest/debugging.py-83-        (
+--
+src/_pytest/fixtures.py-522-        :param argname:
+src/_pytest/fixtures.py-523-            The fixture name.
+src/_pytest/fixtures.py:524:        :raises pytest.FixtureLookupError:
+src/_pytest/fixtures.py-525-            If the given fixture could not be found.
+src/_pytest/fixtures.py-526-        """
+--
+src/_pytest/fixtures.py-1063-                cache_hit = bool(request_cache_key == cache_key)
+src/_pytest/fixtures.py-1064-            except (ValueError, RuntimeError):
+src/_pytest/fixtures.py:1065:                # If the comparison raises, use 'is' as fallback.
+src/_pytest/fixtures.py-1066-                cache_hit = request_cache_key is cache_key
+src/_pytest/fixtures.py-1067-
+--
+src/_pytest/mark/structures.py-456-            reason: str = ...,
+src/_pytest/mark/structures.py-457-            run: bool = ...,
+src/_pytest/mark/structures.py:458:            raises: None | type[BaseException] | tuple[type[BaseException], ...] = ...,
+src/_pytest/mark/structures.py-459-            strict: bool = ...,
+src/_pytest/mark/structures.py-460-        ) -> MarkDecorator: ...
+--
+src/_pytest/monkeypatch.py-208-            monkeypatch.setattr("os.getcwd", lambda: "/")
+src/_pytest/monkeypatch.py-209-
+src/_pytest/monkeypatch.py:210:        Raises :class:`AttributeError` if the attribute does not exist, unless
+src/_pytest/monkeypatch.py-211-        ``raising`` is set to False.
+src/_pytest/monkeypatch.py-212-
+--
+src/_pytest/monkeypatch.py-263-        last part being the attribute name.
+src/_pytest/monkeypatch.py-264-
+src/_pytest/monkeypatch.py:265:        Raises AttributeError it the attribute does not exist, unless
+src/_pytest/monkeypatch.py-266-        ``raising`` is set to False.
+src/_pytest/monkeypatch.py-267-        """
+--
+src/_pytest/monkeypatch.py-298-        """Delete ``name`` from dict.
+src/_pytest/monkeypatch.py-299-
+src/_pytest/monkeypatch.py:300:        Raises ``KeyError`` if it doesn't exist, unless ``raising`` is set to
+src/_pytest/monkeypatch.py-301-        False.
+src/_pytest/monkeypatch.py-302-        """
+--
+src/_pytest/monkeypatch.py-332-        """Delete ``name`` from the environment.
+src/_pytest/monkeypatch.py-333-
+src/_pytest/monkeypatch.py:334:        Raises ``KeyError`` if it does not exist, unless ``raising`` is set to
+src/_pytest/monkeypatch.py-335-        False.
+src/_pytest/monkeypatch.py-336-        """
+--
+src/_pytest/nodes.py-83-
+src/_pytest/nodes.py-84-class NodeMeta(abc.ABCMeta):
+src/_pytest/nodes.py:85:    """Metaclass used by :class:`Node` to enforce that direct construction raises
+src/_pytest/nodes.py-86-    :class:`Failed`.
+src/_pytest/nodes.py-87-
+--
+src/_pytest/nodes.py-249-            The warning instance to issue.
+src/_pytest/nodes.py-250-
+src/_pytest/nodes.py:251:        :raises ValueError: If ``warning`` instance is not a subclass of Warning.
+src/_pytest/nodes.py-252-
+src/_pytest/nodes.py-253-        Example usage:
+--
+src/_pytest/outcomes.py-58-        self.allow_module_level = allow_module_level
+src/_pytest/outcomes.py-59-        # If true, the skip location is reported as the item's location,
+src/_pytest/outcomes.py:60:        # instead of the place that raises the exception/calls skip().
+src/_pytest/outcomes.py-61-        self._use_item_location = _use_item_location
+src/_pytest/outcomes.py-62-
+--
+src/_pytest/outcomes.py-117-        Return code to be used when exiting pytest. None means the same as ``0`` (no error), same as :func:`sys.exit`.
+src/_pytest/outcomes.py-118-
+src/_pytest/outcomes.py:119:    :raises pytest.exit.Exception:
+src/_pytest/outcomes.py-120-        The exception that is raised.
+src/_pytest/outcomes.py-121-    """
+--
+src/_pytest/outcomes.py-147-        Defaults to False.
+src/_pytest/outcomes.py-148-
+src/_pytest/outcomes.py:149:    :raises pytest.skip.Exception:
+src/_pytest/outcomes.py-150-        The exception that is raised.
+src/_pytest/outcomes.py-151-
+--
+src/_pytest/outcomes.py-172-        python traceback will be reported.
+src/_pytest/outcomes.py-173-
+src/_pytest/outcomes.py:174:    :raises pytest.fail.Exception:
+src/_pytest/outcomes.py-175-        The exception that is raised.
+src/_pytest/outcomes.py-176-    """
+--
+src/_pytest/outcomes.py-200-        like known bugs or missing features.
+src/_pytest/outcomes.py-201-
+src/_pytest/outcomes.py:202:    :raises pytest.xfail.Exception:
+src/_pytest/outcomes.py-203-        The exception that is raised.
+src/_pytest/outcomes.py-204-    """
+--
+src/_pytest/outcomes.py-229-        Must be :py:class:`ImportError` or a subclass.
+src/_pytest/outcomes.py-230-
+src/_pytest/outcomes.py:231:        If the module can be imported but raises :class:`ImportError`, pytest will
+src/_pytest/outcomes.py-232-        issue a warning to the user, as often users expect the module not to be
+src/_pytest/outcomes.py-233-        found (which would raise :class:`ModuleNotFoundError` instead).
+--
+src/_pytest/outcomes.py-241-        The imported module. This should be assigned to its canonical name.
+src/_pytest/outcomes.py-242-
+src/_pytest/outcomes.py:243:    :raises pytest.skip.Exception:
+src/_pytest/outcomes.py-244-        If the module cannot be imported.
+src/_pytest/outcomes.py-245-
+--
+src/_pytest/pathlib.py-518-        If True, consider namespace packages when resolving module names.
+src/_pytest/pathlib.py-519-
+src/_pytest/pathlib.py:520:    :raises ImportPathMismatchError:
+src/_pytest/pathlib.py-521-        If after importing the given `path` and the module `__file__`
+src/_pytest/pathlib.py-522-        are different. Only raised in `prepend` and `append` modes.
+--
+src/_pytest/pathlib.py-802-    https://packaging.python.org/en/latest/guides/packaging-namespace-packages
+src/_pytest/pathlib.py-803-
+src/_pytest/pathlib.py:804:    Raises CouldNotResolvePathError if the given path does not belong to a package (missing any __init__.py files).
+src/_pytest/pathlib.py-805-    """
+src/_pytest/pathlib.py-806-    pkg_root: Path | None = None
+--
+src/_pytest/python.py-1425-        :param List[str] argnames: List of argument names passed to ``parametrize()``.
+src/_pytest/python.py-1426-        :param indirect: Same as the ``indirect`` parameter of ``parametrize()``.
+src/_pytest/python.py:1427:        :raises ValueError: If validation fails.
+src/_pytest/python.py-1428-        """
+src/_pytest/python.py-1429-        default_arg_names = set(get_default_arg_names(self.function))
+--
+src/_pytest/python_api.py-693-
+src/_pytest/python_api.py-694-    .. versionchanged:: 3.7.1
+src/_pytest/python_api.py:695:       ``approx`` raises ``TypeError`` when it encounters a dict value or
+src/_pytest/python_api.py-696-       sequence element of nonnumeric type.
+src/_pytest/python_api.py-697-
+--
+src/_pytest/python_api.py-770-
+src/_pytest/python_api.py-771-
+src/_pytest/python_api.py:772:# builtin pytest.raises helper
+src/_pytest/python_api.py-773-
+src/_pytest/python_api.py-774-E = TypeVar("E", bound=BaseException)
+--
+src/_pytest/python_api.py-776-
+src/_pytest/python_api.py-777-@overload
+src/_pytest/python_api.py:778:def raises(
+src/_pytest/python_api.py-779-    expected_exception: type[E] | tuple[type[E], ...],
+src/_pytest/python_api.py-780-    *,
+src/_pytest/python_api.py-781-    match: str | Pattern[str] | None = ...,
+src/_pytest/python_api.py:782:) -> RaisesContext[E]: ...
+src/_pytest/python_api.py-783-
+src/_pytest/python_api.py-784-
+src/_pytest/python_api.py-785-@overload
+src/_pytest/python_api.py:786:def raises(
+src/_pytest/python_api.py-787-    expected_exception: type[E] | tuple[type[E], ...],
+src/_pytest/python_api.py-788-    func: Callable[..., Any],
+--
+src/_pytest/python_api.py-792-
+src/_pytest/python_api.py-793-
+src/_pytest/python_api.py:794:def raises(
+src/_pytest/python_api.py-795-    expected_exception: type[E] | tuple[type[E], ...], *args: Any, **kwargs: Any
+src/_pytest/python_api.py:796:) -> RaisesContext[E] | _pytest._code.ExceptionInfo[E]:
+src/_pytest/python_api.py:797:    r"""Assert that a code block/function call raises an exception type, or one of its subclasses.
+src/_pytest/python_api.py-798-
+src/_pytest/python_api.py-799-    :param expected_exception:
+--
+src/_pytest/python_api.py-811-        <re-syntax>`, the pattern can first be escaped with :func:`re.escape`.
+src/_pytest/python_api.py-812-
+src/_pytest/python_api.py:813:        (This is only used when ``pytest.raises`` is used as a context manager,
+src/_pytest/python_api.py-814-        and passed through to the function otherwise.
+src/_pytest/python_api.py:815:        When using ``pytest.raises`` as a function, you can use:
+src/_pytest/python_api.py:816:        ``pytest.raises(Exc, func, match="passed on").match("my pattern")``.)
+src/_pytest/python_api.py-817-
+src/_pytest/python_api.py:818:    Use ``pytest.raises`` as a context manager, which will capture the exception of the given
+src/_pytest/python_api.py-819-    type, or any of its subclasses::
+src/_pytest/python_api.py-820-
+src/_pytest/python_api.py-821-        >>> import pytest
+src/_pytest/python_api.py:822:        >>> with pytest.raises(ZeroDivisionError):
+src/_pytest/python_api.py-823-        ...    1/0
+src/_pytest/python_api.py-824-
+--
+src/_pytest/python_api.py-829-    exception matches a text or regex::
+src/_pytest/python_api.py-830-
+src/_pytest/python_api.py:831:        >>> with pytest.raises(ValueError, match='must be 0 or None'):
+src/_pytest/python_api.py-832-        ...     raise ValueError("value must be 0 or None")
+src/_pytest/python_api.py-833-
+src/_pytest/python_api.py:834:        >>> with pytest.raises(ValueError, match=r'must be \d+$'):
+src/_pytest/python_api.py-835-        ...     raise ValueError("value must be 42")
+src/_pytest/python_api.py-836-
+--
+src/_pytest/python_api.py-838-    `PEP-678 <https://peps.python.org/pep-0678/>`__ ``__notes__``:
+src/_pytest/python_api.py-839-
+src/_pytest/python_api.py:840:        >>> with pytest.raises(ValueError, match=r"had a note added"):  # doctest: +SKIP
+src/_pytest/python_api.py-841-        ...     e = ValueError("value must be 42")
+src/_pytest/python_api.py-842-        ...     e.add_note("had a note added")
+--
+src/_pytest/python_api.py-846-    details of the captured exception::
+src/_pytest/python_api.py-847-
+src/_pytest/python_api.py:848:        >>> with pytest.raises(ValueError) as exc_info:
+src/_pytest/python_api.py-849-        ...     raise ValueError("value must be 42")
+src/_pytest/python_api.py-850-        >>> assert exc_info.type is ValueError
+--
+src/_pytest/python_api.py-853-    .. warning::
+src/_pytest/python_api.py-854-
+src/_pytest/python_api.py:855:       Given that ``pytest.raises`` matches subclasses, be wary of using it to match :class:`Exception` like this::
+src/_pytest/python_api.py-856-
+src/_pytest/python_api.py:857:           with pytest.raises(Exception):  # Careful, this will catch ANY exception raised.
+src/_pytest/python_api.py-858-               some_function()
+src/_pytest/python_api.py-859-
+--
+src/_pytest/python_api.py-862-       raised due to a bug introduced during a refactoring.
+src/_pytest/python_api.py-863-
+src/_pytest/python_api.py:864:       Avoid using ``pytest.raises`` to catch :class:`Exception` unless certain that you really want to catch
+src/_pytest/python_api.py-865-       **any** exception raised.
+src/_pytest/python_api.py-866-
+src/_pytest/python_api.py-867-    .. note::
+src/_pytest/python_api.py-868-
+src/_pytest/python_api.py:869:       When using ``pytest.raises`` as a context manager, it's worthwhile to
+src/_pytest/python_api.py-870-       note that normal context manager rules apply and that the exception
+src/_pytest/python_api.py-871-       raised *must* be the final line in the scope of the context manager.
+--
+src/_pytest/python_api.py-874-
+src/_pytest/python_api.py-875-           >>> value = 15
+src/_pytest/python_api.py:876:           >>> with pytest.raises(ValueError) as exc_info:
+src/_pytest/python_api.py-877-           ...     if value > 10:
+src/_pytest/python_api.py-878-           ...         raise ValueError("value must be <= 10")
+--
+src/_pytest/python_api.py-882-       scope)::
+src/_pytest/python_api.py-883-
+src/_pytest/python_api.py:884:           >>> with pytest.raises(ValueError) as exc_info:
+src/_pytest/python_api.py-885-           ...     if value > 10:
+src/_pytest/python_api.py-886-           ...         raise ValueError("value must be <= 10")
+--
+src/_pytest/python_api.py-898-    .. seealso::
+src/_pytest/python_api.py-899-
+src/_pytest/python_api.py:900:        :ref:`assertraises` for more examples and detailed discussion.
+src/_pytest/python_api.py-901-
+src/_pytest/python_api.py-902-    **Legacy form**
+--
+src/_pytest/python_api.py-904-    It is possible to specify a callable by passing a to-be-called lambda::
+src/_pytest/python_api.py-905-
+src/_pytest/python_api.py:906:        >>> raises(ZeroDivisionError, lambda: 1/0)
+src/_pytest/python_api.py-907-        <ExceptionInfo ...>
+src/_pytest/python_api.py-908-
+--
+src/_pytest/python_api.py-911-        >>> def f(x): return 1/x
+src/_pytest/python_api.py-912-        ...
+src/_pytest/python_api.py:913:        >>> raises(ZeroDivisionError, f, 0)
+src/_pytest/python_api.py-914-        <ExceptionInfo ...>
+src/_pytest/python_api.py:915:        >>> raises(ZeroDivisionError, f, x=0)
+src/_pytest/python_api.py-916-        <ExceptionInfo ...>
+src/_pytest/python_api.py-917-
+--
+src/_pytest/python_api.py-956-        match: str | Pattern[str] | None = kwargs.pop("match", None)
+src/_pytest/python_api.py-957-        if kwargs:
+src/_pytest/python_api.py:958:            msg = "Unexpected keyword arguments passed to pytest.raises: "
+src/_pytest/python_api.py-959-            msg += ", ".join(sorted(kwargs))
+src/_pytest/python_api.py-960-            msg += "\nUse context-manager form instead?"
+src/_pytest/python_api.py-961-            raise TypeError(msg)
+src/_pytest/python_api.py:962:        return RaisesContext(expected_exception, message, match)
+src/_pytest/python_api.py-963-    else:
+src/_pytest/python_api.py-964-        func = args[0]
+--
+src/_pytest/python_api.py-973-
+src/_pytest/python_api.py-974-# This doesn't work with mypy for now. Use fail.Exception instead.
+src/_pytest/python_api.py:975:raises.Exception = fail.Exception  # type: ignore
+src/_pytest/python_api.py-976-
+src/_pytest/python_api.py-977-
+src/_pytest/python_api.py-978-@final
+src/_pytest/python_api.py:979:class RaisesContext(ContextManager[_pytest._code.ExceptionInfo[E]]):
+src/_pytest/python_api.py-980-    def __init__(
+src/_pytest/python_api.py-981-        self,
+--
+src/_pytest/recwarn.py-110-    **kwargs: Any,
+src/_pytest/recwarn.py-111-) -> WarningsChecker | Any:
+src/_pytest/recwarn.py:112:    r"""Assert that code raises a particular class of warning.
+src/_pytest/recwarn.py-113-
+src/_pytest/recwarn.py-114-    Specifically, the parameter ``expected_warning`` can be a warning class or tuple
+--
+src/_pytest/recwarn.py-207-        """Pop the first recorded warning which is an instance of ``cls``,
+src/_pytest/recwarn.py-208-        but not an instance of a child class of any other match.
+src/_pytest/recwarn.py:209:        Raises ``AssertionError`` if there is no match.
+src/_pytest/recwarn.py-210-        """
+src/_pytest/recwarn.py-211-        best_idx: int | None = None
+--
+src/_pytest/skipping.py-75-    config.addinivalue_line(
+src/_pytest/skipping.py-76-        "markers",
+src/_pytest/skipping.py:77:        "xfail(condition, ..., *, reason=..., run=True, raises=None, strict=xfail_strict): "
+src/_pytest/skipping.py-78-        "mark the test function as an expected failure if any of the conditions "
+src/_pytest/skipping.py-79-        "evaluate to True. Optionally specify a reason for better reporting "
+src/_pytest/skipping.py-80-        "and run=False if you don't even want to execute the test function. "
+src/_pytest/skipping.py-81-        "If only specific exception(s) are expected, you can list them in "
+src/_pytest/skipping.py:82:        "raises, and if the test fails in other ways, it will be reported as "
+src/_pytest/skipping.py-83-        "a true failure. See https://docs.pytest.org/en/stable/reference/reference.html#pytest-mark-xfail",
+src/_pytest/skipping.py-84-    )
+--
+src/_pytest/skipping.py-197-    """The result of evaluate_xfail_marks()."""
+src/_pytest/skipping.py-198-
+src/_pytest/skipping.py:199:    __slots__ = ("reason", "run", "strict", "raises")
+src/_pytest/skipping.py-200-
+src/_pytest/skipping.py-201-    reason: str
+src/_pytest/skipping.py-202-    run: bool
+src/_pytest/skipping.py-203-    strict: bool
+src/_pytest/skipping.py:204:    raises: tuple[type[BaseException], ...] | None
+src/_pytest/skipping.py-205-
+src/_pytest/skipping.py-206-
+--
+src/_pytest/skipping.py-210-        run = mark.kwargs.get("run", True)
+src/_pytest/skipping.py-211-        strict = mark.kwargs.get("strict", item.config.getini("xfail_strict"))
+src/_pytest/skipping.py:212:        raises = mark.kwargs.get("raises", None)
+src/_pytest/skipping.py-213-        if "condition" not in mark.kwargs:
+src/_pytest/skipping.py-214-            conditions = mark.args
+--
+src/_pytest/skipping.py-219-        if not conditions:
+src/_pytest/skipping.py-220-            reason = mark.kwargs.get("reason", "")
+src/_pytest/skipping.py:221:            return Xfail(reason, run, strict, raises)
+src/_pytest/skipping.py-222-
+src/_pytest/skipping.py-223-        # If any of the conditions are true.
+--
+src/_pytest/skipping.py-225-            result, reason = evaluate_condition(item, mark, condition)
+src/_pytest/skipping.py-226-            if result:
+src/_pytest/skipping.py:227:                return Xfail(reason, run, strict, raises)
+src/_pytest/skipping.py-228-
+src/_pytest/skipping.py-229-    return None
+--
+src/_pytest/skipping.py-277-    elif not rep.skipped and xfailed:
+src/_pytest/skipping.py-278-        if call.excinfo:
+src/_pytest/skipping.py:279:            raises = xfailed.raises
+src/_pytest/skipping.py:280:            if raises is not None and not isinstance(call.excinfo.value, raises):
+src/_pytest/skipping.py-281-                rep.outcome = "failed"
+src/_pytest/skipping.py-282-            else:
+--
+src/_pytest/stash.py-80-        """Get the value for key.
+src/_pytest/stash.py-81-
+src/_pytest/stash.py:82:        Raises ``KeyError`` if the key wasn't set before.
+src/_pytest/stash.py-83-        """
+src/_pytest/stash.py-84-        return cast(T, self._storage[key])
+--
+src/_pytest/stash.py-104-        """Delete the value for key.
+src/_pytest/stash.py-105-
+src/_pytest/stash.py:106:        Raises ``KeyError`` if the key wasn't set before.
+src/_pytest/stash.py-107-        """
+src/_pytest/stash.py-108-        del self._storage[key]
+--
+src/_pytest/threadexception.py-31-    Usage:
+src/_pytest/threadexception.py-32-        with threading_helper.catch_threading_exception() as cm:
+src/_pytest/threadexception.py:33:            # code spawning a thread which raises an exception
+src/_pytest/threadexception.py-34-            ...
+src/_pytest/threadexception.py-35-            # check the thread exception: use cm.args
+--
+src/pytest/__init__.py-60-from _pytest.python import Package
+src/pytest/__init__.py-61-from _pytest.python_api import approx
+src/pytest/__init__.py:62:from _pytest.python_api import raises
+src/pytest/__init__.py-63-from _pytest.recwarn import deprecated_call
+src/pytest/__init__.py-64-from _pytest.recwarn import WarningsRecorder
+--
+src/pytest/__init__.py-150-    "PytestUnraisableExceptionWarning",
+src/pytest/__init__.py-151-    "PytestWarning",
+src/pytest/__init__.py:152:    "raises",
+src/pytest/__init__.py-153-    "RecordedHookCall",
+src/pytest/__init__.py-154-    "register_assert_rewrite",

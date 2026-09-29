@@ -23,7 +23,7 @@
       "repo": "pytest",
       "intent": "Understand how pytest.raises matches the raised exception.",
       "subtask": "Locate the raises() implementation and the context manager's __exit__.",
-      "cmd": ["rg", "-n", "-C2", "raises", "src"],
+      "cmd": ["rg", "-n", "-C2", "-i", "raises", "src"],
       "evidence": [
         {"path": "src/_pytest/python_api.py", "line": 794, "text": "def raises(", "critical": true},
         {"path": "src/_pytest/python_api.py", "line": 979, "text": "class RaisesContext", "critical": true},
@@ -36,6 +36,7 @@
       "intent": "Fix a bug where a dynamic fixture scope is accepted when it should not be.",
       "subtask": "Find where a fixture's user-given scope is parsed and where ScopeMismatch is reported.",
       "cmd": ["rg", "-n", "scope", "src/_pytest/fixtures.py"],
+      "default_path": "src/_pytest/fixtures.py",
       "evidence": [
         {"path": "src/_pytest/fixtures.py", "line": 991, "text": "Scope.from_user(", "critical": true},
         {"path": "src/_pytest/fixtures.py", "line": 920, "text": "def _eval_scope_callable(", "critical": true},
@@ -121,7 +122,7 @@
       "repo": "express",
       "intent": "Change the default status code of res.redirect.",
       "subtask": "Find res.redirect and where its default status is set.",
-      "cmd": ["rg", "-n", "-C2", "redirect", "lib", "test"],
+      "cmd": ["rg", "-n", "-C3", "redirect", "lib", "test"],
       "evidence": [
         {"path": "lib/response.js", "line": 946, "text": "res.redirect = function redirect(url)", "critical": true},
         {"path": "lib/response.js", "line": 949, "text": "var status = 302;", "critical": true}

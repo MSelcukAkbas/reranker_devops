@@ -1,0 +1,22 @@
+crates/core/flags/hiargs.rs:685:    pub(crate) fn search_worker<W: termcolor::WriteColor>(
+crates/core/flags/hiargs.rs:702:    pub(crate) fn searcher(&self) -> anyhow::Result<grep::searcher::Searcher> {
+crates/core/main.rs:107:fn search(args: &HiArgs, mode: SearchMode) -> anyhow::Result<bool> {
+crates/core/main.rs:160:fn search_parallel(args: &HiArgs, mode: SearchMode) -> anyhow::Result<bool> {
+crates/core/search.rs:126:    pub(crate) fn search_zip(
+crates/core/search.rs:244:    pub(crate) fn search(
+crates/core/search.rs:296:    fn search_preprocessor(
+crates/core/search.rs:330:    fn search_decompress(&mut self, path: &Path) -> io::Result<SearchResult> {
+crates/core/search.rs:340:    fn search_path(&mut self, path: &Path) -> io::Result<SearchResult> {
+crates/core/search.rs:360:    fn search_reader<R: io::Read>(
+crates/core/search.rs:378:fn search_path<M: Matcher, W: WriteColor>(
+crates/core/search.rs:414:fn search_reader<M: Matcher, R: io::Read, W: WriteColor>(
+crates/grep/examples/simplegrep.rs:32:fn search(pattern: &str, paths: &[OsString]) -> Result<(), Box<dyn Error>> {
+crates/printer/src/stats.rs:37:    pub fn searches(&self) -> u64 {
+crates/printer/src/stats.rs:42:    pub fn searches_with_match(&self) -> u64 {
+crates/searcher/src/searcher/mod.rs:623:    pub fn search_path<P, M, S>(
+crates/searcher/src/searcher/mod.rs:645:    pub fn search_file<M, S>(
+crates/searcher/src/searcher/mod.rs:658:    fn search_file_maybe_path<M, S>(
+crates/searcher/src/searcher/mod.rs:707:    pub fn search_reader<M, R, S>(
+crates/searcher/src/searcher/mod.rs:749:    pub fn search_slice<M, S>(
+crates/searcher/src/testutil.rs:693:    fn search_reader(&self, haystack: &str) -> String {
+crates/searcher/src/testutil.rs:710:    fn search_slice(&self, haystack: &str) -> String {
