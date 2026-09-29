@@ -167,6 +167,21 @@ tarafı hedefin üstünde, sıralı girdide kayıp yok; ama kritik kanıtların
 
 Bulgular burada düzeltilmedi; kural katmanı için ayrı iş.
 
+### rules+model (lexical skorlayıcı, PR #2 `c72cb87`)
+
+`bench.py run --model-cmd "PYTHONPATH=<pr2>/src python3 -m searchslim bench-model --scorer lexical"`:
+
+| mod | token | raw'a göre | kritik kept | recoverable | lost | tahmini ek arama | p95 ms |
+|---|---|---|---|---|---|---|---|
+| raw | 69386 | %100 | 34/34 | 0 | 0 | 0 | 0 |
+| rules | 20027 | %29 | 22/34 | 12 | 0 | 7 | 2.3 |
+| rules+model | 26931 | %39 | 33/34 | 1 | 0 | 1 | 69.8 |
+
+Model, 7k token fazladan harcayarak ek arama ihtiyacını 7'den 1'e indiriyor; tek
+eksik `ripgrep-standard-fns`'de `write_line`. Gecikmenin çoğu alt süreç
+başlatma; hook içinde süreç içi çağrılınca düşer. Kuralların hiçbir şey
+atmadığı (çıktıyı aynen geçirdiği) görevlerde model çağrılmaz.
+
 ## 6. Kullanım
 
 ```sh

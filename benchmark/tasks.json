@@ -57,7 +57,7 @@
     {
       "id": "pytest-raises-impl",
       "repo": "pytest",
-      "intent": "Understand how pytest.raises matches the raised exception.",
+      "intent": "Find where pytest.raises is defined and which context manager class it returns.",
       "subtask": "Locate the raises() implementation and the context manager's __exit__.",
       "cmd": [
         "rg",

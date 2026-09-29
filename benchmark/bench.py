@@ -300,8 +300,8 @@ def cmd_run(args: argparse.Namespace) -> int:
         reduced, ms = timed(lambda: slim(raw, config=config, default_path=default_path(task)), args.repeat)
         rows.append(score(task, "rules", raw, reduced.text, ms, count(reduced.text)))
         if args.model_cmd:
-            if reduced.stats.get("matches_kept", 0) == reduced.stats.get("matches_total", 0) and not reduced.stats.get("omitted"):
-                out, mms, mcost = reduced.text, ms, 0.0  # rules dropped nothing: model not called
+            if reduced.text.rstrip("\n") == raw.rstrip("\n"):
+                out, mms, mcost = reduced.text, ms, 0.0  # passed through unchanged: model not called
             else:
                 out, mms, mcost = run_model(args.model_cmd, task, raw, reduced.text, config)
                 mms += ms
