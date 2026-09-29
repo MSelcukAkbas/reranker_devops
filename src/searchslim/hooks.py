@@ -87,7 +87,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
                 run_args.append(f"--transcript={transcript}")
         if use_session:
             run_args.append(f"--session={session_id}")
-        new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args)
+        new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args, cwd=cwd)
         if not new_command:
             return None
         return {
@@ -105,7 +105,8 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         return None
     if built is None:
         return None
-    argv, run_cwd, kind, postprocess = built
+    argv, run_cwd, kind, postprocess = built[:4]
+    default_path = built[4] if len(built) > 4 else ""
 
     raw = _run(argv, run_cwd)
     if raw is None:
@@ -121,7 +122,10 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         pattern = tool_input.get("pattern", "")
         query = query_from_transcript(transcript, pattern) if transcript else Query(pattern=pattern)
     session = SessionStore(session_id) if use_session else None
-    reduced = slim(raw, kind=kind, config=config, scorer=scorer, query=query, session=session, cwd=run_cwd)
+    reduced = slim(
+        raw, kind=kind, config=config, scorer=scorer, query=query, default_path=default_path,
+        session=session, cwd=run_cwd,
+    )
     return {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
@@ -148,9 +152,13 @@ def grep_to_rg(tool_input: dict, cwd: str):
     if tool_input.get("type"):
         argv += ["--type", tool_input["type"]]
 
+    path = tool_input.get("path")
+    single = ""
+    if mode == "content" and path and os.path.isfile(os.path.join(cwd, path)):
+        single = path  # one file: keep rg's pathless N:text lines; the note names the file
     if mode == "content":
         kind = Kind.CONTENT
-        argv += ["--with-filename", "--no-heading"]
+        argv += ["--no-filename" if single else "--with-filename", "--no-heading"]
         # Line numbers are the evidence anchor; always ask for them.
         argv.append("--line-number")
         context = tool_input.get("context", tool_input.get("-C"))
@@ -168,7 +176,6 @@ def grep_to_rg(tool_input: dict, cwd: str):
 
     # Always name the path: with none, rg searches stdin when it is a pipe,
     # and a hook's stdin is the event JSON.
-    path = tool_input.get("path")
     argv += ["-e", pattern, "--", path or "."]
     offset = int(tool_input.get("offset") or 0)
     limit = tool_input.get("head_limit")
@@ -183,7 +190,7 @@ def grep_to_rg(tool_input: dict, cwd: str):
             lines = lines[:limit]
         return "\n".join(lines)
 
-    return argv, cwd, kind, postprocess
+    return argv, cwd, kind, postprocess, single
 
 
 def glob_to_rg(tool_input: dict, cwd: str):
@@ -208,7 +215,7 @@ def _run(argv: list[str], cwd: str) -> str | None:
         return None
     try:
         proc = subprocess.run(
-            argv, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, text=True, errors="replace", timeout=RG_TIMEOUT_S
+            argv, cwd=cwd, stdin=subprocess.DEVNULL, capture_output=True, encoding="utf-8", errors="replace", timeout=RG_TIMEOUT_S
         )
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -220,7 +227,7 @@ def _run(argv: list[str], cwd: str) -> str | None:
 
 def main() -> int:
     try:
-        event = json.load(sys.stdin)
+        event = json.loads(sys.stdin.buffer.read().decode("utf-8", errors="replace"))
         out = handle(event)
     except Exception:  # never block the agent because of this hook
         return 0

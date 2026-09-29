@@ -18,6 +18,12 @@ Mevcut ayarlara dokunmaz, iki kez çalıştırmak sorun değil. Kaldırmak için
 
 Bu repo hook'u kendi `.claude/settings.json` dosyasıyla zaten kullanıyor.
 
+**Windows:** `searchslim: command not found` alırsanız pip'in `Scripts` klasörü
+PATH'te değildir. Yerini `python -c "import sysconfig; print(sysconfig.get_path('scripts'))"`
+(pip `--user` ile kurduysa `python -m site --user-base` altındaki `Scripts`) gösterir;
+o klasörü PATH'e ekleyin ya da `python -m searchslim ...` kullanın. Girdi ve çıktı
+her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gruplanır.
+
 ## Ne yapar
 
 - **Bash:** düz `rg`/`grep`/`fd`/`find` komutları `searchslim run --` ile sarılır.
@@ -63,6 +69,8 @@ searchslim run --max-tokens 1500 -- rg -n -C2 "raise " src
 searchslim run --rerank lexical --intent "res.redirect varsayılan status'u değiştir" -- rg -n -C2 redirect lib
 ```
 
+`run` ve `filter` de varsayılan olarak alaka sıralaması yapar (`--rerank off` veya
+`SEARCHSLIM_RERANK=off` kapatır); `run` arama desenini komuttan alır.
 `run`, komutun exit code'unu ve stderr'ini aynen korur.
 
 ## Sonuçlar

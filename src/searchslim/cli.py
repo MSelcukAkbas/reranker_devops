@@ -7,6 +7,10 @@
 
 `run` keeps the command's exit code and stderr untouched, so it can stand in
 for rg/fd/grep/find in scripts and agent shells.
+
+filter/run rank by relevance before cutting (lexical, no deps) unless
+`--rerank off` or `SEARCHSLIM_RERANK=off`. Input and output are UTF-8 on every
+platform (rg prints UTF-8; the Windows locale codec would garble it).
 """
 
 from __future__ import annotations
@@ -22,6 +26,25 @@ from .models import Kind
 from .rules import Config
 
 
+def _default_rerank() -> str:
+    value = os.environ.get("SEARCHSLIM_RERANK", "lexical").lower()
+    return value if value in ("off", "none", "lexical", "claude") else "lexical"
+
+
+def _decode(data: bytes) -> str:
+    return data.decode("utf-8", errors="replace")
+
+
+def _utf8_stdio() -> None:
+    # On Windows, text streams default to the ANSI code page (cp1252 etc.), so
+    # Turkish letters and emoji from rg would be garbled on the way out.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
+
 def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--kind", choices=[k.value for k in Kind], help="force the output shape instead of auto-detecting")
     p.add_argument("--max-tokens", type=int, default=Config.max_tokens)
@@ -30,7 +53,12 @@ def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--max-line-chars", type=int, default=Config.max_line_chars)
     p.add_argument("--default-path", default="", help="path for lines printed without a filename")
     p.add_argument("--stats", action="store_true", help="print reduction stats as JSON on stderr")
-    p.add_argument("--rerank", choices=["none", "lexical", "claude"], default="none", help="rules+model mode: rank by relevance before cutting")
+    p.add_argument(
+        "--rerank",
+        choices=["off", "none", "lexical", "claude"],
+        default=_default_rerank(),
+        help="rank by relevance before cutting (default: $SEARCHSLIM_RERANK or lexical; off = plain rules)",
+    )
     p.add_argument("--intent", default="", help="user goal, for --rerank")
     p.add_argument("--subtask", default="", help="agent's current step, for --rerank")
     p.add_argument("--query", default="", help="search pattern, for --rerank")
@@ -51,7 +79,7 @@ def _emit(raw: str, args: argparse.Namespace) -> None:
     if not raw.strip():
         return
     scorer = query = None
-    if args.rerank != "none":
+    if args.rerank not in ("off", "none"):
         from .rerank import Query, make_scorer
 
         scorer = make_scorer(args.rerank)
@@ -106,6 +134,7 @@ def main(argv: list[str] | None = None) -> int:
     p_bench.add_argument("--scorer", choices=["lexical", "claude"], default="lexical")
 
     args = parser.parse_args(argv)
+    _utf8_stdio()
 
     if args.cmd == "hook":
         from .hooks import main as hook_main
@@ -124,19 +153,23 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "bench-model":
         from .rerank import make_scorer, run_for_benchmark
 
-        text, usage = run_for_benchmark(json.load(sys.stdin), make_scorer(args.scorer))
+        text, usage = run_for_benchmark(json.loads(_decode(sys.stdin.buffer.read())), make_scorer(args.scorer))
         sys.stdout.write(text + ("\n" if text and not text.endswith("\n") else ""))
         sys.stderr.write(json.dumps({k: usage[k] for k in ("input_tokens", "output_tokens") if k in usage}) + "\n")
         return 0
 
     if args.cmd == "filter":
-        _emit(sys.stdin.read(), args)
+        _emit(_decode(sys.stdin.buffer.read()), args)
         return 0
 
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
         parser.error("run needs a command, e.g. searchslim run -- rg -n foo")
-    proc = subprocess.run(command, capture_output=True, text=True, errors="replace")
-    sys.stderr.write(proc.stderr)
-    _emit(proc.stdout, args)
+    if not args.query and args.rerank not in ("off", "none"):
+        from .rerank import pattern_and_paths
+
+        args.query = pattern_and_paths(command)[0]
+    proc = subprocess.run(command, capture_output=True)
+    sys.stderr.write(_decode(proc.stderr))
+    _emit(_decode(proc.stdout), args)
     return proc.returncode

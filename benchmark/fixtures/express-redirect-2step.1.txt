@@ -1,0 +1,7 @@
+943- * @public
+944- */
+945-
+946:res.redirect = function redirect(url) {
+947-  var address = url;
+948-  var body;
+949-  var status = 302;

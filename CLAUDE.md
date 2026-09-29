@@ -95,6 +95,10 @@ an agent that must decide from it whether to search again.
   term), and down-weights for comment-only matches, test code, docs and changelogs.
 - `ClaudeScorer`: lexical top-60 shortlist, then `claude-haiku-4-5` returns an ordering of
   unit ids (`pip install 'searchslim[claude]'`, API credentials needed). Unknown ids are ignored.
+- CLI `filter`/`run`: ranking is on by default too (`--rerank off` or `SEARCHSLIM_RERANK=off`);
+  `run` takes the query pattern from the command. CLI and hook read/write UTF-8 regardless of
+  locale (Windows cp1252 garbled rg output). Directory grouping normalizes `\` and leading `./`/`.\`
+  (`rules.group_path`); shown lines keep the tool's spelling.
 - Hook: ranking is on by default (`SEARCHSLIM_RERANK=lexical|claude|off`); intent = last user message and subtask = last
   assistant text from the hook's `transcript_path`.
 
