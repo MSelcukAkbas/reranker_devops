@@ -1,4 +1,7 @@
-"""`searchslim install`: add the PreToolUse hook to a Claude Code settings file.
+"""`searchslim install`: add the hooks to a Claude Code settings file.
+
+PreToolUse (Bash|Grep|Glob) reduces search output; PreCompact clears the
+session's memory of lines already shown (see session.py).
 
 Merges into existing settings (other hooks and keys are kept) and is
 idempotent. `--user` targets ~/.claude/settings.json, otherwise
@@ -27,32 +30,51 @@ def settings_path(project: str | None, user: bool) -> Path:
     return Path(project or ".").resolve() / ".claude" / "settings.json"
 
 
+# (event, matcher) pairs the hook is registered for.
+EVENTS = (("PreToolUse", MATCHER), ("PreCompact", ""))
+
+
+def _has_hook(entries: list) -> bool:
+    return any(MARKER in h.get("command", "") for entry in entries for h in entry.get("hooks", []))
+
+
 def install(path: Path) -> bool:
-    """Add the hook; return False if it was already there."""
+    """Add the hooks; return False if they were all already there."""
     settings = _load(path)
-    pre = settings.setdefault("hooks", {}).setdefault("PreToolUse", [])
-    if any(MARKER in h.get("command", "") for entry in pre for h in entry.get("hooks", [])):
-        return False
-    pre.append({"matcher": MATCHER, "hooks": [{"type": "command", "command": hook_command(), "timeout": 30}]})
-    _save(path, settings)
-    return True
+    hooks = settings.setdefault("hooks", {})
+    changed = False
+    for event, matcher in EVENTS:
+        entries = hooks.setdefault(event, [])
+        if _has_hook(entries):
+            continue
+        entry = {"hooks": [{"type": "command", "command": hook_command(), "timeout": 30}]}
+        if matcher:
+            entry = {"matcher": matcher, **entry}
+        entries.append(entry)
+        changed = True
+    if changed:
+        _save(path, settings)
+    return changed
 
 
 def uninstall(path: Path) -> bool:
-    """Remove the hook; return False if it was not there."""
+    """Remove the hooks; return False if none were there."""
     settings = _load(path)
-    pre = settings.get("hooks", {}).get("PreToolUse", [])
-    kept, removed = [], False
-    for entry in pre:
-        hooks = [h for h in entry.get("hooks", []) if MARKER not in h.get("command", "")]
-        removed |= len(hooks) != len(entry.get("hooks", []))
-        if hooks:
-            kept.append({**entry, "hooks": hooks})
+    removed = False
+    for event, _ in EVENTS:
+        entries = settings.get("hooks", {}).get(event, [])
+        kept = []
+        for entry in entries:
+            hooks = [h for h in entry.get("hooks", []) if MARKER not in h.get("command", "")]
+            removed |= len(hooks) != len(entry.get("hooks", []))
+            if hooks:
+                kept.append({**entry, "hooks": hooks})
+        if event in settings.get("hooks", {}):
+            settings["hooks"][event] = kept
+            if not kept:
+                del settings["hooks"][event]
     if not removed:
         return False
-    settings["hooks"]["PreToolUse"] = kept
-    if not kept:
-        del settings["hooks"]["PreToolUse"]
     if not settings["hooks"]:
         del settings["hooks"]
     _save(path, settings)

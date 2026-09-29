@@ -63,6 +63,7 @@ def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--subtask", default="", help="agent's current step, for --rerank")
     p.add_argument("--query", default="", help="search pattern, for --rerank")
     p.add_argument("--transcript", default="", help="Claude Code transcript (JSONL) to take intent/subtask from, for --rerank")
+    p.add_argument("--session", default="", help="agent session id: don't repeat lines earlier searches in it already showed")
 
 
 def _config(args: argparse.Namespace) -> Config:
@@ -88,6 +89,12 @@ def _emit(raw: str, args: argparse.Namespace) -> None:
             query = query_from_transcript(args.transcript, args.query)
         else:
             query = Query(args.intent, args.subtask, args.query)
+    session = None
+    if args.session:
+        from .session import SessionStore, enabled
+
+        if enabled():
+            session = SessionStore(args.session)
     reduced = slim(
         raw,
         kind=Kind(args.kind) if args.kind else None,
@@ -95,6 +102,8 @@ def _emit(raw: str, args: argparse.Namespace) -> None:
         default_path=args.default_path,
         scorer=scorer,
         query=query,
+        session=session,
+        cwd=os.getcwd(),
     )
     sys.stdout.write(reduced.text)
     if reduced.text and not reduced.text.endswith("\n"):
