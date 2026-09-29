@@ -125,9 +125,11 @@ def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
     body, note = split_note(output)
     parsed = parse(body, kind=kind, default_path=dpath)
     path = ev["path"]
+    # Single-file output has no filename; the parser leaves path "" for those lines.
+    line_path = lambda ln: _norm(ln.path or dpath)  # noqa: E731
     if kind is Kind.CONTENT:
-        seen_paths = {_norm(ln.path) for ln in parsed.lines}
-        if "line" in ev and any(_norm(ln.path) == path and ln.number == ev["line"] for ln in parsed.lines):
+        seen_paths = {line_path(ln) for ln in parsed.lines}
+        if "line" in ev and any(line_path(ln) == path and ln.number == ev["line"] for ln in parsed.lines):
             return "kept"
         if "line" not in ev and path in seen_paths:
             return "kept"
@@ -136,7 +138,7 @@ def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
             return "kept"
     elif path in {_norm(c.path) for c in parsed.counts}:
         return "kept"
-    body_paths = {_norm(ln.path) for ln in parsed.lines} | {_norm(p) for p in parsed.paths} | {_norm(c.path) for c in parsed.counts}
+    body_paths = {line_path(ln) for ln in parsed.lines} | {_norm(p) for p in parsed.paths} | {_norm(c.path) for c in parsed.counts}
     note_paths = {_norm(tok.rstrip(",.:;()")) for tok in note.split()}
     if path in note_paths or path in body_paths:
         return "recoverable"

@@ -3,6 +3,7 @@
   searchslim filter [opts] < raw_output     reduce output read from stdin
   searchslim run [opts] -- rg -n foo src    run a search command, reduce its stdout
   searchslim hook < event.json              Claude Code PreToolUse hook (see hooks.py)
+  searchslim install [--user | DIR]         enable the hook in Claude Code settings
 
 `run` keeps the command's exit code and stderr untouched, so it can stand in
 for rg/fd/grep/find in scripts and agent shells.
@@ -86,6 +87,11 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("hook", help="Claude Code PreToolUse hook: JSON event on stdin")
 
+    for name, help_text in (("install", "enable the hook in Claude Code settings"), ("uninstall", "remove the hook")):
+        p_inst = sub.add_parser(name, help=help_text)
+        p_inst.add_argument("project", nargs="?", default=".", help="project directory (default: current)")
+        p_inst.add_argument("--user", action="store_true", help="use ~/.claude/settings.json (all projects)")
+
     p_bench = sub.add_parser("bench-model", help="rules+model entry for benchmark/bench.py --model-cmd (JSON on stdin)")
     p_bench.add_argument("--scorer", choices=["lexical", "claude"], default="lexical")
 
@@ -95,6 +101,15 @@ def main(argv: list[str] | None = None) -> int:
         from .hooks import main as hook_main
 
         return hook_main()
+
+    if args.cmd in ("install", "uninstall"):
+        from .install import install, settings_path, uninstall
+
+        path = settings_path(args.project, args.user)
+        changed = (install if args.cmd == "install" else uninstall)(path)
+        state = {"install": ("added to", "already in"), "uninstall": ("removed from", "not in")}[args.cmd]
+        print(f"searchslim hook {state[0] if changed else state[1]} {path}")
+        return 0
 
     if args.cmd == "bench-model":
         from .rerank import make_scorer, run_for_benchmark

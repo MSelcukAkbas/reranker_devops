@@ -44,6 +44,7 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/rewrite.py`  wraps plain rg/grep/fd/find shell commands in `searchslim run --`
 - `src/searchslim/hooks.py`    PreToolUse hook for Bash, Grep, Glob
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
+- `src/searchslim/install.py`  `searchslim install [--user|DIR]` merges the hook into Claude Code settings
 - `src/searchslim/cli.py`      `searchslim filter` (stdin), `searchslim run -- <cmd>`, `searchslim hook`,
                                `searchslim bench-model` (the benchmark's `--model-cmd` contract)
 - `tests/`                     pytest; one test runs real `rg` if installed
@@ -82,14 +83,7 @@ an agent that must decide from it whether to search again.
 - Hook: ranking is on by default (`SEARCHSLIM_RERANK=lexical|claude|off`); intent = last user message and subtask = last
   assistant text from the hook's `transcript_path`.
 
-Budget sweep on the benchmark tasks (critical evidence visible in the body, of 22; tokens chars/4):
-
-| budget | rules tokens | rules kept | lexical tokens | lexical kept |
-|---|---|---|---|---|
-| 800 | 7.3k | 9 | 8.1k | 19 |
-| 1200 | 10.0k | 11 | 11.5k | 20 |
-| 2000 | 14.1k | 16 | 18.0k | 22 |
-| 3000 | 20.0k | 21 | 23.7k | 22 |
+Benchmark results live in `benchmark/results/` (latest: 2026-09-29, rules+model keeps 34/34 critical lines at the default budget vs 30/34 for rules).
 
 ## Commands
 
