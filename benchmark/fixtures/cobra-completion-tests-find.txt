@@ -1,0 +1,17 @@
+./args_test.go
+./doc/rest_docs_test.go
+./doc/man_docs_test.go
+./doc/yaml_docs_test.go
+./doc/cmd_test.go
+./doc/man_examples_test.go
+./doc/md_docs_test.go
+./active_help_test.go
+./flag_groups_test.go
+./command_test.go
+./cobra_test.go
+./zsh_completions_test.go
+./bash_completionsV2_test.go
+./completions_test.go
+./fish_completions_test.go
+./bash_completions_test.go
+./powershell_completions_test.go
