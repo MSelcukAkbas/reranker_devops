@@ -2,7 +2,7 @@
 
 from .models import Block, Kind, Line, PathCount, SearchResult
 from .parsers import detect_kind, parse
-from .rules import Config, Reduced, estimate_tokens, reduce
+from .rules import Config, Reduced, estimate_tokens, for_output, reduce
 
 __all__ = [
     "Block",
@@ -40,6 +40,7 @@ def slim(
     and the lines shown now are recorded. `cwd` resolves relative paths.
     """
     config = config or Config()
+    config = for_output(config, raw)  # below the trigger, rules pass it through unchanged
     result = parse(raw, kind=kind, default_path=default_path)
     shown = []
     if session is not None and estimate_tokens(raw) > config.max_tokens:

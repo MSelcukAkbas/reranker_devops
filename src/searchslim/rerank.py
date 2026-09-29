@@ -31,6 +31,8 @@ from typing import Protocol
 
 from .models import Block, Kind, Line, SearchResult
 from .rules import (
+    ASK_LIST,
+    ASK_PATH,
     NOTE_PREFIX,
     _assemble,
     Config,
@@ -38,6 +40,7 @@ from .rules import (
     build_blocks,
     dedupe_lines,
     estimate_tokens,
+    for_output,
     format_dirs,
     reduce,
     render_blocks,
@@ -380,17 +383,17 @@ def _rank_content(result: SearchResult, query: Query, scorer: Scorer, config: Co
     total = sum(len(u.matches) for u in units)
     kept_matches = sum(len(units[i].matches) for i in kept)
 
-    note = f"{NOTE_PREFIX} {len(result.lines)} -> {body.count(chr(10)) + 1 if body else 0} lines, {kept_matches}/{total} matches shown, ranked by relevance ({scorer.name})."
+    note = f"{NOTE_PREFIX} {len(result.lines)} -> {body.count(chr(10)) + 1 if body else 0} lines, {kept_matches}/{total} matches shown, ranked by relevance ({scorer.name}) to the task; the shown matches are the most relevant and usually enough."
     if omitted:
         listed = list(omitted.items())[: config.note_max_files]
         name = lambda p: p or getattr(result, "default_path", "") or "this file"  # noqa: E731
-        note += " Omitted matches, most relevant first: " + ", ".join(f"{name(p)} ({n})" for p, n in listed)
+        note += " Left out, most relevant first: " + ", ".join(f"{name(p)} ({n})" for p, n in listed)
         rest = list(omitted.items())[len(listed):]
         if rest:
             # Same guarantee as the rules note: every omitted file is under a named directory.
             dirs = format_dirs(rollup_dirs(rest, config.note_max_files))
             note += f"; {len(rest)} more files by directory: {dirs}"
-        note += ". Narrow the search (path/glob) to see them."
+        note += ". " + ASK_PATH
     return Reduced(
         text=_assemble(result, body, note),
         stats={
@@ -446,12 +449,12 @@ def _rank_paths(result: SearchResult, query: Query, scorer: Scorer, config: Conf
             used += cost
     body = "\n".join(paths[i] for i in kept)
     missing = len(paths) - len(kept)
-    note = f"{NOTE_PREFIX} {len(kept)}/{len(paths)} paths shown, ranked by relevance ({scorer.name})."
+    note = f"{NOTE_PREFIX} {len(kept)}/{len(paths)} paths shown, ranked by relevance ({scorer.name}) to the task; the shown paths are the most relevant."
     if missing:
         kept_set = set(kept)
         rest = [(paths[i], 1) for i in order if i not in kept_set]
         note += " Not shown, by directory: " + format_dirs(rollup_dirs(rest, config.note_max_files))
-        note += ". Narrow the pattern to see them."
+        note += ". " + ASK_LIST
     return Reduced(
         text=_assemble(result, body, note),
         stats={"kind": "paths", "reranked": True, "scorer": scorer.name, "unique": len(paths), "kept": len(kept), "model_usage": scored.usage},
@@ -535,10 +538,14 @@ def run_for_benchmark(payload: dict, scorer: Scorer) -> tuple[str, dict]:
     cmd = payload.get("cmd") or []
     pattern, paths = pattern_and_paths(cmd)
     single = paths[0] if len(paths) == 1 and "." in os.path.basename(paths[0]) else ""
-    config = Config(max_tokens=int(payload.get("max_tokens") or Config.max_tokens))
+    config = Config(
+        max_tokens=int(payload.get("max_tokens") or Config.max_tokens),
+        trigger_tokens=int(payload.get("trigger_tokens") or 0),
+    )
     from .parsers import parse
 
     result = parse(payload.get("raw", ""), default_path=single)
+    config = for_output(config, payload.get("raw", ""))
     reduced = reduce_ranked(result, Query(payload.get("intent", ""), payload.get("subtask", ""), pattern), scorer, config)
     text = reduced.text
     raw_lines = set(payload.get("raw", "").splitlines())

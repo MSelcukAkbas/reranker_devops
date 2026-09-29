@@ -17,7 +17,8 @@
 
 Every failure path (bad input, missing rg, timeout) returns no output so the
 original tool call runs unchanged. `SEARCHSLIM=off` in the environment
-disables the hook; `SEARCHSLIM_MAX_TOKENS` sets the budget.
+disables the hook; `SEARCHSLIM_MAX_TOKENS` sets the budget and
+`SEARCHSLIM_TRIGGER_TOKENS` (default 6000) the size above which output is reduced.
 `SEARCHSLIM_RERANK=lexical|claude|off` picks the ranking (default lexical), with
 the intent taken from the session transcript.
 
@@ -38,7 +39,7 @@ from pathlib import Path
 from . import slim
 from .models import Kind
 from .rewrite import rewrite_command
-from .rules import NOTE_PREFIX, Config, estimate_tokens
+from .rules import DEFAULT_TRIGGER_TOKENS, NOTE_PREFIX, Config, estimate_tokens
 from .session import SessionStore, enabled as session_enabled
 
 RG_TIMEOUT_S = 20
@@ -59,10 +60,13 @@ DENY_NOTE = " This is the search result, not an error; do not retry the same cal
 
 
 def config_from_env() -> Config:
-    config = Config()
+    config = Config(trigger_tokens=DEFAULT_TRIGGER_TOKENS)
     value = os.environ.get("SEARCHSLIM_MAX_TOKENS", "")
     if value.isdigit():
         config.max_tokens = int(value)
+    value = os.environ.get("SEARCHSLIM_TRIGGER_TOKENS", "")
+    if value.isdigit():
+        config.trigger_tokens = int(value)
     return config
 
 
@@ -93,7 +97,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     grep_mode = os.environ.get("SEARCHSLIM_GREP_MODE", "post").lower()
 
     if tool == "Bash" and event_name == "PreToolUse":
-        run_args = [f"--max-tokens={config.max_tokens}"]
+        run_args = [f"--max-tokens={config.max_tokens}", f"--trigger-tokens={config.trigger_tokens}"]
         if rerank:
             run_args.append(f"--rerank={rerank}")
             if transcript:
@@ -134,7 +138,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         raw = postprocess(raw)
     else:
         run_cwd = cwd
-    if estimate_tokens(raw) <= config.max_tokens:
+    if estimate_tokens(raw) <= max(config.max_tokens, config.trigger_tokens):
         return None  # small enough: let the real tool answer
     scorer = query = None
     if rerank:
