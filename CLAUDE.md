@@ -19,14 +19,21 @@ an agent that must decide from it whether to search again.
 ## Invariants (tests enforce these; do not break them)
 
 - Output keeps the tool's own format (`path:line:text`, `path-line-text`, `--`,
-  one path per line, `path:N`), so it is a drop-in replacement.
+  one path per line, `path:N`, pathless `N:text` for single-file searches),
+  so it is a drop-in replacement. Claude Code framing lines (`Found N files`,
+  truncation notices) are kept verbatim around the body.
 - Every emitted body line is a line from the raw input (only very long lines
   are clipped, with a `…[+N chars]` marker). Nothing is rewritten or invented.
 - Rules never reorder by guessed relevance. When over budget they drop in a
-  fixed order: context lines, then matches beyond N per file, then whole files
-  from the end. Kept files are a prefix of the input order.
+  fixed order: context lines, then matches beyond N per file (N is the largest
+  cap that fits the budget, at least `max_matches_per_file`, or 1 for a
+  single-file search), then whole files from the end. Kept files are a prefix
+  of the input order, and kept matches a prefix of each file's line order.
 - Anything dropped is accounted for in one trailing `[searchslim] ...` note
   (counts per file or directory) so the agent knows what to narrow and re-run.
+  Every omitted file is covered: files past the named ones are rolled up into
+  directories, so input order (rg is unordered without `--sort path`) never
+  hides where evidence went.
 - Small outputs pass through unchanged.
 
 ## Layout

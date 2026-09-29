@@ -20,6 +20,8 @@ class Kind(str, Enum):
 class Line:
     """One output line from a content search.
 
+    `path` is "" for single-file searches, whose output has no filename.
+
     `is_match` is False for context lines (rg -A/-B/-C, printed as path-line-text).
     """
 
@@ -71,3 +73,5 @@ class SearchResult:
     # "Found 3 files", "(Results are truncated...)"). Re-emitted verbatim.
     header: list[str] = field(default_factory=list)
     footer: list[str] = field(default_factory=list)
+    # Name for pathless lines (single-file search, path ""); used only in notes.
+    default_path: str = ""

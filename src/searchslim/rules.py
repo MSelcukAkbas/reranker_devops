@@ -23,7 +23,9 @@ class Config:
     max_tokens: int = 2000
     # Blocks in the same file closer than this many lines are merged into one.
     merge_gap: int = 0
-    # When over budget, keep at most this many match lines per file.
+    # When over budget, keep at most N match lines per file. N is the largest
+    # value that fits the budget, but never below this floor (1 for a
+    # single-file search, where the cap is the only way to shrink).
     max_matches_per_file: int = 8
     # Longer lines (minified code, data blobs) are cut; the line itself is kept.
     max_line_chars: int = 300
@@ -104,7 +106,8 @@ def render_blocks(blocks: "OrderedDict[str, list[Block]]", max_line_chars: int) 
             first = False
             for num in sorted(block.lines):
                 sep = ":" if num in block.matches else "-"
-                out.append(f"{path}{sep}{num}{sep}{_clip(block.lines[num], max_line_chars)}")
+                prefix = f"{path}{sep}" if path else ""  # single-file output has no path
+                out.append(f"{prefix}{num}{sep}{_clip(block.lines[num], max_line_chars)}")
     return "\n".join(out)
 
 
@@ -119,16 +122,25 @@ def _reduce_content(result: SearchResult, config: Config) -> Reduced:
         return estimate_tokens(render_blocks(bs, config.max_line_chars)) <= config.max_tokens
 
     if not fits(blocks):
+        had_context = any(len(b.lines) > len(b.matches) for bs in blocks.values() for b in bs)
         blocks = _drop_context(blocks)
-        steps.append("context lines dropped")
+        if had_context:
+            steps.append("context lines dropped")
 
     omitted: OrderedDict[str, int] = OrderedDict()
     if not fits(blocks):
-        blocks, capped = _cap_matches_per_file(blocks, config.max_matches_per_file)
+        # Leave room for the note, which grows once matches are omitted.
+        note_room = 60 + 15 * config.note_max_files
+        cap = _largest_fitting_cap(
+            blocks,
+            config,
+            lambda bs: estimate_tokens(render_blocks(bs, config.max_line_chars)) + note_room <= config.max_tokens,
+        )
+        blocks, capped = _cap_matches_per_file(blocks, cap)
         for path, n in capped.items():
             omitted[path] = omitted.get(path, 0) + n
         if capped:
-            steps.append(f"max {config.max_matches_per_file} matches per file")
+            steps.append(f"max {cap} matches per file")
 
     if not fits(blocks):
         blocks, dropped = _drop_files_to_budget(blocks, config)
@@ -143,7 +155,7 @@ def _reduce_content(result: SearchResult, config: Config) -> Reduced:
 
     note = ""
     if steps or len(lines) < raw_lines:
-        note = _content_note(raw_lines, body, total_matches, kept_matches, steps, omitted, config)
+        note = _content_note(raw_lines, body, total_matches, kept_matches, steps, omitted, config, result.default_path)
 
     return Reduced(
         text=_assemble(result, body, note),
@@ -193,6 +205,26 @@ def _cap_matches_per_file(blocks, cap: int):
     return out, capped
 
 
+def _largest_fitting_cap(blocks, config: Config, fits) -> int:
+    """Largest per-file match cap whose output fits, not below the floor.
+
+    Budget-driven, not relevance-driven: every file gets the same cap, so a
+    large file keeps as many of its matches (in line order) as the budget allows.
+    """
+    floor = 1 if len(blocks) == 1 else config.max_matches_per_file
+    most = max((sum(len(b.matches) for b in bs) for bs in blocks.values()), default=0)
+    lo, hi = floor, max(floor, most - 1)
+    if not fits(_cap_matches_per_file(blocks, lo)[0]):
+        return lo
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if fits(_cap_matches_per_file(blocks, mid)[0]):
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+
+
 def _drop_files_to_budget(blocks, config: Config):
     # Reserve room for the note so body + note stays near the budget.
     budget = max(config.max_tokens - 60 - 15 * config.note_max_files, config.max_tokens // 2)
@@ -211,21 +243,57 @@ def _drop_files_to_budget(blocks, config: Config):
     return kept, dropped
 
 
-def _content_note(raw_lines, body, total, kept, steps, omitted, config) -> str:
+def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_path="") -> str:
     parts = [f"{NOTE_PREFIX} {raw_lines} -> {body.count(chr(10)) + 1 if body else 0} lines"]
     parts.append(f"{kept}/{total} matches shown")
     if steps:
         parts.append("; ".join(steps))
     note = ", ".join(parts) + "."
     if omitted:
-        listed = list(omitted.items())[: config.note_max_files]
-        names = ", ".join(f"{p} ({n})" for p, n in listed)
-        more = len(omitted) - len(listed)
+        items = list(omitted.items())
+        listed = items[: config.note_max_files]
+        names = ", ".join(f"{p or default_path or 'this file'} ({n})" for p, n in listed)
         note += f" Omitted matches: {names}"
-        if more > 0:
-            note += f", +{more} more files ({sum(list(omitted.values())[len(listed):])} matches)"
-        note += ". Narrow the search (path/glob) to see them."
+        rest = items[len(listed):]
+        if rest:
+            # Every omitted file stays covered by a named directory, so an
+            # agent can always tell where to narrow the search.
+            dirs = _format_dirs(rollup_dirs(rest, config.note_max_files))
+            note += f"; {len(rest)} more files by directory: {dirs}"
+        if list(omitted) == [""]:
+            note += ". Narrow the pattern to see them."
+        else:
+            note += ". Narrow the search (path/glob) to see them."
     return note
+
+
+def rollup_dirs(path_counts, limit: int) -> list[tuple[str, int]]:
+    """Group (path, count) pairs by directory, moving the deepest directories up
+    to their parents until at most `limit` groups remain. Every input is counted
+    in some group, so no omitted file goes unmentioned."""
+    groups: OrderedDict[str, int] = OrderedDict()
+    for p, n in path_counts:
+        d = posixpath.dirname(p) or "."
+        groups[d] = groups.get(d, 0) + n
+    limit = max(limit, 2)
+    while len(groups) > limit:
+        deepest = max(d.count("/") for d in groups)
+        if deepest == 0:
+            # Only top-level dirs left: name the first ones, lump the rest.
+            items = list(groups.items())
+            head, tail = items[: limit - 1], items[limit - 1:]
+            return head + [(f"+{len(tail)} other dirs", sum(n for _, n in tail))]
+        merged: OrderedDict[str, int] = OrderedDict()
+        for d, n in groups.items():
+            if d.count("/") == deepest:
+                d = posixpath.dirname(d)
+            merged[d] = merged.get(d, 0) + n
+        groups = merged
+    return list(groups.items())
+
+
+def _format_dirs(groups) -> str:
+    return ", ".join(f"{d} ({n})" if d.startswith("+") else f"{d}/ ({n})" for d, n in groups)
 
 
 def _clip(text: str, limit: int) -> str:
@@ -257,16 +325,9 @@ def _reduce_paths(result: SearchResult, config: Config) -> Reduced:
     body = "\n".join(kept)
     note = ""
     if rest:
-        by_dir: OrderedDict[str, int] = OrderedDict()
-        for p in rest:
-            d = posixpath.dirname(p) or "."
-            by_dir[d] = by_dir.get(d, 0) + 1
-        listed = list(by_dir.items())[: config.note_max_files]
-        dirs = ", ".join(f"{d}/ ({n})" for d, n in listed)
-        more = len(by_dir) - len(listed)
+        dirs = _format_dirs(rollup_dirs([(p, 1) for p in rest], config.note_max_files))
         note = (
             f"{NOTE_PREFIX} {len(kept)}/{len(unique)} paths shown. Not shown, by directory: {dirs}"
-            + (f", +{more} more dirs" if more > 0 else "")
             + ". Narrow the pattern to see them."
         )
     elif len(unique) < len(result.paths):

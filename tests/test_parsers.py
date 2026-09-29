@@ -45,9 +45,11 @@ def test_heading_mode():
     ]
 
 
-def test_bare_lines_need_default_path():
-    lines = parse("3:foo\n4-bar\n", kind=Kind.CONTENT, default_path="x.py").lines
-    assert [(ln.path, ln.number, ln.is_match) for ln in lines] == [("x.py", 3, True), ("x.py", 4, False)]
+def test_bare_lines_parse_without_a_path():
+    result = parse("3:foo\n4-bar\n", default_path="x.py")
+    assert result.kind is Kind.CONTENT
+    assert [(ln.path, ln.number, ln.is_match) for ln in result.lines] == [("", 3, True), ("", 4, False)]
+    assert result.default_path == "x.py"
 
 
 def test_rg_json():

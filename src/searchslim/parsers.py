@@ -5,7 +5,8 @@ Supported content shapes:
   path-12-text        context line (-A/-B/-C)
   --                  separator between context groups
   path                heading line, followed by `12:text` / `12-text` (rg --heading)
-  12:text             no filename (single-file search); needs `default_path`
+  12:text             no filename (single-file search); kept without a path,
+                      `default_path` only names the file in the note
   rg --json           one JSON event per line
 
 Paths shape: one path per line (Glob, fd, find, rg -l, grep -l).
@@ -80,7 +81,9 @@ def _parse_body(raw: str, kind: Kind | None, default_path: str) -> SearchResult:
     first = next((ln for ln in raw.splitlines() if ln.strip()), "")
     if first.startswith("{") and _is_rg_json(first):
         return parse_rg_json(raw)
-    return parse_content(raw, default_path=default_path)
+    result = parse_content(raw)
+    result.default_path = default_path
+    return result
 
 
 def parse_paths(raw: str) -> SearchResult:
@@ -105,7 +108,7 @@ def parse_counts(raw: str) -> SearchResult:
     return result
 
 
-def parse_content(raw: str, default_path: str = "") -> SearchResult:
+def parse_content(raw: str) -> SearchResult:
     result = SearchResult(kind=Kind.CONTENT)
     known_paths: set[str] = set()
     heading: str | None = None
@@ -143,10 +146,9 @@ def parse_content(raw: str, default_path: str = "") -> SearchResult:
             result.lines.append(ctx)
             continue
 
-        if bare and default_path:
-            result.lines.append(
-                Line(default_path, int(bare["num"]), bare["text"], bare["sep"] == ":")
-            )
+        if bare:
+            # Single-file search: no path in the output, so none is added.
+            result.lines.append(Line("", int(bare["num"]), bare["text"], bare["sep"] == ":"))
             continue
 
         if not bare and _looks_like_path(ln):
