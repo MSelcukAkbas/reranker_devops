@@ -182,6 +182,29 @@ eksik `ripgrep-standard-fns`'de `write_line`. Gecikmenin çoğu alt süreç
 başlatma; hook içinde süreç içi çağrılınca düşer. Kuralların hiçbir şey
 atmadığı (çıktıyı aynen geçirdiği) görevlerde model çağrılmaz.
 
+### Canlı ajan koşusu (katman B, 21 görev, 1 tekrar, 2026-09-29)
+
+`live.py --repeat 1`, hook `8be193f` (PR #2, `rg` sıralaması ve rerank öncesi), varsayılan Claude Code modeli:
+
+| mod | başarı | medyan arama çağrısı | medyan arama sonucu tok | medyan girdi tok | toplam $ | medyan s |
+|---|---|---|---|---|---|---|
+| off | 11/21 | 2 | 426 | 125492 | 1.47 | 17 |
+| on | 11/21 | 2 | 300 | 96918 | 1.35 | 16 |
+
+- Hook açıkken medyan girdi token'ı %23, maliyet %8 düştü; arama sayısı ve
+  doğruluk değişmedi. Tek tekrar olduğu için bu farklar gürültü içinde olabilir.
+- Ajan dar aramalar yapıyor: hook 21 koşuda yalnızca 4 Grep/Glob çağrısını
+  kendisi cevapladı. Katman A'daki geniş komutlar canlı kullanımda nadir.
+- Bu 4 koşunun 3'ü başarısız. `ripgrep-max-columns` ve `ripgrep-unwrap-counts`
+  hook kapalıyken de başarısız; `ripgrep-standard-fns` ise hook kapalıyken
+  geçip açıkken kaldı. Bu tek dosya aramasının 8 eşleşmeye inmesiyle (bulgu 2)
+  tutarlı; tekrar sayısı artınca doğrulanmalı.
+- Başarısızlıkların çoğu ölçüm kaynaklı: ajan doğru ama farklı bir yeri
+  gösteriyor (ör. `ValidateArgs` tanımı yerine `command.go:938`'deki çağrısı,
+  `pytest.raises` için `__exit__`). Canlı katman için her görevin kabul
+  edilebilir satır kümesi genişletilmeli; o zamana kadar `success` iki modu
+  ayırt etmekte zayıf.
+
 ## 6. Kullanım
 
 ```sh
