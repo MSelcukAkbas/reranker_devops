@@ -277,7 +277,7 @@ def timed(fn, repeat: int) -> tuple[object, float]:
 
 def run_model(cmd: str, task: dict, raw: str, rules_text: str, config: Config) -> tuple[str, float, float]:
     payload = json.dumps(
-        {"intent": task["intent"], "subtask": task["subtask"], "cmd": task["cmd"], "raw": raw, "rules": rules_text, "max_tokens": config.max_tokens}
+        {"intent": task["intent"], "subtask": task["subtask"], "cmd": task["cmd"], "raw": raw, "rules": rules_text, "max_tokens": config.max_tokens, "trigger_tokens": config.trigger_tokens}
     )
     t0 = time.perf_counter()
     proc = subprocess.run(cmd, shell=True, input=payload, capture_output=True, text=True)
@@ -326,7 +326,7 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 
 def cmd_run(args: argparse.Namespace) -> int:
     spec = load_spec()
-    config = Config(max_tokens=args.max_tokens)
+    config = Config(max_tokens=args.max_tokens, trigger_tokens=args.trigger_tokens)
     count = TokenCounter(args.tokenizer)
     modes = ["raw", "rules"] + (["rules+model"] if args.model_cmd else [])
     rows: list[Row] = []
@@ -429,6 +429,7 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("run", help="run modes over the fixtures")
     p.add_argument("--only", nargs="*")
     p.add_argument("--max-tokens", type=int, default=Config.max_tokens)
+    p.add_argument("--trigger-tokens", type=int, default=0, help="reduce only outputs above this (0 = --max-tokens; the hook uses 6000)")
     p.add_argument("--tokenizer", choices=["auto", "api", "chars"], default="auto")
     p.add_argument("--repeat", type=int, default=20, help="runs per task for the rules latency median")
     p.add_argument("--model-cmd", help="reranker command for the rules+model mode")

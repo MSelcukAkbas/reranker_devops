@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "searchslim"
-version = "0.3.1"
+version = "0.3.2"
 description = "Drop-in reducer for Grep/Glob/rg/fd output: fewer tokens, same code evidence."
 requires-python = ">=3.10"
 dependencies = []

@@ -73,7 +73,8 @@ Ayarlar (ortam değişkeni):
 | değişken | etkisi |
 |---|---|
 | `SEARCHSLIM=off` | hook'u kapatır (komutun başına da yazılabilir) |
-| `SEARCHSLIM_MAX_TOKENS` | bütçe, varsayılan 2000 |
+| `SEARCHSLIM_MAX_TOKENS` | küçültülen çıktının bütçesi, varsayılan 2000 |
+| `SEARCHSLIM_TRIGGER_TOKENS` | yalnızca bundan büyük çıktılar küçültülür, varsayılan 6000 (orta boy sonuçlar kesilince ajan eksik kısmı yeniden arıyordu) |
 | `SEARCHSLIM_RERANK` | `lexical` (varsayılan), `claude` veya `off` |
 | `SEARCHSLIM_GREP_MODE` | `post` (varsayılan) veya `deny` (Grep/Glob için eski PreToolUse davranışı) |
 | `SEARCHSLIM_SESSION=off` | oturum hafızasını kapatır |

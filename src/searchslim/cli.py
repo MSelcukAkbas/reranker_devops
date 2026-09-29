@@ -24,7 +24,7 @@ import sys
 
 from . import slim
 from .models import Kind
-from .rules import Config
+from .rules import DEFAULT_TRIGGER_TOKENS, Config
 
 
 def _version() -> str:
@@ -34,6 +34,11 @@ def _version() -> str:
         return version("searchslim")
     except Exception:
         return "unknown"
+
+
+def _default_trigger() -> int:
+    value = os.environ.get("SEARCHSLIM_TRIGGER_TOKENS", "")
+    return int(value) if value.isdigit() else DEFAULT_TRIGGER_TOKENS
 
 
 def _default_rerank() -> str:
@@ -58,6 +63,12 @@ def _utf8_stdio() -> None:
 def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--kind", choices=[k.value for k in Kind], help="force the output shape instead of auto-detecting")
     p.add_argument("--max-tokens", type=int, default=Config.max_tokens)
+    p.add_argument(
+        "--trigger-tokens",
+        type=int,
+        default=_default_trigger(),
+        help="reduce only outputs above this many tokens (default: $SEARCHSLIM_TRIGGER_TOKENS or 6000; 0 = --max-tokens)",
+    )
     p.add_argument("--merge-gap", type=int, default=Config.merge_gap)
     p.add_argument("--max-matches-per-file", type=int, default=Config.max_matches_per_file)
     p.add_argument("--max-line-chars", type=int, default=Config.max_line_chars)
@@ -79,6 +90,7 @@ def _add_common(p: argparse.ArgumentParser) -> None:
 def _config(args: argparse.Namespace) -> Config:
     return Config(
         max_tokens=args.max_tokens,
+        trigger_tokens=args.trigger_tokens,
         merge_gap=args.merge_gap,
         max_matches_per_file=args.max_matches_per_file,
         max_line_chars=args.max_line_chars,

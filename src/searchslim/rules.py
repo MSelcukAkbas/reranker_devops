@@ -10,18 +10,29 @@ what to search again for.
 from __future__ import annotations
 
 from collections import OrderedDict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 import posixpath
 import re
 
 from .models import Block, Kind, Line, PathCount, SearchResult
 
 NOTE_PREFIX = "[searchslim]"
+DEFAULT_TRIGGER_TOKENS = 6000
+# Note endings. They say what to do if something left out is needed, without
+# inviting a search for its own sake: the kept part is usually enough.
+ASK_PATH = "Search again with a narrower path/glob only if you need something specific from these."
+ASK_PATTERN = "Refine the pattern only if you need a specific line from these."
+ASK_LIST = "Search again only if you need a specific file from these."
 
 
 @dataclass
 class Config:
     max_tokens: int = 2000
+    # Only outputs above this many tokens are reduced (to max_tokens); smaller
+    # ones pass unchanged. 0 means max_tokens. The hook and CLI default to
+    # DEFAULT_TRIGGER_TOKENS: trimming a mid-sized result made agents search
+    # again for what was cut, costing more than the tokens saved.
+    trigger_tokens: int = 0
     # Blocks in the same file closer than this many lines are merged into one.
     merge_gap: int = 0
     # When over budget, keep at most N match lines per file. N is the largest
@@ -38,6 +49,13 @@ class Config:
 class Reduced:
     text: str
     stats: dict = field(default_factory=dict)
+
+
+def for_output(config: Config, raw: str) -> Config:
+    """`config` for this raw output: below the trigger the whole output is the budget."""
+    if config.trigger_tokens > config.max_tokens and estimate_tokens(raw) <= config.trigger_tokens:
+        return replace(config, max_tokens=config.trigger_tokens)
+    return config
 
 
 def estimate_tokens(text: str) -> int:
@@ -259,7 +277,7 @@ def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_
         items = list(omitted.items())
         listed = items[: config.note_max_files]
         names = ", ".join(f"{p or default_path or 'this file'} ({n})" for p, n in listed)
-        note += f" Omitted matches: {names}"
+        note += f" Left out: {names}"
         rest = items[len(listed):]
         if rest:
             # Every omitted file stays covered by a named directory, so an
@@ -267,9 +285,9 @@ def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_
             dirs = format_dirs(rollup_dirs(rest, config.note_max_files))
             note += f"; {len(rest)} more files by directory: {dirs}"
         if files_total == 1:  # the search already targets one file
-            note += ". Narrow the pattern to see them."
+            note += ". " + ASK_PATTERN
         else:
-            note += ". Narrow the search (path/glob) to see them."
+            note += ". " + ASK_PATH
     return note
 
 
@@ -370,7 +388,7 @@ def _reduce_paths(result: SearchResult, config: Config) -> Reduced:
         dirs = format_dirs(rollup_dirs([(p, 1) for p in rest], config.note_max_files))
         note = (
             f"{NOTE_PREFIX} {len(kept)}/{len(unique)} paths shown. Not shown, by directory: {dirs}"
-            + ". Narrow the pattern to see them."
+            + ". " + ASK_LIST
         )
     elif len(unique) < len(result.paths):
         note = f"{NOTE_PREFIX} {len(result.paths) - len(unique)} duplicate paths removed."
@@ -429,7 +447,7 @@ def _reduce_lines(result: SearchResult, config: Config) -> Reduced:
         kept = _prefix_fitting(rows, budget)
         shown = sum(1 for r in kept if r.strip())
         total = sum(1 for r in rows if r.strip())
-        note = f"{NOTE_PREFIX} {shown}/{total} lines shown; the last {total - shown} lines not shown. Narrow the command to see them."
+        note = f"{NOTE_PREFIX} {shown}/{total} lines shown; the last {total - shown} lines not shown. Run a narrower command only if you need them."
         reduced = (kept, note, "prefix")
     kept, note, how = reduced
     kept_count = sum(1 for r in kept if r.strip())

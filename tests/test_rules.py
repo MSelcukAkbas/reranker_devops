@@ -199,7 +199,7 @@ def test_unordered_input_still_names_the_dropped_evidence_dir():
 def test_one_file_with_path_asks_to_narrow_the_pattern():
     raw = "".join(f"src/f.py:{i}:scope = {i} * 1234567890\n" for i in range(1, 300))
     note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
-    assert "src/f.py (" in note and "Narrow the pattern" in note
+    assert "src/f.py (" in note and "Refine the pattern only if" in note
 
 
 def _ls_r(dirs):
@@ -242,3 +242,18 @@ def test_paths_note_names_subdirs_and_says_a_long_shared_prefix_once():
     assert f"under {base}/: " in note
     assert "react/lib/ (" in note and "zod/lib/ (60)" in note
     assert note.count(base) == 1
+
+
+def test_trigger_passes_mid_sized_output_unchanged():
+    raw = "".join(f"src/m{i}.py:{n}:value = compute(target, {n})\n" for i in range(20) for n in range(1, 20))
+    assert 2000 < estimate_tokens(raw) < 6000
+    assert slim(raw, config=Config(max_tokens=2000, trigger_tokens=6000)).text == raw.rstrip("\n")
+    big = raw * 3
+    out = slim(big, config=Config(max_tokens=2000, trigger_tokens=6000)).text
+    assert estimate_tokens(out) <= 2000
+
+
+def test_note_does_not_invite_a_search_for_its_own_sake():
+    raw = "".join(f"src/m{i}.py:{n}:x\n" for i in range(50) for n in range(1, 40))
+    note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
+    assert "only if you need something specific" in note and "to see them" not in note

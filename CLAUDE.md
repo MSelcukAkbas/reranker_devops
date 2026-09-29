@@ -81,6 +81,12 @@ an agent that must decide from it whether to search again.
   Re-running install rewrites older install-written commands.
 - Any failure returns nothing, so the original call runs. `SEARCHSLIM=off` (env, or
   as a command prefix) disables it; `SEARCHSLIM_MAX_TOKENS` sets the budget.
+- Hook and CLI only reduce outputs above `Config.trigger_tokens` (default 6000,
+  `SEARCHSLIM_TRIGGER_TOKENS`, `--trigger-tokens`); below it output passes unchanged. Trimming
+  mid-sized results made agents search again for what was cut (benchmark/results/2026-09-29-trigger.md).
+  Library `Config()` keeps trigger 0 (= max_tokens), so tests and the benchmark are unchanged.
+- The note says the kept part is the most relevant and asks for another search only if
+  something specific is needed (`rules.ASK_*`); it must not invite a search for its own sake.
 - Hook stdin is the event JSON: any subprocess the hook starts must get
   `stdin=DEVNULL` and an explicit path, or `rg` will search the JSON.
 

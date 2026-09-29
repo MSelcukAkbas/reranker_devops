@@ -16,7 +16,7 @@ TURKISH = "// PUBLIC_PATHS kontrolü: DEĞİL Şu an 🎯"
 def _env(**extra):
     env = {k: v for k, v in os.environ.items() if not k.startswith("SEARCHSLIM")}
     # cp1254 is the Turkish Windows code page: 0x9E (in UTF-8 'Ş'/'Ğ') is undefined there.
-    env.update({"PYTHONIOENCODING": "cp1254", "PYTHONUTF8": "0", "SEARCHSLIM_SESSION": "off", **extra})
+    env.update({"PYTHONIOENCODING": "cp1254", "PYTHONUTF8": "0", "SEARCHSLIM_SESSION": "off", "SEARCHSLIM_TRIGGER_TOKENS": "0", **extra})
     return env
 
 
