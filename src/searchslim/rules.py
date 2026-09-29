@@ -155,7 +155,10 @@ def _reduce_content(result: SearchResult, config: Config) -> Reduced:
 
     note = ""
     if steps or len(lines) < raw_lines:
-        note = _content_note(raw_lines, body, total_matches, kept_matches, steps, omitted, config, result.default_path)
+        note = _content_note(
+            raw_lines, body, total_matches, kept_matches, steps, omitted, config,
+            result.default_path, len({ln.path for ln in lines}),
+        )
 
     return Reduced(
         text=_assemble(result, body, note),
@@ -243,7 +246,7 @@ def _drop_files_to_budget(blocks, config: Config):
     return kept, dropped
 
 
-def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_path="") -> str:
+def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_path="", files_total=0) -> str:
     parts = [f"{NOTE_PREFIX} {raw_lines} -> {body.count(chr(10)) + 1 if body else 0} lines"]
     parts.append(f"{kept}/{total} matches shown")
     if steps:
@@ -260,7 +263,7 @@ def _content_note(raw_lines, body, total, kept, steps, omitted, config, default_
             # agent can always tell where to narrow the search.
             dirs = _format_dirs(rollup_dirs(rest, config.note_max_files))
             note += f"; {len(rest)} more files by directory: {dirs}"
-        if list(omitted) == [""]:
+        if files_total == 1:  # the search already targets one file
             note += ". Narrow the pattern to see them."
         else:
             note += ". Narrow the search (path/glob) to see them."

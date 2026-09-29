@@ -194,3 +194,9 @@ def test_unordered_input_still_names_the_dropped_evidence_dir():
     out = slim(raw, config=Config(max_tokens=500))
     note = out.text.splitlines()[-1]
     assert "src/_pytest/config/" in note
+
+
+def test_one_file_with_path_asks_to_narrow_the_pattern():
+    raw = "".join(f"src/f.py:{i}:scope = {i} * 1234567890\n" for i in range(1, 300))
+    note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
+    assert "src/f.py (" in note and "Narrow the pattern" in note
