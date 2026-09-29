@@ -15,6 +15,9 @@ def test_cited_matches_paths_lines_and_ranges():
     assert not live.cited("fixtures.py:900", ev)
     assert not live.cited("other_fixtures.py:1129", ev)
     assert live.cited("look at src/_pytest/fixtures.py", {"path": "src/_pytest/fixtures.py"})
+    # bare `:N` refers to the file named just before it
+    assert live.cited("`lib/router/index.js:136` defines it, the stack at `:153`", {"path": "lib/router/index.js", "line": 153})
+    assert not live.cited("`lib/a.js:1` then `other.js:5` then `:153`", {"path": "lib/a.js", "line": 153})
 
 
 def test_is_search_call():

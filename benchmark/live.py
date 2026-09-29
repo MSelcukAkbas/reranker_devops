@@ -138,17 +138,40 @@ def parse_transcript(lines: list[str]) -> dict:
     }
 
 
+_FILE_REF = re.compile(r"(?<![\w.-])((?:[\w.-]+/)*[\w.-]+\.\w+)(?::|#L| line |, line )(\d+)(?:[-–](\d+))?")
+_BARE_REF = re.compile(r"(?<![\w./-]):(\d+)(?:[-–](\d+))?\b")
+
+
+def line_refs(answer: str) -> list[tuple[str, int, int]]:
+    """(file name, first line, last line) for every citation in the answer.
+
+    Agents often write `path:10` once and then `:15`, `:20-24` for the same
+    file; a bare `:N` is attributed to the file named most recently before it.
+    """
+    refs = []
+    marks = []  # (offset, file name)
+    for m in _FILE_REF.finditer(answer):
+        name = os.path.basename(m.group(1))
+        lo = int(m.group(2))
+        refs.append((name, lo, int(m.group(3) or lo)))
+        marks.append((m.start(), name))
+    for m in re.finditer(r"(?<![\w.-])((?:[\w.-]+/)*[\w.-]+\.\w+)", answer):
+        marks.append((m.start(), os.path.basename(m.group(1))))
+    marks.sort()
+    for m in _BARE_REF.finditer(answer):
+        before = [name for off, name in marks if off < m.start()]
+        if before:
+            lo = int(m.group(1))
+            refs.append((before[-1], lo, int(m.group(2) or lo)))
+    return refs
+
+
 def cited(answer: str, ev: dict, tolerance: int = 2) -> bool:
     path = ev["path"]
     name = os.path.basename(path)
     if "line" not in ev:
         return path in answer or re.search(rf"(?<![\w/.-]){re.escape(name)}\b", answer) is not None
-    for m in re.finditer(rf"(?<![\w.-])(?:[\w./-]*/)?{re.escape(name)}(?::|#L| line |, line )(\d+)(?:[-–](\d+))?", answer):
-        lo = int(m.group(1))
-        hi = int(m.group(2) or lo)
-        if lo - tolerance <= ev["line"] <= hi + tolerance:
-            return True
-    return False
+    return any(n == name and lo - tolerance <= ev["line"] <= hi + tolerance for n, lo, hi in line_refs(answer))
 
 
 def run_one(task: dict, repo_dir: Path, mode: str, src: Path, args) -> dict:
