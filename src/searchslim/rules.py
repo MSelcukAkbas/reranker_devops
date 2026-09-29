@@ -51,6 +51,11 @@ def reduce(result: SearchResult, config: Config | None = None) -> Reduced:
     return _reduce_paths(result, config)
 
 
+def _assemble(result: SearchResult, body: str, note: str) -> str:
+    """Tool framing lines around the body; the searchslim note always last."""
+    return "\n".join(p for p in [*result.header, body, *result.footer, note] if p)
+
+
 # --- content -----------------------------------------------------------------
 
 
@@ -140,9 +145,8 @@ def _reduce_content(result: SearchResult, config: Config) -> Reduced:
     if steps or len(lines) < raw_lines:
         note = _content_note(raw_lines, body, total_matches, kept_matches, steps, omitted, config)
 
-    text = body + ("\n" + note if note and body else note)
     return Reduced(
-        text=text,
+        text=_assemble(result, body, note),
         stats={
             "kind": "content",
             "input_lines": raw_lines,
@@ -268,7 +272,7 @@ def _reduce_paths(result: SearchResult, config: Config) -> Reduced:
     elif len(unique) < len(result.paths):
         note = f"{NOTE_PREFIX} {len(result.paths) - len(unique)} duplicate paths removed."
     return Reduced(
-        text=body + ("\n" + note if note and body else note),
+        text=_assemble(result, body, note),
         stats={"kind": "paths", "input": len(result.paths), "unique": len(unique), "kept": len(kept)},
     )
 
@@ -297,7 +301,7 @@ def _reduce_counts(result: SearchResult, config: Config) -> Reduced:
         rest = list(merged.values())[len(kept):]
         note = f"{NOTE_PREFIX} {len(kept)}/{len(lines)} files shown; {len(rest)} files with {sum(rest)} matches not shown."
     return Reduced(
-        text=body + ("\n" + note if note and body else note),
+        text=_assemble(result, body, note),
         stats={"kind": "count", "input": len(result.counts), "unique": len(merged), "kept": len(kept)},
     )
 

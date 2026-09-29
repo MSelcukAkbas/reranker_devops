@@ -121,3 +121,20 @@ def test_real_rg_output_round_trips(tmp_path):
     assert reduced.stats["matches_total"] == 3 * 9
     assert reduced.stats["matches_kept"] == 3 * 9
     assert set(reduced.text.splitlines()) <= set(raw.splitlines())
+
+
+def test_framing_kept_around_trimmed_paths_with_note_last():
+    paths = [f"src/d{i % 3}/f{i}.py" for i in range(500)]
+    footer = "(Results are truncated. Consider using a more specific path or pattern.)"
+    raw = "\n".join(["Found 500 files", *paths, footer]) + "\n"
+    out = slim(raw, config=Config(max_tokens=200))
+    lines = out.text.splitlines()
+    assert lines[0] == "Found 500 files"
+    assert lines[-2] == footer
+    assert lines[-1].startswith(NOTE_PREFIX)
+    assert "/500 paths shown" in lines[-1]
+    assert out.stats["input"] == 500
+
+
+def test_framing_only_passes_through():
+    assert slim("No files found\n").text == "No files found"

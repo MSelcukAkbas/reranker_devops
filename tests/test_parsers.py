@@ -75,3 +75,25 @@ def test_detect_paths_and_counts():
 def test_unparseable_lines_are_kept():
     result = parse("src/a.py:1:x\nsome warning text here\n")
     assert result.unparsed == ["some warning text here"]
+
+
+def test_claude_code_framing_is_split_off():
+    raw = "Found 2 files\nsrc/a.py\nsrc/b.py\n(Results are truncated. Consider using a more specific path or pattern.)\n"
+    result = parse(raw)
+    assert result.kind is Kind.PATHS
+    assert result.paths == ["src/a.py", "src/b.py"]
+    assert result.header == ["Found 2 files"]
+    assert result.footer == ["(Results are truncated. Consider using a more specific path or pattern.)"]
+
+
+def test_claude_code_count_footer_keeps_count_kind():
+    result = parse("a.py:3\nb.py:2\n\nFound 5 total occurrences across 2 files.\n")
+    assert result.kind is Kind.COUNT
+    assert [(c.path, c.count) for c in result.counts] == [("a.py", 3), ("b.py", 2)]
+    assert result.footer == ["Found 5 total occurrences across 2 files."]
+
+
+def test_no_files_found_is_framing_only():
+    result = parse("No files found\n")
+    assert result.header == ["No files found"]
+    assert not result.paths and not result.unparsed

@@ -67,3 +67,7 @@ class SearchResult:
     counts: list[PathCount] = field(default_factory=list)
     # Lines the parser could not interpret. Kept verbatim so nothing is lost silently.
     unparsed: list[str] = field(default_factory=list)
+    # Framing lines the tool prints around results (Claude Code Grep/Glob:
+    # "Found 3 files", "(Results are truncated...)"). Re-emitted verbatim.
+    header: list[str] = field(default_factory=list)
+    footer: list[str] = field(default_factory=list)

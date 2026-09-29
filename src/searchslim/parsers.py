@@ -10,6 +10,12 @@ Supported content shapes:
 
 Paths shape: one path per line (Glob, fd, find, rg -l, grep -l).
 Count shape: path:N (rg -c, grep -c).
+
+Claude Code's Grep/Glob wrap results in framing lines ("Found 3 files",
+"No files found", "Found 5 total occurrences across 2 files.",
+"(Results are truncated...)", "[Showing results with pagination ...]").
+These are split off into `header`/`footer` so they are neither parsed as
+paths nor dropped.
 """
 
 from __future__ import annotations
@@ -24,6 +30,10 @@ _CONTEXT = re.compile(r"^(?P<path>.+?)-(?P<num>\d+)-(?P<text>.*)$")
 _BARE = re.compile(r"^(?P<num>\d+)(?P<sep>[:-])(?P<text>.*)$")
 _COUNT = re.compile(r"^(?P<path>.+):(?P<count>\d+)$")
 _SEPARATOR = "--"
+_FRAMING = re.compile(
+    r"^(?:Found \d+ .+|No (?:files|matches) found\.?"
+    r"|\(Results are truncated[^)]*\)\.?|\[Showing results with pagination[^\]]*\])$"
+)
 
 
 def detect_kind(raw: str) -> Kind:
@@ -40,6 +50,28 @@ def detect_kind(raw: str) -> Kind:
 
 
 def parse(raw: str, kind: Kind | None = None, default_path: str = "") -> SearchResult:
+    header, raw, footer = split_framing(raw)
+    result = _parse_body(raw, kind, default_path)
+    result.header, result.footer = header, footer
+    return result
+
+
+def split_framing(raw: str) -> tuple[list[str], str, list[str]]:
+    """Split Claude Code framing lines off the start and end of `raw`."""
+    lines = raw.splitlines()
+    start, end = 0, len(lines)
+    while start < end and (not lines[start].strip() or _FRAMING.match(lines[start].strip())):
+        start += 1
+    while end > start and (not lines[end - 1].strip() or _FRAMING.match(lines[end - 1].strip())):
+        end -= 1
+    header = [ln for ln in lines[:start] if ln.strip()]
+    footer = [ln for ln in lines[end:] if ln.strip()]
+    if not header and not footer:
+        return [], raw, []
+    return header, "\n".join(lines[start:end]), footer
+
+
+def _parse_body(raw: str, kind: Kind | None, default_path: str) -> SearchResult:
     kind = kind or detect_kind(raw)
     if kind is Kind.PATHS:
         return parse_paths(raw)
