@@ -67,7 +67,11 @@ an agent that must decide from it whether to search again.
 - `tree`/`ls -R` output is `Kind.LINES`: kept verbatim, no dedupe; when over budget the deepest
   levels are dropped (tree entries / ls sections) and the note counts hidden entries per directory.
 - Grep/Glob: the tool runs normally; on PostToolUse the hook runs the equivalent `rg`
-  itself and, when that is over budget, replaces the result via `updatedToolOutput`.
+  reduces the tool's own `tool_response` (Grep `content` or `filenames`, Glob `filenames`) when
+  it is over budget and returns it via `updatedToolOutput` as the same object, other fields
+  kept: Claude Code validates it against the tool's output schema and silently keeps the
+  original on a mismatch (a plain string is rejected). In list modes the note is the last
+  `filenames` entry. Without a `tool_response` dict it falls back to running `rg` itself.
   PreToolUse does nothing for them: a deny reaches the model as a "hook error" and made
   agents search again (live Windows test). `SEARCHSLIM_GREP_MODE=deny` restores the
   PreToolUse deny-with-reason answer for Claude Code versions without `updatedToolOutput`.

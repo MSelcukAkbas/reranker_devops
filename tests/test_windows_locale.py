@@ -49,7 +49,7 @@ def _hook(repo, pattern):
     proc = _searchslim(["hook"], repo, json.dumps(event, ensure_ascii=False).encode("utf-8"), SEARCHSLIM_MAX_TOKENS="60", SEARCHSLIM_RERANK="off")
     assert proc.returncode == 0
     assert proc.stdout, "hook skipped the event"
-    return json.loads(proc.stdout)["hookSpecificOutput"]["updatedToolOutput"]
+    return json.loads(proc.stdout)["hookSpecificOutput"]["updatedToolOutput"]["content"]
 
 
 @needs_rg

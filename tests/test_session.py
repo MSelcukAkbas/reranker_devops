@@ -139,14 +139,14 @@ def _grep(repo, session_id="sess"):
         "hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(repo), "session_id": session_id,
         "tool_input": {"pattern": "target", "output_mode": "content"},
     }
-    return handle(event, Config(max_tokens=800))["hookSpecificOutput"]["updatedToolOutput"]
+    return handle(event, Config(max_tokens=800))["hookSpecificOutput"]["updatedToolOutput"]["content"]
 
 
 @needs_rg
 def test_hook_repeat_grep_then_compaction_resets(repo):
     first, second = _grep(repo), _grep(repo)
     assert "already shown by an earlier search" in second
-    assert not set(body_lines(first)[1:]) & set(body_lines(second)[1:])  # [0] is the header
+    assert not set(body_lines(first)) & set(body_lines(second))
     handle({"hook_event_name": "PreCompact", "session_id": "sess"})
     assert _grep(repo) == first
 
@@ -158,7 +158,7 @@ def test_bash_run_uses_the_session_across_tools(repo):
            "rg", "--sort=path", "--with-filename", "--line-number", "target"]
     out = subprocess.run(cmd, cwd=repo, capture_output=True, text=True, env=os.environ).stdout
     assert "already shown by an earlier search" in out
-    assert not set(body_lines(first)[1:]) & set(body_lines(out))
+    assert not set(body_lines(first)) & set(body_lines(out))
 
 
 @needs_rg

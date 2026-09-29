@@ -4,9 +4,11 @@
              `python -m searchslim run -- <cmd>` via `updatedInput`, so the
              command still runs as the Bash tool call, only its stdout is reduced.
 
-  Grep/Glob  On PostToolUse the hook runs the equivalent `rg` itself and, when
-             the result is over budget, replaces the tool's output with the
-             reduced one (`updatedToolOutput`). Under budget it does nothing.
+  Grep/Glob  On PostToolUse the hook reduces the tool's own result
+             (`tool_response`) when it is over budget and returns it as
+             `updatedToolOutput` in the same object shape (see shape_output).
+             Under budget it does nothing. Without a tool_response it runs the
+             equivalent `rg` itself.
              PreToolUse does nothing for them by default: a denied call reaches
              the model as a "hook error", which made agents search again.
              `SEARCHSLIM_GREP_MODE=deny` restores the old PreToolUse answer
@@ -36,7 +38,7 @@ from pathlib import Path
 from . import slim
 from .models import Kind
 from .rewrite import rewrite_command
-from .rules import Config, estimate_tokens
+from .rules import NOTE_PREFIX, Config, estimate_tokens
 from .session import SessionStore, enabled as session_enabled
 
 RG_TIMEOUT_S = 20
@@ -122,10 +124,16 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         return None
     argv, run_cwd, kind, postprocess, default_path = built
 
-    raw = _run(argv, run_cwd)
+    response = event.get("tool_response") if event_name == "PostToolUse" else None
+    raw = _response_text(tool, response) if isinstance(response, dict) else None
     if raw is None:
-        return None
-    raw = postprocess(raw)
+        # No usable tool result (deny mode, or an older Claude Code): search ourselves.
+        raw = _run(argv, run_cwd)
+        if raw is None:
+            return None
+        raw = postprocess(raw)
+    else:
+        run_cwd = cwd
     if estimate_tokens(raw) <= config.max_tokens:
         return None  # small enough: let the real tool answer
     scorer = query = None
@@ -144,10 +152,15 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     if default_path:
         header += f" All lines are from {default_path}."
     if event_name == "PostToolUse":
+        # Claude Code validates updatedToolOutput against the tool's own output
+        # schema and silently keeps the original on a mismatch, so return the
+        # tool's result object with its text fields replaced.
+        mode = "files" if tool == "Glob" else tool_input.get("output_mode") or "files_with_matches"
+        base = response if isinstance(response, dict) else {}
         return {
             "hookSpecificOutput": {
                 "hookEventName": "PostToolUse",
-                "updatedToolOutput": f"{header}\n\n{reduced.text}",
+                "updatedToolOutput": shape_output(tool, mode, base, reduced.text),
             }
         }
     return {
@@ -157,6 +170,46 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
             "permissionDecisionReason": f"{header}{DENY_NOTE}\n\n{reduced.text}",
         }
     }
+
+
+def _response_text(tool: str, response: dict) -> str | None:
+    """The tool's own result as raw text, or None if its shape is unknown."""
+    if tool == "Grep" and isinstance(response.get("content"), str) and response.get("mode") != "files_with_matches":
+        return response["content"]
+    names = response.get("filenames")
+    if isinstance(names, list) and all(isinstance(n, str) for n in names):
+        return "\n".join(names)
+    return None
+
+
+def shape_output(tool: str, mode: str, response: dict, text: str) -> dict:
+    """The reduced result in the tool's output shape.
+
+    Grep: {mode, numFiles, filenames, content, numLines, ...}; Glob:
+    {filenames, numFiles, truncated, durationMs}. Fields not set here keep the
+    tool's own values. In list modes the [searchslim] note becomes the last
+    entry, so the model still sees what was left out; numFiles stays the
+    tool's total, which the note explains.
+    """
+    out = dict(response)
+    lines = text.splitlines()
+    if tool == "Grep" and mode in ("content", "count"):
+        out["mode"] = mode
+        out["content"] = text
+        out["numLines"] = len(lines)
+        out.setdefault("numFiles", 0)
+        out.setdefault("filenames", [])
+        return out
+    body = [ln for ln in lines if not ln.startswith(NOTE_PREFIX)]
+    notes = [ln for ln in lines if ln.startswith(NOTE_PREFIX)]
+    out["filenames"] = body + notes
+    out.setdefault("numFiles", len(body))
+    if tool == "Glob":
+        out["truncated"] = True
+        out.setdefault("durationMs", 0)
+    else:
+        out["mode"] = "files_with_matches"
+    return out
 
 
 def grep_to_rg(tool_input: dict, cwd: str):
