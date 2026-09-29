@@ -25,7 +25,10 @@ Bu repo hook'u kendi `.claude/settings.json` dosyasıyla zaten kullanıyor.
 **Windows:** `searchslim: command not found` alırsanız pip'in `Scripts` klasörü
 PATH'te değildir. Yerini `python -c "import sysconfig; print(sysconfig.get_path('scripts'))"`
 (pip `--user` ile kurduysa `python -m site --user-base` altındaki `Scripts`) gösterir;
-o klasörü PATH'e ekleyin ya da `python -m searchslim ...` kullanın. Girdi ve çıktı
+o klasörü PATH'e ekleyin ya da `python -m searchslim ...` kullanın. `install`, hook
+komutunu hem Git Bash'te hem PowerShell'de çalışacak biçimde yazar
+(`C:/Python314/python.exe -m searchslim hook`); eski bir kurulumu düzeltmek için
+`searchslim install --user` komutunu yeniden çalıştırmak yeterli. Girdi ve çıktı
 her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gruplanır.
 
 ## Ne yapar
@@ -41,11 +44,14 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   en derin seviyeye kadar her şey kalır, daha derindekiler dizin dizin sayılır.
   Diğer yönlendirmeler, `$(...)`, `find -exec` gibi yan etkili komutlar ve
   sistemde kurulu olmayan araçlar (ör. yalnızca alias olan `rg`) değişmez.
-- **Grep/Glob:** hook aynı aramayı `rg` ile kendisi yapar (Grep'in content,
-  files_with_matches ve count modları, -A/-B/-C, multiline, glob/type,
-  head_limit/offset). Sonuç bütçeye
-  sığıyorsa hiçbir şey yapmaz, gerçek araç çalışır. Sığmıyorsa küçültülmüş
-  sonucu modele verir (başında "bu bir hata değil, sonuç" yazar).
+- **Grep/Glob:** araç normal çalışır. Ardından PostToolUse hook'u aynı aramayı
+  `rg` ile kendisi yapar (Grep'in content, files_with_matches ve count modları,
+  -A/-B/-C, multiline, glob/type, head_limit/offset). Sonuç bütçeye sığıyorsa
+  hiçbir şey yapmaz. Sığmıyorsa aracın çıktısını küçültülmüş sonuçla değiştirir
+  (`updatedToolOutput`), yani model bunu "hook error" olarak değil, aracın
+  kendi sonucu olarak görür. Bu alanı desteklemeyen eski Claude Code
+  sürümlerinde `SEARCHSLIM_GREP_MODE=deny` eski davranışı geri getirir
+  (çağrı reddedilir, küçültülmüş sonuç gerekçede gelir).
 - **Kurallar:** tekrarlar atılır, örtüşen satır aralıkları birleşir. Bütçe
   aşılırsa önce bağlam satırları, sonra fazla eşleşmeler, sonra dosyalar atılır.
 - **Sıralama (varsayılan açık):** kurallar bir şey atmak zorunda kaldığında
@@ -69,6 +75,7 @@ Ayarlar (ortam değişkeni):
 | `SEARCHSLIM=off` | hook'u kapatır (komutun başına da yazılabilir) |
 | `SEARCHSLIM_MAX_TOKENS` | bütçe, varsayılan 2000 |
 | `SEARCHSLIM_RERANK` | `lexical` (varsayılan), `claude` veya `off` |
+| `SEARCHSLIM_GREP_MODE` | `post` (varsayılan) veya `deny` (Grep/Glob için eski PreToolUse davranışı) |
 | `SEARCHSLIM_SESSION=off` | oturum hafızasını kapatır |
 | `SEARCHSLIM_CACHE_DIR` | hafızanın yeri, varsayılan geçici dizinde `searchslim-<kullanıcı>` |
 

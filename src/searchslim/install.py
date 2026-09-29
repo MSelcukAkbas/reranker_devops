@@ -1,7 +1,12 @@
 """`searchslim install`: add the hooks to a Claude Code settings file.
 
-PreToolUse (Bash|Grep|Glob) reduces search output; PreCompact clears the
-session's memory of lines already shown (see session.py).
+PreToolUse (Bash) rewrites search commands, PostToolUse (Grep|Glob) replaces
+over-budget results, PreCompact clears the session's memory of lines already
+shown (see session.py). PreToolUse keeps Grep|Glob in its matcher so
+`SEARCHSLIM_GREP_MODE=deny` works without reinstalling.
+
+Re-running install also rewrites an older searchslim hook command (e.g. one
+PowerShell could not parse) to the current form.
 
 Merges into existing settings (other hooks and keys are kept) and is
 idempotent. `--user` targets ~/.claude/settings.json, otherwise
@@ -11,6 +16,7 @@ idempotent. `--user` targets ~/.claude/settings.json, otherwise
 from __future__ import annotations
 
 import json
+import os
 import shlex
 import sys
 from pathlib import Path
@@ -19,9 +25,46 @@ MATCHER = "Bash|Grep|Glob"
 MARKER = "-m searchslim hook"
 
 
-def hook_command() -> str:
-    # Absolute interpreter, so the hook works whatever python is on PATH.
-    return f"{shlex.quote(sys.executable)} -m searchslim hook"
+def hook_command(executable: str | None = None, windows: bool | None = None) -> str:
+    """The hook's command line. Absolute interpreter, so the hook works
+    whatever python is on PATH.
+
+    On Windows, Claude Code runs hooks with Git Bash, or with PowerShell when
+    Git Bash is missing. A quoted path followed by arguments is a parse error
+    in PowerShell, so the path is written unquoted with `/` separators, which
+    both shells accept. A path with spaces gets its 8.3 short form first.
+    """
+    executable = executable or sys.executable
+    windows = os.name == "nt" if windows is None else windows
+    if not windows:
+        return f"{shlex.quote(executable)} -m searchslim hook"
+    if " " in executable:
+        executable = _short_path(executable)
+    path = executable.replace("\\", "/")
+    if " " in path:
+        # Still spaces: PowerShell's call operator (see hook_entry's shell).
+        return f"& '{path}' -m searchslim hook"
+    return f"{path} -m searchslim hook"
+
+
+def hook_entry() -> dict:
+    command = hook_command()
+    entry = {"type": "command", "command": command, "timeout": 30}
+    if command.startswith("& "):
+        entry["shell"] = "powershell"
+    return entry
+
+
+def _short_path(path: str) -> str:
+    try:
+        import ctypes
+
+        buf = ctypes.create_unicode_buffer(1024)
+        if ctypes.windll.kernel32.GetShortPathNameW(path, buf, len(buf)):
+            return buf.value
+    except Exception:
+        pass
+    return path
 
 
 def settings_path(project: str | None, user: bool) -> Path:
@@ -31,7 +74,7 @@ def settings_path(project: str | None, user: bool) -> Path:
 
 
 # (event, matcher) pairs the hook is registered for.
-EVENTS = (("PreToolUse", MATCHER), ("PreCompact", ""))
+EVENTS = (("PreToolUse", MATCHER), ("PostToolUse", "Grep|Glob"), ("PreCompact", ""))
 
 
 def _has_hook(entries: list) -> bool:
@@ -43,11 +86,18 @@ def install(path: Path) -> bool:
     settings = _load(path)
     hooks = settings.setdefault("hooks", {})
     changed = False
+    current = hook_entry()
     for event, matcher in EVENTS:
         entries = hooks.setdefault(event, [])
         if _has_hook(entries):
+            for entry in entries:
+                for h in entry.get("hooks", []):
+                    if MARKER in h.get("command", "") and _is_installed_form(h) and h != current:
+                        h.clear()
+                        h.update(current)
+                        changed = True
             continue
-        entry = {"hooks": [{"type": "command", "command": hook_command(), "timeout": 30}]}
+        entry = {"hooks": [dict(current)]}
         if matcher:
             entry = {"matcher": matcher, **entry}
         entries.append(entry)
@@ -55,6 +105,13 @@ def install(path: Path) -> bool:
     if changed:
         _save(path, settings)
     return changed
+
+
+def _is_installed_form(h: dict) -> bool:
+    # Only rewrite commands install wrote (`<python> -m searchslim hook`), not a
+    # hand-written one such as this repo's `PYTHONPATH=... python3 -m ...`.
+    cmd = h.get("command", "")
+    return cmd.endswith(MARKER) and "=" not in cmd.split(MARKER)[0]
 
 
 def uninstall(path: Path) -> bool:

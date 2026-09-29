@@ -10,7 +10,7 @@ an agent that must decide from it whether to search again.
 
 1. Common data model + parsers for every tool's output shape. **Done** (`models.py`, `parsers.py`).
 2. Deterministic rules (dedupe, merge overlapping ranges, keep `path:line`, budget). **Done** (`rules.py`).
-3. Drop-in integration via a Claude Code PreToolUse hook; no new tool. **Done** (`rewrite.py`, `hooks.py`, `.claude/settings.json`).
+3. Drop-in integration via Claude Code hooks (PreToolUse Bash, PostToolUse Grep/Glob); no new tool. **Done** (`rewrite.py`, `hooks.py`, `.claude/settings.json`).
 4. **Done** (`benchmark/`, PR #3). Benchmark harness: raw vs rules vs rules+model on tokens, latency, cost,
    extra searches, and lost critical evidence.
 5. Optional light-model reranker on top of rules (rules+model mode). It may only reorder or
@@ -66,11 +66,15 @@ an agent that must decide from it whether to search again.
   `fd -x`, `rg -r`, `git grep -O`, `tree -o`) are never rewritten.
 - `tree`/`ls -R` output is `Kind.LINES`: kept verbatim, no dedupe; when over budget the deepest
   levels are dropped (tree entries / ls sections) and the note counts hidden entries per directory.
-- Grep/Glob: a hook cannot rewrite a built-in tool's result, so the hook runs the
-  equivalent `rg` itself. If that fits the budget it returns nothing and the real
-  tool runs. Otherwise it returns `permissionDecision: deny` with the reduced result
-  as the reason, which Claude Code passes to the model. The reason starts with a
-  header saying this is the result, not an error.
+- Grep/Glob: the tool runs normally; on PostToolUse the hook runs the equivalent `rg`
+  itself and, when that is over budget, replaces the result via `updatedToolOutput`.
+  PreToolUse does nothing for them: a deny reaches the model as a "hook error" and made
+  agents search again (live Windows test). `SEARCHSLIM_GREP_MODE=deny` restores the
+  PreToolUse deny-with-reason answer for Claude Code versions without `updatedToolOutput`.
+- `install` writes the command PowerShell and Git Bash both parse: unquoted, `/`
+  separators on Windows (a quoted path then args is a PowerShell ParserError); a path
+  with spaces gets its 8.3 short form, else `& '<path>' ...` with `"shell": "powershell"`.
+  Re-running install rewrites older install-written commands.
 - Any failure returns nothing, so the original call runs. `SEARCHSLIM=off` (env, or
   as a command prefix) disables it; `SEARCHSLIM_MAX_TOKENS` sets the budget.
 - Hook stdin is the event JSON: any subprocess the hook starts must get

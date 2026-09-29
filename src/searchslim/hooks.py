@@ -4,11 +4,14 @@
              `python -m searchslim run -- <cmd>` via `updatedInput`, so the
              command still runs as the Bash tool call, only its stdout is reduced.
 
-  Grep/Glob  Built-in tool results cannot be rewritten by a hook, so the hook
-             runs the equivalent `rg` itself. If the result already fits the
-             budget it does nothing and the built-in tool runs normally. If not,
-             it answers with `permissionDecision: deny` and puts the reduced
-             result in the reason, which Claude Code hands to the model.
+  Grep/Glob  On PostToolUse the hook runs the equivalent `rg` itself and, when
+             the result is over budget, replaces the tool's output with the
+             reduced one (`updatedToolOutput`). Under budget it does nothing.
+             PreToolUse does nothing for them by default: a denied call reaches
+             the model as a "hook error", which made agents search again.
+             `SEARCHSLIM_GREP_MODE=deny` restores the old PreToolUse answer
+             (deny with the reduced result as the reason) for Claude Code
+             versions without `updatedToolOutput`.
 
 Every failure path (bad input, missing rg, timeout) returns no output so the
 original tool call runs unchanged. `SEARCHSLIM=off` in the environment
@@ -42,15 +45,15 @@ RG_TIMEOUT_S = 20
 # by default. SEARCHSLIM_RERANK=off gives the plain rules mode.
 DEFAULT_RERANK = "lexical"
 GREP_REASON_HEADER = (
-    "searchslim ran this search and reduced the output. This is the search "
-    "result, not an error; do not retry the same call. Lines keep path:line "
-    "anchors; the trailing [searchslim] note lists what was left out."
+    "searchslim reduced this search output. Lines keep path:line anchors; the "
+    "trailing [searchslim] note lists what was left out."
 )
 GLOB_REASON_HEADER = (
-    "searchslim ran this file search and reduced the output. This is the "
-    "result, not an error; do not retry the same call. The trailing "
-    "[searchslim] note counts the paths left out, by directory."
+    "searchslim reduced this file list. The trailing [searchslim] note counts "
+    "the paths left out, by directory."
 )
+# Only in deny mode, where the result arrives as a blocked call.
+DENY_NOTE = " This is the search result, not an error; do not retry the same call."
 
 
 def config_from_env() -> Config:
@@ -84,7 +87,10 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     transcript = event.get("transcript_path") or ""
     use_session = bool(session_id) and session_enabled()
 
-    if tool == "Bash":
+    event_name = event.get("hook_event_name") or "PreToolUse"
+    grep_mode = os.environ.get("SEARCHSLIM_GREP_MODE", "post").lower()
+
+    if tool == "Bash" and event_name == "PreToolUse":
         run_args = [f"--max-tokens={config.max_tokens}"]
         if rerank:
             run_args.append(f"--rerank={rerank}")
@@ -102,6 +108,10 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
             }
         }
 
+    if event_name == "PreToolUse" and grep_mode != "deny":
+        return None  # reduced after the tool runs (PostToolUse)
+    if event_name not in ("PreToolUse", "PostToolUse"):
+        return None
     if tool == "Grep":
         built = grep_to_rg(tool_input, cwd)
     elif tool == "Glob":
@@ -133,11 +143,18 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     header = GLOB_REASON_HEADER if tool == "Glob" else GREP_REASON_HEADER
     if default_path:
         header += f" All lines are from {default_path}."
+    if event_name == "PostToolUse":
+        return {
+            "hookSpecificOutput": {
+                "hookEventName": "PostToolUse",
+                "updatedToolOutput": f"{header}\n\n{reduced.text}",
+            }
+        }
     return {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "deny",
-            "permissionDecisionReason": f"{header}\n\n{reduced.text}",
+            "permissionDecisionReason": f"{header}{DENY_NOTE}\n\n{reduced.text}",
         }
     }
 

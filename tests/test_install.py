@@ -2,7 +2,7 @@ import json
 import subprocess
 import sys
 
-from searchslim.install import MARKER, install, uninstall
+from searchslim.install import MARKER, hook_command, install, uninstall
 
 
 def test_install_merges_and_is_idempotent(tmp_path):
@@ -31,3 +31,40 @@ def test_install_cli_on_a_project(tmp_path):
     out = subprocess.run([sys.executable, "-m", "searchslim", "install", str(tmp_path)], capture_output=True, text=True)
     assert out.returncode == 0 and "added to" in out.stdout
     assert (tmp_path / ".claude" / "settings.json").exists()
+
+
+def test_install_registers_post_tool_use_for_grep_and_glob(tmp_path):
+    path = tmp_path / "settings.json"
+    install(path)
+    post = json.loads(path.read_text())["hooks"]["PostToolUse"]
+    assert post[0]["matcher"] == "Grep|Glob" and MARKER in post[0]["hooks"][0]["command"]
+
+
+def test_windows_command_parses_in_powershell_and_bash():
+    # PowerShell rejects `'C:\\x\\python.exe' -m ...` (quoted path, then arguments).
+    assert hook_command(r"C:\Python314\python.exe", windows=True) == "C:/Python314/python.exe -m searchslim hook"
+    spaced = hook_command(r"C:\Program Files\Python\python.exe", windows=True)
+    assert spaced == "& 'C:/Program Files/Python/python.exe' -m searchslim hook"
+    assert hook_command("/usr/bin/python3", windows=False) == "/usr/bin/python3 -m searchslim hook"
+
+
+def test_reinstall_fixes_an_old_windows_command(tmp_path, monkeypatch):
+    import searchslim.install as inst
+
+    path = tmp_path / "settings.json"
+    old = "'C:\\Python314\\python.exe' -m searchslim hook"
+    path.write_text(json.dumps({"hooks": {"PreToolUse": [{"matcher": "Bash|Grep|Glob", "hooks": [{"type": "command", "command": old, "timeout": 30}]}]}}))
+    monkeypatch.setattr(inst, "hook_command", lambda: "C:/Python314/python.exe -m searchslim hook")
+    assert install(path) is True
+    hooks = json.loads(path.read_text())["hooks"]
+    commands = [h["command"] for ev in hooks.values() for e in ev for h in e["hooks"]]
+    assert commands == ["C:/Python314/python.exe -m searchslim hook"] * 3
+    assert install(path) is False
+
+
+def test_reinstall_keeps_hand_written_commands(tmp_path):
+    path = tmp_path / "settings.json"
+    mine = 'PYTHONPATH="$CLAUDE_PROJECT_DIR/src" python3 -m searchslim hook'
+    path.write_text(json.dumps({"hooks": {"PreToolUse": [{"matcher": "Bash|Grep|Glob", "hooks": [{"type": "command", "command": mine}]}]}}))
+    install(path)
+    assert json.loads(path.read_text())["hooks"]["PreToolUse"][0]["hooks"][0]["command"] == mine
