@@ -1,6 +1,7 @@
 # searchslim
 
-Claude Code gibi ajanların Grep, Glob, `rg`, `grep`, `fd` ve `find` çıktılarını,
+Claude Code gibi ajanların Grep, Glob, `rg`, `grep`, `git grep`, `fd`, `find`,
+`git ls-files`, `tree` ve `ls -R` çıktılarını,
 kritik kod kanıtını kaybetmeden küçülten drop-in katman. Yeni bir tool eklemez;
 çıktı, aracın kendi formatında (`yol:satır:metin`) kalır ve atılan her şey
 sondaki tek bir `[searchslim]` notunda sayılır.
@@ -20,11 +21,20 @@ Bu repo hook'u kendi `.claude/settings.json` dosyasıyla zaten kullanıyor.
 
 ## Ne yapar
 
-- **Bash:** düz `rg`/`grep`/`fd`/`find` komutları `searchslim run --` ile sarılır.
-  Her satır `yol:satır` ile gelsin diye dosya adı ve satır numarası bayrakları,
-  sonuç kararlı olsun diye `rg --sort=path` eklenir. Pipe, yönlendirme, `$(...)`
-  veya `find -exec` gibi yan etkili komutlara dokunulmaz.
-- **Grep/Glob:** hook aynı aramayı `rg` ile kendisi yapar. Sonuç bütçeye
+- **Bash:** `rg`, `grep`, `git grep`, `fd`, `find`, `git ls-files`, `tree` ve
+  `ls -R` komutları `searchslim run --` ile sarılır. Her satır `yol:satır` ile
+  gelsin diye çalışma anında satır numarası ve (birden çok dosyada) dosya adı
+  bayrakları, sonuç kararlı olsun diye `rg --sort=path` eklenir. Tek dosyalı
+  aramalar dosya adı eklenmeden kalır, böylece küçük çıktılar küçük kalır.
+  `2>/dev/null` desteklenir. Arkasından yalnızca satır süzen komutlar gelen
+  pipe'lar (`| head`, `| tail -n`, `| sort`, `| uniq`, `| grep -v x`) olduğu gibi
+  çalıştırılır, yalnızca son çıktı küçültülür. `tree` ve `ls -R` çıktısında sığan
+  en derin seviyeye kadar her şey kalır, daha derindekiler dizin dizin sayılır.
+  Diğer yönlendirmeler, `$(...)`, `find -exec` gibi yan etkili komutlar ve
+  sistemde kurulu olmayan araçlar (ör. yalnızca alias olan `rg`) değişmez.
+- **Grep/Glob:** hook aynı aramayı `rg` ile kendisi yapar (Grep'in content,
+  files_with_matches ve count modları, -A/-B/-C, multiline, glob/type,
+  head_limit/offset). Sonuç bütçeye
   sığıyorsa hiçbir şey yapmaz, gerçek araç çalışır. Sığmıyorsa küçültülmüş
   sonucu modele verir (başında "bu bir hata değil, sonuç" yazar).
 - **Kurallar:** tekrarlar atılır, örtüşen satır aralıkları birleşir. Bütçe

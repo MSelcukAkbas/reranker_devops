@@ -1,36 +1,85 @@
 """Rewrite a shell search command so its output goes through searchslim.
 
-Only plain, single search commands are touched (`rg ...`, `grep -rn ...`,
-`fd ...`, `find ...`, optionally after `cd dir &&`). Anything with pipes,
-redirects, command chaining beyond a leading `cd`, subshells, or side-effect
-flags is left alone: the rewrite must never change what a command does, only
-how much of its stdout is shown.
+Wrapped (optionally after `cd dir &&`, optionally with `2>/dev/null` / `2>&1`):
+
+  rg, grep/egrep/fgrep, git grep     content, file lists and counts
+  fd/fdfind, find, git ls-files      path lists
+  tree, ls -R                        directory listings
+  <one of the above> | head/tail/sort/uniq/grep ...
+                                     simple filter pipelines (POSIX shells only)
+
+Anything else with pipes, redirects, command chaining beyond a leading `cd`,
+subshells, or side-effect flags is left alone: the rewrite must never change
+what a command does, only how much of its stdout is shown.
+
+A single command becomes `searchslim run -- <cmd>`: `run` adds the flags that
+keep every line anchored (see `prepare`) after the shell has expanded globs.
+A pipeline becomes `searchslim run --shell -- '<pipeline>'` and is run
+unchanged; only its final stdout is reduced.
 
 Prefix a command with `SEARCHSLIM=off ` to get raw output.
 """
 
 from __future__ import annotations
 
+import os
+import re
 import shlex
+import shutil
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 OFF_PREFIX = "SEARCHSLIM=off "
 
-_SEARCH_TOOLS = {"rg", "grep", "egrep", "fgrep", "fd", "fdfind", "find"}
+_SEARCH_TOOLS = {"rg", "grep", "egrep", "fgrep", "fd", "fdfind", "find", "git", "tree", "ls"}
+_GREP_TOOLS = {"grep", "egrep", "fgrep"}
 _UNSAFE_CHARS = set("|;&<>`$(){}\n")
+# stderr redirects that do not change stdout; allowed anywhere in a command.
+_STDERR_REDIRECT = re.compile(r"(?<!\S)2>\s*(?:/dev/null|&1)(?!\S)")
 # find flags that run things or print in custom formats.
 _FIND_UNSAFE = {"-exec", "-execdir", "-ok", "-okdir", "-delete", "-fprint", "-fprintf", "-fls", "-printf", "-print0", "-fprint0", "-ls"}
 _FD_UNSAFE = {"-x", "--exec", "-X", "--exec-batch", "-0", "--print0", "-l", "--list-details", "--format"}
 # rg/grep modes whose output is not path/line oriented, or that we should not second-guess.
 _RG_PASSTHROUGH = {"--help", "-h", "--version", "-V", "--type-list", "--pcre2-version", "-0", "--null", "--vimgrep", "--replace", "-r", "-o", "--only-matching", "--passthru", "--stats", "-q", "--quiet"}
 _GREP_PASSTHROUGH = {"--help", "--version", "-V", "-Z", "--null", "-z", "--null-data", "-o", "--only-matching", "-q", "--quiet", "--silent"}
+_GIT_GREP_PASSTHROUGH = {"-h", "--help", "-O", "--open-files-in-pager", "-z", "--null", "-o", "--only-matching", "-q", "--quiet", "-p", "--show-function", "-W", "--function-context"}
+_LS_FILES_PASSTHROUGH = {"-h", "--help", "-z"}
+_LS_FILES_NOT_PATHS = {"-s", "--stage", "-t", "-v", "-f", "--debug", "--eol", "--format", "-u", "--unmerged", "--resolve-undo"}
+_TREE_PASSTHROUGH = {"-o", "-J", "-X", "-H", "--help", "--version", "-R"}
 _RG_NO_LINE_MODES = {"-l", "--files-with-matches", "--files-without-match", "-c", "--count", "--count-matches", "--files", "--json", "-N", "--no-line-number"}
 _GREP_NO_LINE_MODES = {"-l", "--files-with-matches", "-L", "--files-without-match", "-c", "--count"}
+_GIT_GREP_NO_LINE_MODES = {"-l", "--files-with-matches", "--name-only", "-L", "--files-without-match", "-c", "--count"}
+_PATH_MODES = {"-l", "--files-with-matches", "--files-without-match", "-L", "--files", "--name-only"}
+_COUNT_MODES = {"-c", "--count", "--count-matches"}
+_LINE_NUMBER_FLAGS = {"-n", "--line-number"}
+_WITH_FILENAME = {"-H", "--with-filename"}
+
+# rg/grep flags that take a value as the next argument.
+_RG_VALUE_FLAGS = {
+    "-e", "--regexp", "-f", "--file", "-g", "--glob", "--iglob", "-t", "--type", "-T", "--type-not",
+    "--type-add", "--type-clear", "-A", "--after-context", "-B", "--before-context", "-C", "--context",
+    "-m", "--max-count", "-M", "--max-columns", "-d", "--max-depth", "--max-filesize", "-E", "--encoding",
+    "-j", "--threads", "--sort", "--sortr", "--pre", "--pre-glob", "--ignore-file", "--path-separator",
+    "--context-separator", "--field-match-separator", "--field-context-separator", "--colors", "--color",
+    "--engine", "--dfa-size-limit", "--regex-size-limit", "--max-columns-preview", "--hostname-bin",
+}
+_GREP_VALUE_FLAGS = {"-e", "--regexp", "-f", "--file", "-A", "-B", "-C", "-m", "--max-count", "--include", "--exclude", "--exclude-dir", "-d", "-D", "--label", "--color", "--colour"}
+
+# Pipeline stages after the search: filters that keep each line as it is.
+_FILTER_TOOLS = {"head", "tail", "sort", "uniq", "grep", "egrep", "fgrep", "rg"}
+_HEAD_TAIL_OK = re.compile(r"^(?:-\d+|-n\d*|--lines=\d+|\d+|-q|-v)$")
+_SORT_OK = {"-u", "-r", "-n", "-f", "-V", "-s", "-h", "-b", "-d", "-g", "-k", "-t", "--unique", "--reverse", "--numeric-sort", "--ignore-case", "--version-sort", "--stable"}
+_UNIQ_OK = {"-u", "-d", "-i", "--unique", "--repeated", "--ignore-case"}
+_FILTER_GREP_OK = {"-v", "-i", "-E", "-F", "-w", "-x", "-P", "-e", "-G", "--invert-match", "--ignore-case", "--word-regexp", "--line-regexp", "--fixed-strings", "--extended-regexp", "--regexp"}
 
 
-def rewrite_command(command: str, runner: str | None = None, run_args: list[str] | None = None) -> str | None:
-    """Return the wrapped command, or None when it should run unchanged."""
+def rewrite_command(command: str, runner: str | None = None, run_args: list[str] | None = None, check_path: bool = False) -> str | None:
+    """Return the wrapped command, or None when it should run unchanged.
+
+    `check_path`: only wrap when the search tool is installed (the hook sets it,
+    so a tool that the agent's shell only knows as an alias still runs as typed).
+    """
     stripped = command.strip()
     if not stripped or stripped.startswith(OFF_PREFIX.strip()):
         return None
@@ -44,34 +93,233 @@ def rewrite_command(command: str, runner: str | None = None, run_args: list[str]
         prefix = cd_part.strip() + " && "
         body = rest.strip()
 
-    if _has_unsafe(body):
+    stages = _split_pipeline(body)
+    if not stages or any(_has_unsafe(_STDERR_REDIRECT.sub(" ", s)) for s in stages):
         return None
     try:
-        argv = shlex.split(body)
+        argvs = [shlex.split(_STDERR_REDIRECT.sub(" ", s)) for s in stages]
     except ValueError:
         return None
-    if not argv or argv[0] not in _SEARCH_TOOLS:
+    if any(not a for a in argvs):
         return None
 
-    extra = _extra_flags(argv)
-    if extra is None:
+    argv = argvs[0]
+    kind = search_kind(argv)
+    if kind is None:
+        return None
+    if check_path and shutil.which(argv[0]) is None:
         return None
 
-    # Keep the user's own text after the tool name: re-quoting it would stop the
-    # shell from expanding unquoted globs and ~ exactly as before.
-    rest = body[len(argv[0]):] if body.startswith(argv[0]) else None
-    if rest is None:
-        return None
-    head = " ".join([argv[0], *extra])
     runner = runner or default_runner()
     opts = "".join(f" {shlex.quote(a)}" for a in run_args or [])
-    return f"{prefix}{runner} run{opts} -- {head}{rest}"
+    if len(argvs) == 1:
+        return f"{prefix}{runner} run{opts} -- {body}"
+
+    # A pipeline: every later stage must be a line filter, and the shell must be POSIX.
+    if os.name != "posix" or not all(_is_line_filter(a) for a in argvs[1:]):
+        return None
+    if kind == "content" and not _flags(argv) & _LINE_NUMBER_FLAGS:
+        kind = "lines"  # piped search output has no line numbers without -n: keep lines opaque
+    return f"{prefix}{runner} run{opts} --kind={kind} --shell -- {shlex.quote(body)}"
+
+
+def search_kind(argv: list[str]) -> str | None:
+    """Output shape of a wrappable search command ("content", "paths", "count",
+    "lines"), or None when the command must not be wrapped."""
+    tool = argv[0]
+    if tool not in _SEARCH_TOOLS:
+        return None
+    flags = _flags(argv)
+    if tool == "rg":
+        if flags & _RG_PASSTHROUGH:
+            return None
+        return _mode_kind(flags)
+    if tool in _GREP_TOOLS:
+        if flags & _GREP_PASSTHROUGH:
+            return None
+        return _mode_kind(flags)
+    if tool in {"fd", "fdfind"}:
+        return None if flags & _FD_UNSAFE else "paths"
+    if tool == "find":
+        return None if set(argv[1:]) & _FIND_UNSAFE else "paths"
+    if tool == "git":
+        sub = argv[1] if len(argv) > 1 else ""
+        sub_flags = _flags(argv[1:])
+        if sub == "grep":
+            return None if sub_flags & _GIT_GREP_PASSTHROUGH else _mode_kind(sub_flags)
+        if sub == "ls-files":
+            if sub_flags & _LS_FILES_PASSTHROUGH:
+                return None
+            return "lines" if sub_flags & _LS_FILES_NOT_PATHS else "paths"
+        return None
+    if tool == "tree":
+        return None if flags & _TREE_PASSTHROUGH or any(a.startswith("--output") for a in argv) else "lines"
+    if tool == "ls":
+        return "lines" if "-R" in flags or "--recursive" in flags else None
+    return None
+
+
+def _mode_kind(flags: set[str]) -> str:
+    if flags & _PATH_MODES:
+        return "paths"
+    if flags & _COUNT_MODES:
+        return "count"
+    return "content"
+
+
+@dataclass
+class Prepared:
+    argv: list[str]
+    default_path: str = ""  # the one file searched, for single-file (pathless) output
+    kind: str | None = None  # forced output shape, or None to auto-detect
+
+
+def prepare(argv: list[str]) -> Prepared:
+    """Add the flags that keep every output line anchored, at run time.
+
+    Run after the shell has expanded globs, so it can tell a single-file search
+    (printed without a filename, like the tool does on a terminal, which keeps
+    small outputs small) from a multi-file one (every line gets its path).
+    Piped rg and grep drop line numbers, and rg also drops the filename.
+    """
+    if not argv:
+        return Prepared(argv)
+    tool = argv[0]
+    kind = search_kind(argv)
+    if kind is None:
+        return Prepared(argv)
+    flags = _flags(argv)
+    if tool == "rg":
+        # rg searches in parallel, so file order changes run to run; sorting
+        # keeps what survives the budget (and the note) reproducible.
+        extra = [] if flags & {"--sort", "--sortr"} else ["--sort=path"]
+        if flags & _RG_NO_LINE_MODES:
+            return Prepared([tool, *extra, *argv[1:]])
+        single = _single_file(argv, _RG_VALUE_FLAGS)
+        if single and not flags & _WITH_FILENAME:
+            return Prepared([tool, *extra, "--line-number", *argv[1:]], default_path=single)
+        return Prepared([tool, *extra, "--with-filename", "--line-number", *argv[1:]])
+    if tool in _GREP_TOOLS:
+        if flags & _GREP_NO_LINE_MODES:
+            return Prepared(argv)
+        single = _single_file(argv, _GREP_VALUE_FLAGS)
+        if single and not flags & _WITH_FILENAME:
+            return Prepared([tool, "-n", *argv[1:]], default_path=single)
+        return Prepared([tool, "-H", "-n", *argv[1:]])
+    if tool == "git" and argv[1] == "grep":
+        if _flags(argv[1:]) & _GIT_GREP_NO_LINE_MODES:
+            return Prepared(argv)
+        return Prepared(["git", "grep", "-n", *argv[2:]])
+    return Prepared(argv, kind="lines" if kind == "lines" else None)
+
+
+def _single_file(argv: list[str], value_flags: set[str]) -> str:
+    """The searched path when it is exactly one regular file, else ""."""
+    positional, skip, explicit_pattern, after_dashdash = [], False, False, False
+    for a in argv[1:]:
+        if skip:
+            skip = False
+            continue
+        if after_dashdash:
+            positional.append(a)
+        elif a == "--":
+            after_dashdash = True
+        elif a in value_flags:
+            skip = True
+            explicit_pattern |= a in {"-e", "--regexp", "-f", "--file"}
+        elif a.startswith("-") and a != "-":
+            if a.startswith(("--regexp=", "--file=")) or (a[:2] in ("-e", "-f") and len(a) > 2 and not a.startswith("--")):
+                explicit_pattern = True
+        else:
+            positional.append(a)
+    paths = positional if explicit_pattern else positional[1:]
+    if len(paths) == 1 and os.path.isfile(paths[0]):
+        return paths[0]
+    return ""
 
 
 def default_runner() -> str:
     # The Bash tool's shell may not have this package on its path, so point at it explicitly.
     package_root = Path(__file__).resolve().parent.parent
     return f"PYTHONPATH={shlex.quote(str(package_root))} {shlex.quote(sys.executable)} -m searchslim"
+
+
+def _split_pipeline(s: str) -> list[str] | None:
+    """Split on unquoted single `|`; None when quotes are unbalanced or `||` is used."""
+    parts, cur, quote, escaped = [], [], None, False
+    i = 0
+    while i < len(s):
+        ch = s[i]
+        if escaped:
+            escaped = False
+        elif ch == "\\" and quote != "'":
+            escaped = True
+        elif quote:
+            if ch == quote:
+                quote = None
+        elif ch in "'\"":
+            quote = ch
+        elif ch == "|":
+            if s[i + 1 : i + 2] in ("|", "&") or (i and s[i - 1] == ">"):
+                return None
+            parts.append("".join(cur).strip())
+            cur = []
+            i += 1
+            continue
+        cur.append(ch)
+        i += 1
+    if quote or escaped:
+        return None
+    parts.append("".join(cur).strip())
+    return parts if all(parts) else None
+
+
+def _is_line_filter(argv: list[str]) -> bool:
+    """A pipeline stage that only drops, keeps or reorders whole lines, reads only
+    stdin and writes nothing but stdout."""
+    tool, args = argv[0], argv[1:]
+    if tool not in _FILTER_TOOLS:
+        return False
+    if tool in ("head", "tail"):
+        # `-n 20` or `-n20` or `-20`; never `-f` (tail would follow forever) or files.
+        ok, skip = True, False
+        for a in args:
+            if skip:
+                skip = False
+                ok &= a.lstrip("+-").isdigit()
+            elif a == "-n":
+                skip = True
+            else:
+                ok &= bool(_HEAD_TAIL_OK.match(a)) and not a.isdigit()
+        return ok and not skip
+    if tool == "sort":
+        skip = False
+        for a in args:
+            if skip:
+                skip = False
+            elif a in ("-k", "-t"):
+                skip = True
+            elif not (a.startswith("-") and (a in _SORT_OK or a[:2] in ("-k", "-t") or set(a[1:]) <= set("urnfVshbdg"))):
+                return False
+        return not skip
+    if tool == "uniq":
+        return all(a in _UNIQ_OK or (a.startswith("-") and set(a[1:]) <= set("udi")) for a in args)
+    # grep/rg as a filter: flags from a safe set, one pattern, no files.
+    positional, skip, has_e = [], False, False
+    for a in args:
+        if skip:
+            skip = False
+        elif a in ("-e", "--regexp"):
+            skip = has_e = True
+        elif a.startswith("-") and a != "-":
+            if a.startswith("--"):
+                if a.split("=", 1)[0] not in _FILTER_GREP_OK:
+                    return False
+            elif not set(a[1:]) <= set("viEFwxPG"):
+                return False
+        else:
+            positional.append(a)
+    return not skip and len(positional) == (0 if has_e else 1)
 
 
 def _has_unsafe(s: str) -> bool:
@@ -113,29 +361,6 @@ def _flags(argv: list[str]) -> set[str]:
             if a[1:].isalpha():  # combined short flags: -rn -> -r, -n
                 flags.update(f"-{c}" for c in a[1:])
     return flags
-
-
-def _extra_flags(argv: list[str]) -> list[str] | None:
-    """Flags to add so every output line keeps its path:line anchor; None = do not wrap."""
-    tool = argv[0]
-    flags = _flags(argv)
-    if tool == "rg":
-        if flags & _RG_PASSTHROUGH:
-            return None
-        # rg searches in parallel, so file order changes run to run; sorting
-        # keeps what survives the budget (and the note) reproducible.
-        extra = [] if flags & {"--sort", "--sortr"} else ["--sort=path"]
-        # Piped rg drops line numbers and, for one file, the filename.
-        return extra if flags & _RG_NO_LINE_MODES else [*extra, "--with-filename", "--line-number"]
-    if tool in {"grep", "egrep", "fgrep"}:
-        if flags & _GREP_PASSTHROUGH:
-            return None
-        return [] if flags & _GREP_NO_LINE_MODES else ["-H", "-n"]
-    if tool in {"fd", "fdfind"}:
-        return None if flags & _FD_UNSAFE else []
-    if tool == "find":
-        return None if set(argv[1:]) & _FIND_UNSAFE else []
-    return None
 
 
 if __name__ == "__main__":  # pragma: no cover

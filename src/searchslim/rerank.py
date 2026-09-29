@@ -31,6 +31,9 @@ from typing import Protocol
 from .models import Block, Kind, Line, SearchResult
 from .rules import (
     NOTE_PREFIX,
+    _assemble,
+    _format_dirs,
+    rollup_dirs,
     Config,
     Reduced,
     build_blocks,
@@ -378,7 +381,7 @@ def _rank_content(result: SearchResult, query: Query, scorer: Scorer, config: Co
             note += f", +{len(rest)} more files ({sum(n for _, n in rest)} matches)"
         note += ". Narrow the search (path/glob) to see them."
     return Reduced(
-        text=body + ("\n" + note if body else note),
+        text=_assemble(result, body, note),
         stats={
             "kind": "content",
             "reranked": True,
@@ -434,19 +437,14 @@ def _rank_paths(result: SearchResult, query: Query, scorer: Scorer, config: Conf
     missing = len(paths) - len(kept)
     note = f"{NOTE_PREFIX} {len(kept)}/{len(paths)} paths shown, ranked by relevance ({scorer.name})."
     if missing:
-        dirs: OrderedDict[str, int] = OrderedDict()
         kept_set = set(kept)
-        for i in order:
-            if i not in kept_set:
-                d = os.path.dirname(paths[i]) or "."
-                dirs[d] = dirs.get(d, 0) + 1
-        listed = list(dirs.items())[: config.note_max_files]
-        note += " Not shown, by directory: " + ", ".join(f"{d}/ ({n})" for d, n in listed)
-        if len(dirs) > len(listed):
-            note += f", +{len(dirs) - len(listed)} more dirs"
+        # Directories of the most relevant omitted paths first; rolled up so
+        # every omitted path is covered by a named directory.
+        rest = [(paths[i], 1) for i in order if i not in kept_set]
+        note += " Not shown, by directory: " + _format_dirs(rollup_dirs(rest, config.note_max_files))
         note += ". Narrow the pattern to see them."
     return Reduced(
-        text=body + "\n" + note,
+        text=_assemble(result, body, note),
         stats={"kind": "paths", "reranked": True, "scorer": scorer.name, "unique": len(paths), "kept": len(kept), "model_usage": scored.usage},
     )
 

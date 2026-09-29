@@ -14,6 +14,7 @@ class Kind(str, Enum):
     CONTENT = "content"  # path:line:text lines (rg, grep -n, Claude Code Grep content mode)
     PATHS = "paths"  # one path per line (Glob, fd, find, rg -l, Grep files_with_matches)
     COUNT = "count"  # path:count lines (rg -c, Grep count mode)
+    LINES = "lines"  # opaque lines kept verbatim (tree, ls -R, filtered pipelines)
 
 
 @dataclass(frozen=True)
@@ -67,6 +68,8 @@ class SearchResult:
     lines: list[Line] = field(default_factory=list)
     paths: list[str] = field(default_factory=list)
     counts: list[PathCount] = field(default_factory=list)
+    # Kind.LINES: raw output lines, blank lines included (they separate ls -R sections).
+    rows: list[str] = field(default_factory=list)
     # Lines the parser could not interpret. Kept verbatim so nothing is lost silently.
     unparsed: list[str] = field(default_factory=list)
     # Framing lines the tool prints around results (Claude Code Grep/Glob:

@@ -2,6 +2,7 @@
 
   searchslim filter [opts] < raw_output     reduce output read from stdin
   searchslim run [opts] -- rg -n foo src    run a search command, reduce its stdout
+  searchslim run --shell -- 'rg -n foo | grep -v test'   same, for a filter pipeline
   searchslim hook < event.json              Claude Code PreToolUse hook (see hooks.py)
   searchslim install [--user | DIR]         enable the hook in Claude Code settings
 
@@ -83,6 +84,8 @@ def main(argv: list[str] | None = None) -> int:
 
     p_run = sub.add_parser("run", help="run a search command and reduce its stdout")
     _add_common(p_run)
+    p_run.add_argument("--shell", action="store_true", help="run the command (one string) through the shell, e.g. a filter pipeline")
+    p_run.add_argument("--no-anchor", action="store_true", help="do not add the flags that keep path:line on every line (rg/grep/git grep)")
     p_run.add_argument("command", nargs=argparse.REMAINDER, help="command to run, after --")
 
     sub.add_parser("hook", help="Claude Code PreToolUse hook: JSON event on stdin")
@@ -126,7 +129,21 @@ def main(argv: list[str] | None = None) -> int:
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
         parser.error("run needs a command, e.g. searchslim run -- rg -n foo")
-    proc = subprocess.run(command, capture_output=True, text=True, errors="replace")
+    if args.shell:
+        proc = subprocess.run(" ".join(command), shell=True, capture_output=True, text=True, errors="replace")
+    else:
+        if not args.no_anchor:
+            from .rewrite import prepare
+
+            prepared = prepare(command)
+            command = prepared.argv
+            args.default_path = args.default_path or prepared.default_path
+            args.kind = args.kind or prepared.kind
+        try:
+            proc = subprocess.run(command, capture_output=True, text=True, errors="replace")
+        except FileNotFoundError:
+            sys.stderr.write(f"searchslim: command not found: {command[0]}\n")
+            return 127
     sys.stderr.write(proc.stderr)
     _emit(proc.stdout, args)
     return proc.returncode

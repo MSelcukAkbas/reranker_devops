@@ -12,6 +12,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from dataclasses import dataclass, field
 import posixpath
+import re
 
 from .models import Block, Kind, Line, PathCount, SearchResult
 
@@ -50,6 +51,8 @@ def reduce(result: SearchResult, config: Config | None = None) -> Reduced:
         return _reduce_content(result, config)
     if result.kind is Kind.COUNT:
         return _reduce_counts(result, config)
+    if result.kind is Kind.LINES:
+        return _reduce_lines(result, config)
     return _reduce_paths(result, config)
 
 
@@ -282,21 +285,37 @@ def rollup_dirs(path_counts, limit: int) -> list[tuple[str, int]]:
     while len(groups) > limit:
         deepest = max(d.count("/") for d in groups)
         if deepest == 0:
-            # Only top-level dirs left: name the first ones, lump the rest.
-            items = list(groups.items())
-            head, tail = items[: limit - 1], items[limit - 1:]
-            return head + [(f"+{len(tail)} other dirs", sum(n for _, n in tail))]
+            return _head_and_rest(list(groups.items()), limit)
         merged: OrderedDict[str, int] = OrderedDict()
         for d, n in groups.items():
             if d.count("/") == deepest:
                 d = posixpath.dirname(d)
             merged[d] = merged.get(d, 0) + n
+        if len(merged) < 3 < len(groups):
+            # Merging would leave one or two big dirs (everything under /usr/lib/...),
+            # which says nothing; name the biggest subdirs instead.
+            return _head_and_rest(sorted(groups.items(), key=lambda kv: -kv[1]), limit)
         groups = merged
     return list(groups.items())
 
 
+def _head_and_rest(items, limit: int):
+    """The first `limit - 1` groups by name, the rest lumped into one counted group."""
+    if len(items) <= limit:
+        return items
+    head, tail = items[: limit - 1], items[limit - 1:]
+    return head + [(f"+{len(tail)} other dirs", sum(n for _, n in tail))]
+
+
 def _format_dirs(groups) -> str:
-    return ", ".join(f"{d} ({n})" if d.startswith("+") else f"{d}/ ({n})" for d, n in groups)
+    names = [d for d, _ in groups if not d.startswith("+")]
+    base = posixpath.commonpath(names) if len(names) > 1 and all(n.startswith("/") for n in names) else ""
+    if len(base) < 12 or base in names:
+        base = ""
+    trim = len(base) + 1 if base else 0
+    listed = ", ".join(f"{d} ({n})" if d.startswith("+") else f"{d[trim:]}/ ({n})" for d, n in groups)
+    # Absolute paths share a long prefix (Glob output); say it once.
+    return f"under {base}/: {listed}" if base else listed
 
 
 def _clip(text: str, limit: int) -> str:
@@ -368,6 +387,136 @@ def _reduce_counts(result: SearchResult, config: Config) -> Reduced:
         text=_assemble(result, body, note),
         stats={"kind": "count", "input": len(result.counts), "unique": len(merged), "kept": len(kept)},
     )
+
+
+# --- listings (tree, ls -R, filtered pipelines) --------------------------------
+
+# tree entry: indent of "│   " / "|   " / "    " units, then a branch marker.
+_TREE_ENTRY = re.compile(r"^((?:[│|]\s{3}|\s{4})*)(?:├──|└──|\|--|`--)\s")
+_TREE_SUMMARY = re.compile(r"^\d+ director(?:y|ies)(?:, \d+ files?)?$")
+
+
+def _reduce_lines(result: SearchResult, config: Config) -> Reduced:
+    rows = result.rows
+    text = "\n".join(rows)
+    stats = {"kind": "lines", "input": len(rows)}
+    if estimate_tokens(text) <= config.max_tokens:
+        return Reduced(text=text, stats={**stats, "kept": len(rows), "unique": len(rows)})
+    # The note is short; reserve a little room for it.
+    budget = config.max_tokens - 40 - 12 * config.note_max_files
+    reduced = _reduce_tree(rows, budget, config) or _reduce_ls_sections(rows, budget, config)
+    if reduced is None:
+        kept = _prefix_fitting(rows, budget)
+        shown = sum(1 for r in kept if r.strip())
+        total = sum(1 for r in rows if r.strip())
+        note = f"{NOTE_PREFIX} {shown}/{total} lines shown; the last {total - shown} lines not shown. Narrow the command to see them."
+        reduced = (kept, note, "prefix")
+    kept, note, how = reduced
+    kept_count = sum(1 for r in kept if r.strip())
+    return Reduced(
+        text="\n".join([*kept, note]),
+        stats={**stats, "kept": kept_count, "unique": sum(1 for r in rows if r.strip()), "steps": [how]},
+    )
+
+
+def _prefix_fitting(rows: list[str], budget: int) -> list[str]:
+    kept, used = [], 0
+    for r in rows:
+        cost = estimate_tokens(_clip(r, 300)) + 1
+        if used + cost > budget and kept:
+            break
+        kept.append(r)
+        used += cost
+    return kept
+
+
+def _fits_rows(rows, budget: int) -> bool:
+    return sum(estimate_tokens(r) + 1 for r in rows) <= budget
+
+
+def _reduce_tree(rows: list[str], budget: int, config: Config):
+    """tree output: keep the shallow levels whole and drop the deepest ones, so the
+    agent still sees the full layout and knows which directories to expand."""
+    depths = []
+    for r in rows:
+        m = _TREE_ENTRY.match(r)
+        depths.append(len(m.group(1)) // 4 + 1 if m else 0)
+    if sum(1 for d in depths if d) < len(rows) // 2:
+        return None
+    deepest = max(depths)
+    for level in range(deepest - 1, 0, -1):
+        kept_idx = [i for i, d in enumerate(depths) if d <= level]
+        if _fits_rows([rows[i] for i in kept_idx], budget):
+            break
+    else:
+        return None
+    # Attribute each hidden entry to the kept entry it sits under.
+    hidden: OrderedDict[str, int] = OrderedDict()
+    stack: list[str] = []
+    for r, d in zip(rows, depths):
+        if 0 < d <= level:
+            stack = stack[: d - 1] + [_TREE_ENTRY.sub("", r).strip()]
+        elif d > level:
+            owner = "/".join(stack)
+            hidden[owner] = hidden.get(owner, 0) + 1
+    total_hidden = sum(hidden.values())
+    ranked = sorted(hidden.items(), key=lambda kv: -kv[1])
+    listed, rest = ranked[: config.note_max_files], ranked[config.note_max_files:]
+    names = ", ".join(f"{name}/ ({n})" for name, n in listed)
+    if rest:
+        names += f", +{len(rest)} more dirs ({sum(n for _, n in rest)})"
+    note = (
+        f"{NOTE_PREFIX} {len(kept_idx)}/{len(rows)} lines shown: {total_hidden} entries deeper than level {level} not shown"
+        f" (under {names})."
+        " Run tree on one of these directories to see them."
+    )
+    return [rows[i] for i in kept_idx], note, f"tree depth {level}"
+
+
+def _reduce_ls_sections(rows: list[str], budget: int, config: Config):
+    """ls -R output ("dir:" header, entries, blank line): keep whole sections for
+    the shallowest directories and name the rest by directory."""
+    starts = [i for i, r in enumerate(rows) if r.endswith(":") and (i == 0 or not rows[i - 1].strip())]
+    if len(starts) < 2 or starts[0] != 0:
+        return None
+    sections = []
+    for n, s in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(rows)
+        name = rows[s][:-1]
+        sections.append((name, rows[s:end]))
+    root_depth = sections[0][0].rstrip("/").count("/")
+    depth = [name.rstrip("/").count("/") - root_depth for name, _ in sections]
+    for level in range(max(depth) - 1, -1, -1):
+        kept = [sec for sec, d in zip(sections, depth) if d <= level]
+        if _fits_rows([r for _, body in kept for r in body], budget):
+            break
+    else:
+        return None
+    kept_names = {name for name, _ in kept}
+    # Name omitted sections by their first hidden level (a child of a listed
+    # directory), biggest first; the tail is counted so every one is covered.
+    groups: OrderedDict[str, int] = OrderedDict()
+    n_omitted = 0
+    for (name, body), d in zip(sections, depth):
+        if name in kept_names:
+            continue
+        n_omitted += 1
+        parts = name.rstrip("/").split("/")
+        top = "/".join(parts[: len(parts) - (d - level - 1)])
+        groups[top] = groups.get(top, 0) + sum(1 for r in body[1:] if r.strip())
+    ranked = sorted(groups.items(), key=lambda kv: -kv[1])
+    listed, rest = ranked[: config.note_max_files], ranked[config.note_max_files:]
+    dirs = ", ".join(f"{d}/ ({n})" for d, n in listed)
+    if rest:
+        dirs += f", +{len(rest)} other dirs ({sum(n for _, n in rest)})"
+    out = [r for _, body in kept for r in body]
+    while out and not out[-1].strip():
+        out.pop()
+    note = (
+        f"{NOTE_PREFIX} {len(kept)}/{len(sections)} directories listed; {n_omitted} deeper directories"
+        f" not listed ({sum(groups.values())} entries), by directory: {dirs}. List one of them to see it."
+    )
+    return out, note, f"ls depth {level}"
 
 
 __all__ = ["Config", "Reduced", "reduce", "estimate_tokens", "dedupe_lines", "build_blocks", "NOTE_PREFIX", "PathCount"]

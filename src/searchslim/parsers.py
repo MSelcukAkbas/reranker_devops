@@ -11,6 +11,8 @@ Supported content shapes:
 
 Paths shape: one path per line (Glob, fd, find, rg -l, grep -l).
 Count shape: path:N (rg -c, grep -c).
+Lines shape: anything else (tree, ls -R, a filtered pipeline); only chosen when
+the caller knows the command, never auto-detected.
 
 Claude Code's Grep/Glob wrap results in framing lines ("Found 3 files",
 "No files found", "Found 5 total occurrences across 2 files.",
@@ -51,6 +53,8 @@ def detect_kind(raw: str) -> Kind:
 
 
 def parse(raw: str, kind: Kind | None = None, default_path: str = "") -> SearchResult:
+    if kind is Kind.LINES:  # no Claude Code framing around shell listings
+        return _parse_body(raw, kind, default_path)
     header, raw, footer = split_framing(raw)
     result = _parse_body(raw, kind, default_path)
     result.header, result.footer = header, footer
@@ -74,6 +78,8 @@ def split_framing(raw: str) -> tuple[list[str], str, list[str]]:
 
 def _parse_body(raw: str, kind: Kind | None, default_path: str) -> SearchResult:
     kind = kind or detect_kind(raw)
+    if kind is Kind.LINES:
+        return SearchResult(kind=Kind.LINES, rows=raw.splitlines())
     if kind is Kind.PATHS:
         return parse_paths(raw)
     if kind is Kind.COUNT:

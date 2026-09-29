@@ -41,6 +41,11 @@ GREP_REASON_HEADER = (
     "result, not an error; do not retry the same call. Lines keep path:line "
     "anchors; the trailing [searchslim] note lists what was left out."
 )
+GLOB_REASON_HEADER = (
+    "searchslim ran this file search and reduced the output. This is the "
+    "result, not an error; do not retry the same call. The trailing "
+    "[searchslim] note counts the paths left out, by directory."
+)
 
 
 def config_from_env() -> Config:
@@ -70,7 +75,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
             run_args.append(f"--rerank={rerank}")
             if transcript:
                 run_args.append(f"--transcript={transcript}")
-        new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args)
+        new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args, check_path=True)
         if not new_command:
             return None
         return {
@@ -88,7 +93,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         return None
     if built is None:
         return None
-    argv, run_cwd, kind, postprocess = built
+    argv, run_cwd, kind, postprocess, default_path = built
 
     raw = _run(argv, run_cwd)
     if raw is None:
@@ -103,12 +108,15 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         scorer = make_scorer(rerank)
         pattern = tool_input.get("pattern", "")
         query = query_from_transcript(transcript, pattern) if transcript else Query(pattern=pattern)
-    reduced = slim(raw, kind=kind, config=config, scorer=scorer, query=query)
+    reduced = slim(raw, kind=kind, config=config, default_path=default_path, scorer=scorer, query=query)
+    header = GLOB_REASON_HEADER if tool == "Glob" else GREP_REASON_HEADER
+    if default_path:
+        header += f" All lines are from {default_path}."
     return {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "deny",
-            "permissionDecisionReason": f"{GREP_REASON_HEADER}\n\n{reduced.text}",
+            "permissionDecisionReason": f"{header}\n\n{reduced.text}",
         }
     }
 
@@ -130,9 +138,18 @@ def grep_to_rg(tool_input: dict, cwd: str):
     if tool_input.get("type"):
         argv += ["--type", tool_input["type"]]
 
+    path = tool_input.get("path")
+    # A single-file search prints no filename (as rg does for one file), which
+    # keeps the output, and so the budget check, the same as the real tool's.
+    single = ""
+    if path:
+        full = path if os.path.isabs(path) else os.path.join(cwd, path)
+        single = path if os.path.isfile(full) else ""
+
     if mode == "content":
         kind = Kind.CONTENT
-        argv += ["--with-filename", "--no-heading"]
+        argv += ["--no-heading"]
+        argv += ["--no-filename"] if single else ["--with-filename"]
         # Line numbers are the evidence anchor; always ask for them.
         argv.append("--line-number")
         context = tool_input.get("context", tool_input.get("-C"))
@@ -150,7 +167,6 @@ def grep_to_rg(tool_input: dict, cwd: str):
 
     # Always name the path: with none, rg searches stdin when it is a pipe,
     # and a hook's stdin is the event JSON.
-    path = tool_input.get("path")
     argv += ["-e", pattern, "--", path or "."]
     offset = int(tool_input.get("offset") or 0)
     limit = tool_input.get("head_limit")
@@ -165,7 +181,7 @@ def grep_to_rg(tool_input: dict, cwd: str):
             lines = lines[:limit]
         return "\n".join(lines)
 
-    return argv, cwd, kind, postprocess
+    return argv, cwd, kind, postprocess, single if mode == "content" else ""
 
 
 def glob_to_rg(tool_input: dict, cwd: str):
@@ -182,7 +198,7 @@ def glob_to_rg(tool_input: dict, cwd: str):
         # Glob returns absolute paths.
         return "\n".join(str(base / p) for p in raw.splitlines() if p)
 
-    return argv, str(base), Kind.PATHS, postprocess
+    return argv, str(base), Kind.PATHS, postprocess, ""
 
 
 def _run(argv: list[str], cwd: str) -> str | None:
