@@ -15,16 +15,17 @@ def rw(cmd):
 @pytest.mark.parametrize(
     "cmd,expected",
     [
-        ("rg foo src", "SLIM run -- rg --with-filename --line-number foo src"),
-        ("rg -n -C2 'a|b' src", "SLIM run -- rg --with-filename --line-number -n -C2 'a|b' src"),
-        ("rg -l foo", "SLIM run -- rg -l foo"),
-        ("rg --files -g '*.py'", "SLIM run -- rg --files -g '*.py'"),
+        ("rg foo src", "SLIM run -- rg --sort=path --with-filename --line-number foo src"),
+        ("rg -n -C2 'a|b' src", "SLIM run -- rg --sort=path --with-filename --line-number -n -C2 'a|b' src"),
+        ("rg -l foo", "SLIM run -- rg --sort=path -l foo"),
+        ("rg --files -g '*.py'", "SLIM run -- rg --sort=path --files -g '*.py'"),
         ("grep -rn foo .", "SLIM run -- grep -H -n -rn foo ."),
         ("grep -rl foo .", "SLIM run -- grep -rl foo ."),
         ("fd -e py", "SLIM run -- fd -e py"),
         ("find . -name '*.py'", "SLIM run -- find . -name '*.py'"),
-        ("rg foo *.py ~/x", "SLIM run -- rg --with-filename --line-number foo *.py ~/x"),
-        ("cd /repo && rg foo", "cd /repo && SLIM run -- rg --with-filename --line-number foo"),
+        ("rg foo *.py ~/x", "SLIM run -- rg --sort=path --with-filename --line-number foo *.py ~/x"),
+        ("rg --sort modified foo", "SLIM run -- rg --with-filename --line-number --sort modified foo"),
+        ("cd /repo && rg foo", "cd /repo && SLIM run -- rg --sort=path --with-filename --line-number foo"),
     ],
 )
 def test_search_commands_are_wrapped(cmd, expected):

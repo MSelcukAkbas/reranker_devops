@@ -122,8 +122,11 @@ def _extra_flags(argv: list[str]) -> list[str] | None:
     if tool == "rg":
         if flags & _RG_PASSTHROUGH:
             return None
+        # rg searches in parallel, so file order changes run to run; sorting
+        # keeps what survives the budget (and the note) reproducible.
+        extra = [] if flags & {"--sort", "--sortr"} else ["--sort=path"]
         # Piped rg drops line numbers and, for one file, the filename.
-        return [] if flags & _RG_NO_LINE_MODES else ["--with-filename", "--line-number"]
+        return extra if flags & _RG_NO_LINE_MODES else [*extra, "--with-filename", "--line-number"]
     if tool in {"grep", "egrep", "fgrep"}:
         if flags & _GREP_PASSTHROUGH:
             return None

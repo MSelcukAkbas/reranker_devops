@@ -24,7 +24,7 @@ def test_bash_search_is_rewritten_keeping_other_fields():
     out = handle({"tool_name": "Bash", "tool_input": {"command": "rg foo", "description": "search"}})
     upd = out["hookSpecificOutput"]["updatedInput"]
     assert upd["description"] == "search"
-    assert upd["command"].endswith("-m searchslim run --max-tokens=2000 --rerank=lexical -- rg --with-filename --line-number foo")
+    assert upd["command"].endswith("-m searchslim run --max-tokens=2000 --rerank=lexical -- rg --sort=path --with-filename --line-number foo")
     assert "permissionDecision" not in out["hookSpecificOutput"]
 
 
