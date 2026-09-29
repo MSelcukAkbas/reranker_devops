@@ -1,3 +1,4 @@
+import re
 import json
 import subprocess
 import sys
@@ -12,6 +13,7 @@ from searchslim.rerank import (
     parse_ranking,
     pattern_and_paths,
     query_from_transcript,
+    reduce_ranked,
     run_for_benchmark,
     split_units,
     terms,
@@ -150,3 +152,13 @@ def test_bench_model_cli_contract():
     assert proc.returncode == 0
     assert "command.go:701:func (c *Command) Execute() error {" in proc.stdout
     assert json.loads(proc.stderr.strip().splitlines()[-1]) == {}
+
+
+def test_ranked_paths_note_covers_every_omitted_path():
+    raw = "\n".join(f"pkg{d}/sub{s}/file_{i}.py" for d in range(15) for s in range(3) for i in range(5))
+    result = parse(raw)
+    out = reduce_ranked(result, Query(intent="file_3"), LexicalScorer(), Config(max_tokens=200))
+    note = out.text.splitlines()[-1]
+    shown = len(out.text.splitlines()) - 1
+    counted = sum(int(n) for n in re.findall(r"\((\d+)\)", note))
+    assert shown + counted == 225

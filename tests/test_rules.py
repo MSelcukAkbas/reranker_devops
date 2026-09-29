@@ -200,3 +200,45 @@ def test_one_file_with_path_asks_to_narrow_the_pattern():
     raw = "".join(f"src/f.py:{i}:scope = {i} * 1234567890\n" for i in range(1, 300))
     note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
     assert "src/f.py (" in note and "Narrow the pattern" in note
+
+
+def _ls_r(dirs):
+    out = []
+    for d, entries in dirs:
+        out += [f"{d}:", *entries, ""]
+    return "\n".join(out[:-1])
+
+
+def test_ls_r_keeps_shallow_directories_and_names_the_rest():
+    dirs = [(".", ["pkg", "README.md"]), ("./pkg", [f"mod{i}" for i in range(3)])]
+    dirs += [(f"./pkg/mod{i}", [f"file_{j}_with_a_longer_name.py" for j in range(40)]) for i in range(3)]
+    raw = _ls_r(dirs)
+    out = slim(raw, kind=Kind.LINES, config=Config(max_tokens=200)).text
+    lines = out.splitlines()
+    assert lines[:3] == [".:", "pkg", "README.md"]
+    assert "./pkg:" in lines and "./pkg/mod0:" not in lines
+    assert all(ln in raw.splitlines() for ln in lines[:-1])
+    assert lines[-1].startswith(NOTE_PREFIX)
+    assert "3 deeper directories not listed (120 entries)" in lines[-1]
+    assert "./pkg/mod0/ (40)" in lines[-1]
+
+
+def test_generic_lines_keep_a_prefix_without_dedupe():
+    raw = "\n".join(["__init__.py"] * 5 + [f"line {i} " * 10 for i in range(100)])
+    out = slim(raw, kind=Kind.LINES, config=Config(max_tokens=300)).text.splitlines()
+    assert out[:5] == ["__init__.py"] * 5  # repeated names are different entries, not duplicates
+    assert out[-1].startswith(NOTE_PREFIX) and "lines not shown" in out[-1]
+
+
+def test_small_listing_passes_through():
+    raw = "a\n\nb:\nc"
+    assert slim(raw, kind=Kind.LINES).text == raw
+
+
+def test_paths_note_names_subdirs_and_says_a_long_shared_prefix_once():
+    base = "/home/user/projects/app/node_modules"
+    raw = "\n".join(f"{base}/{pkg}/lib/file_{i}.js" for pkg in ("react", "lodash", "express", "zod") for i in range(60))
+    note = slim(raw, config=Config(max_tokens=300)).text.splitlines()[-1]
+    assert f"under {base}/: " in note
+    assert "react/lib/ (" in note and "zod/lib/ (60)" in note
+    assert note.count(base) == 1

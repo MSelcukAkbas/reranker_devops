@@ -32,6 +32,7 @@ from typing import Protocol
 from .models import Block, Kind, Line, SearchResult
 from .rules import (
     NOTE_PREFIX,
+    _assemble,
     Config,
     Reduced,
     build_blocks,
@@ -391,7 +392,7 @@ def _rank_content(result: SearchResult, query: Query, scorer: Scorer, config: Co
             note += f"; {len(rest)} more files by directory: {dirs}"
         note += ". Narrow the search (path/glob) to see them."
     return Reduced(
-        text=body + ("\n" + note if body else note),
+        text=_assemble(result, body, note),
         stats={
             "kind": "content",
             "reranked": True,
@@ -452,7 +453,7 @@ def _rank_paths(result: SearchResult, query: Query, scorer: Scorer, config: Conf
         note += " Not shown, by directory: " + format_dirs(rollup_dirs(rest, config.note_max_files))
         note += ". Narrow the pattern to see them."
     return Reduced(
-        text=body + "\n" + note,
+        text=_assemble(result, body, note),
         stats={"kind": "paths", "reranked": True, "scorer": scorer.name, "unique": len(paths), "kept": len(kept), "model_usage": scored.usage},
     )
 

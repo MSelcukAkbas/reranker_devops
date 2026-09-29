@@ -5,7 +5,7 @@ import sys
 
 import pytest
 
-from searchslim.hooks import GREP_REASON_HEADER, grep_to_rg, handle
+from searchslim.hooks import GLOB_REASON_HEADER, GREP_REASON_HEADER, grep_to_rg, handle
 from searchslim.rules import Config, NOTE_PREFIX, estimate_tokens
 
 needs_rg = pytest.mark.skipif(shutil.which("rg") is None, reason="rg not installed")
@@ -20,11 +20,12 @@ def repo(tmp_path):
     return tmp_path
 
 
+@needs_rg
 def test_bash_search_is_rewritten_keeping_other_fields():
     out = handle({"tool_name": "Bash", "tool_input": {"command": "rg foo", "description": "search"}})
     upd = out["hookSpecificOutput"]["updatedInput"]
     assert upd["description"] == "search"
-    assert upd["command"].endswith("-m searchslim run --max-tokens=2000 --rerank=lexical -- rg --sort=path --with-filename --line-number foo")
+    assert upd["command"].endswith("-m searchslim run --max-tokens=2000 --rerank=lexical -- rg foo")
     assert "permissionDecision" not in out["hookSpecificOutput"]
 
 
@@ -90,11 +91,12 @@ def test_hook_cli_searches_cwd_not_its_own_stdin(repo):
 
 
 def test_hook_cli_emits_json():
-    event = json.dumps({"tool_name": "Bash", "tool_input": {"command": "fd -e py"}})
+    event = json.dumps({"tool_name": "Bash", "tool_input": {"command": "find . -name '*.py'"}})
     proc = subprocess.run([sys.executable, "-m", "searchslim", "hook"], input=event, capture_output=True, text=True)
-    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=2000 --rerank=lexical -- fd -e py")
+    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=2000 --rerank=lexical -- find . -name '*.py'")
 
 
+@needs_rg
 def test_rerank_can_be_turned_off(monkeypatch):
     monkeypatch.setenv("SEARCHSLIM_RERANK", "off")
     out = handle({"tool_name": "Bash", "tool_input": {"command": "rg foo"}})
@@ -108,6 +110,51 @@ def test_large_grep_is_ranked_by_default(repo):
     assert "ranked by relevance (lexical)" in reason
 
 
+def test_bash_search_with_a_missing_tool_is_left_alone(monkeypatch):
+    # The agent's shell may know the tool only as an alias (Claude Code's bundled rg).
+    monkeypatch.setenv("PATH", "/nonexistent")
+    assert handle({"tool_name": "Bash", "tool_input": {"command": "rg foo"}}) is None
+
+
+@needs_rg
+def test_single_file_grep_under_budget_lets_builtin_tool_run(tmp_path):
+    # With a path on every line this file's matches would exceed the budget.
+    name = "a_rather_long_directory_name/another_nested_directory/module.py"
+    (tmp_path / name).parent.mkdir(parents=True)
+    (tmp_path / name).write_text("\n".join(f"def f_{i}(): pass" for i in range(150)) + "\n")
+    event = {"tool_name": "Grep", "cwd": str(tmp_path), "tool_input": {"pattern": "def ", "path": name, "output_mode": "content"}}
+    assert handle(event, Config(max_tokens=1000)) is None
+
+
+@needs_rg
+def test_single_file_grep_over_budget_names_the_file(tmp_path):
+    (tmp_path / "big.py").write_text("\n".join(f"def function_{i}(value): return value * {i}" for i in range(300)) + "\n")
+    event = {"tool_name": "Grep", "cwd": str(tmp_path), "tool_input": {"pattern": "def ", "path": str(tmp_path / "big.py"), "output_mode": "content"}}
+    reason = handle(event, Config(max_tokens=600))["hookSpecificOutput"]["permissionDecisionReason"]
+    assert f"All lines are from {tmp_path / 'big.py'}." in reason.splitlines()[0]
+    body = reason.split("\n\n", 1)[1].splitlines()
+    assert body[0][0].isdigit()  # pathless N:text, as rg prints one file
+    assert body[-1].startswith(NOTE_PREFIX)
+
+
+@needs_rg
+@pytest.mark.parametrize("mode", ["files_with_matches", "count"])
+def test_grep_list_modes_are_reduced(repo, mode):
+    for i in range(200):
+        (repo / f"extra_module_with_long_name_{i:03d}.py").write_text("target\n")
+    event = {"tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": mode}}
+    reason = handle(event, Config(max_tokens=300))["hookSpecificOutput"]["permissionDecisionReason"]
+    assert reason.startswith(GREP_REASON_HEADER)
+    assert reason.splitlines()[-1].startswith(NOTE_PREFIX)
+
+
+@needs_rg
+def test_glob_reason_has_its_own_header(repo):
+    event = {"tool_name": "Glob", "cwd": str(repo), "tool_input": {"pattern": "*.py"}}
+    reason = handle(event, Config(max_tokens=100))["hookSpecificOutput"]["permissionDecisionReason"]
+    assert reason.startswith(GLOB_REASON_HEADER)
+
+
 @needs_rg
 def test_single_file_grep_keeps_pathless_lines(repo):
     event = {"tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": "content", "path": "mod00.py"}}
@@ -115,11 +162,16 @@ def test_single_file_grep_keeps_pathless_lines(repo):
     assert handle(event, Config(max_tokens=800)) is None
 
 
+@needs_rg
 def test_single_file_bash_search_keeps_pathless_lines(tmp_path):
     (tmp_path / "f.rs").write_text("fn a() {}\n")
     (tmp_path / "d").mkdir()
-    out = handle({"tool_name": "Bash", "cwd": str(tmp_path), "tool_input": {"command": "rg -n 'fn ' f.rs"}})
-    cmd = out["hookSpecificOutput"]["updatedInput"]["command"]
-    assert "--with-filename" not in cmd and "--default-path=f.rs" in cmd
-    cmd = handle({"tool_name": "Bash", "cwd": str(tmp_path), "tool_input": {"command": "rg -n 'fn ' d"}})["hookSpecificOutput"]["updatedInput"]["command"]
-    assert "--with-filename" in cmd
+    (tmp_path / "d" / "g.rs").write_text("fn b() {}\n")
+
+    def run(command):
+        cmd = handle({"tool_name": "Bash", "cwd": str(tmp_path), "tool_input": {"command": command}})["hookSpecificOutput"]["updatedInput"]["command"]
+        return subprocess.run(cmd, shell=True, cwd=tmp_path, capture_output=True, text=True).stdout
+
+    # Anchor flags are chosen at run time: one file stays pathless, a directory gets paths.
+    assert run("rg -n 'fn ' f.rs") == "1:fn a() {}\n"
+    assert run("rg 'fn ' d") == "d/g.rs:1:fn b() {}\n"

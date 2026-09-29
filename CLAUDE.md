@@ -19,7 +19,7 @@ an agent that must decide from it whether to search again.
 ## Invariants (tests enforce these; do not break them)
 
 - Output keeps the tool's own format (`path:line:text`, `path-line-text`, `--`,
-  one path per line, `path:N`, pathless `N:text` for single-file searches),
+  one path per line, `path:N`, pathless `N:text` for single-file searches, tree/ls -R lines),
   so it is a drop-in replacement. Claude Code framing lines (`Found N files`,
   truncation notices) are kept verbatim around the body.
 - Every emitted body line is a line from the raw input (only very long lines
@@ -41,7 +41,8 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/models.py`   Line, Block, SearchResult, Kind
 - `src/searchslim/parsers.py`  raw text -> SearchResult (auto-detects shape; rg --json supported)
 - `src/searchslim/rules.py`    SearchResult -> reduced text + stats
-- `src/searchslim/rewrite.py`  wraps plain rg/grep/fd/find shell commands in `searchslim run --`
+- `src/searchslim/rewrite.py`  wraps shell search commands (and filter pipelines) in `searchslim run --`;
+                               `prepare` adds anchor flags at run time
 - `src/searchslim/hooks.py`    PreToolUse hook for Bash, Grep, Glob
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
 - `src/searchslim/session.py`  session memory: lines already shown in this agent session (lock-free store)
@@ -52,11 +53,19 @@ an agent that must decide from it whether to search again.
 
 ## Hook behaviour (this repo dogfoods it via `.claude/settings.json`)
 
-- Bash: plain `rg`/`grep`/`fd`/`find` commands are rewritten through `updatedInput`
-  to `searchslim run -- <cmd>`. Pipes, redirects, `$(...)`, chaining (other than a
-  leading `cd x &&`) and side-effect flags (`find -exec/-delete`, `fd -x`, `rg -r`)
-  are never rewritten. `rg`/`grep` get `--with-filename --line-number` / `-H -n`
-  added so every line keeps its anchor.
+- Bash: `rg`, `grep`, `git grep`, `fd`, `find`, `git ls-files`, `tree`, `ls -R` commands are
+  rewritten through `updatedInput` to `searchslim run -- <cmd>`, only when the tool is on PATH
+  (an alias-only `rg` is left alone). `run` adds anchor flags at run time via `rewrite.prepare`,
+  after glob expansion: `--with-filename --line-number` / `-H -n` / `git grep -n`, except that a
+  single-file search stays pathless (`N:text`, `default_path` names it) so it is not pushed over
+  budget by path prefixes. `2>/dev/null` and `2>&1` are allowed. Pipelines are wrapped only when
+  every later stage is a line filter (`head`/`tail -n`, `sort`, `uniq` without -c, `grep`/`rg`
+  filter with no file args or output-mode flags); they run unchanged via
+  `searchslim run --kind=K --shell -- '<pipeline>'` (POSIX only). Other redirects, `$(...)`,
+  chaining (other than a leading `cd x &&`) and side-effect flags (`find -exec/-delete`,
+  `fd -x`, `rg -r`, `git grep -O`, `tree -o`) are never rewritten.
+- `tree`/`ls -R` output is `Kind.LINES`: kept verbatim, no dedupe; when over budget the deepest
+  levels are dropped (tree entries / ls sections) and the note counts hidden entries per directory.
 - Grep/Glob: a hook cannot rewrite a built-in tool's result, so the hook runs the
   equivalent `rg` itself. If that fits the budget it returns nothing and the real
   tool runs. Otherwise it returns `permissionDecision: deny` with the reduced result
