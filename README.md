@@ -12,6 +12,9 @@ sondaki tek bir `[searchslim]` notunda sayılır.
 pip install git+https://github.com/MSelcukAkbas/reranker_devops && searchslim install --user
 ```
 
+Güncellemek için `pip install -U --force-reinstall --no-deps git+https://github.com/MSelcukAkbas/reranker_devops`
+(bayraksız pip, aynı sürüm kuruluysa eski kodu bırakır). Kurulu sürüm: `python -m searchslim --version`.
+
 `searchslim install --user` hook'u `~/.claude/settings.json` dosyasına ekler, yani
 bütün projelerde açılır. Tek bir proje için `searchslim install <proje-dizini>`.
 Mevcut ayarlara dokunmaz, iki kez çalıştırmak sorun değil. Kaldırmak için

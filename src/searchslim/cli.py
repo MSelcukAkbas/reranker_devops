@@ -27,6 +27,15 @@ from .models import Kind
 from .rules import Config
 
 
+def _version() -> str:
+    try:
+        from importlib.metadata import version
+
+        return version("searchslim")
+    except Exception:
+        return "unknown"
+
+
 def _default_rerank() -> str:
     value = os.environ.get("SEARCHSLIM_RERANK", "lexical").lower()
     return value if value in ("off", "none", "lexical", "claude") else "lexical"
@@ -76,9 +85,33 @@ def _config(args: argparse.Namespace) -> Config:
     )
 
 
+def _write(text: str, stream=None) -> None:
+    """Write UTF-8 bytes directly, so no console/locale codec can fail on them."""
+    stream = stream or sys.stdout
+    stream.flush()
+    buf = getattr(stream, "buffer", None)
+    if buf is None:  # e.g. a StringIO in tests
+        stream.write(text)
+        return
+    buf.write(text.encode("utf-8", errors="replace"))
+    buf.flush()
+
+
 def _emit(raw: str, args: argparse.Namespace) -> None:
+    """Reduce and print `raw`. Any failure prints `raw` unchanged (fail open)."""
     if not raw.strip():
         return
+    try:
+        text, stats = _reduce(raw, args)
+    except Exception as exc:  # never swallow the search result
+        sys.stderr.write(f"searchslim: {type(exc).__name__}: {exc}; showing raw output\n")
+        text, stats = raw, None
+    _write(text + ("\n" if text and not text.endswith("\n") else ""))
+    if args.stats and stats is not None:
+        _write(json.dumps(stats) + "\n", sys.stderr)
+
+
+def _reduce(raw: str, args: argparse.Namespace):
     scorer = query = None
     if args.rerank not in ("off", "none"):
         from .rerank import Query, make_scorer
@@ -106,15 +139,12 @@ def _emit(raw: str, args: argparse.Namespace) -> None:
         session=session,
         cwd=os.getcwd(),
     )
-    sys.stdout.write(reduced.text)
-    if reduced.text and not reduced.text.endswith("\n"):
-        sys.stdout.write("\n")
-    if args.stats:
-        sys.stderr.write(json.dumps(reduced.stats) + "\n")
+    return reduced.text, reduced.stats
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="searchslim", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--version", action="version", version=f"searchslim {_version()}")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_filter = sub.add_parser("filter", help="reduce search output read from stdin")
@@ -157,7 +187,7 @@ def main(argv: list[str] | None = None) -> int:
         from .rerank import make_scorer, run_for_benchmark
 
         text, usage = run_for_benchmark(json.loads(_decode(sys.stdin.buffer.read())), make_scorer(args.scorer))
-        sys.stdout.write(text + ("\n" if text and not text.endswith("\n") else ""))
+        _write(text + ("\n" if text and not text.endswith("\n") else ""))
         sys.stderr.write(json.dumps({k: usage[k] for k in ("input_tokens", "output_tokens") if k in usage}) + "\n")
         return 0
 
@@ -187,6 +217,6 @@ def main(argv: list[str] | None = None) -> int:
         except FileNotFoundError:
             sys.stderr.write(f"searchslim: command not found: {command[0]}\n")
             return 127
-    sys.stderr.write(_decode(proc.stderr))
+    _write(_decode(proc.stderr), sys.stderr)
     _emit(_decode(proc.stdout), args)
     return proc.returncode
