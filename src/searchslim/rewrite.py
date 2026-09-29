@@ -11,6 +11,7 @@ Prefix a command with `SEARCHSLIM=off ` to get raw output.
 
 from __future__ import annotations
 
+import os
 import shlex
 import sys
 from pathlib import Path
@@ -29,8 +30,14 @@ _RG_NO_LINE_MODES = {"-l", "--files-with-matches", "--files-without-match", "-c"
 _GREP_NO_LINE_MODES = {"-l", "--files-with-matches", "-L", "--files-without-match", "-c", "--count"}
 
 
-def rewrite_command(command: str, runner: str | None = None, run_args: list[str] | None = None) -> str | None:
-    """Return the wrapped command, or None when it should run unchanged."""
+def rewrite_command(
+    command: str, runner: str | None = None, run_args: list[str] | None = None, cwd: str | None = None
+) -> str | None:
+    """Return the wrapped command, or None when it should run unchanged.
+
+    With `cwd`, a content search over exactly one existing file keeps the tool's
+    pathless `N:text` output instead of adding the filename to every line.
+    """
     stripped = command.strip()
     if not stripped or stripped.startswith(OFF_PREFIX.strip()):
         return None
@@ -62,9 +69,21 @@ def rewrite_command(command: str, runner: str | None = None, run_args: list[str]
     rest = body[len(argv[0]):] if body.startswith(argv[0]) else None
     if rest is None:
         return None
+    run_args = list(run_args or [])
+    if cwd is not None and ("--with-filename" in extra or "-H" in extra):
+        base = cwd
+        if prefix:
+            cd_args = shlex.split(prefix.removesuffix(" && "))
+            base = os.path.join(cwd, os.path.expanduser(cd_args[1])) if len(cd_args) == 2 else None
+        single = _single_file(argv, base) if base else None
+        if single:
+            # One file: rg/grep print no filename, and adding it to every line
+            # can push a small result over budget. The note names the file.
+            extra = [f for f in extra if f not in ("--with-filename", "-H")]
+            run_args.append(f"--default-path={single}")
     head = " ".join([argv[0], *extra])
     runner = runner or default_runner()
-    opts = "".join(f" {shlex.quote(a)}" for a in run_args or [])
+    opts = "".join(f" {shlex.quote(a)}" for a in run_args)
     return f"{prefix}{runner} run{opts} -- {head}{rest}"
 
 
@@ -113,6 +132,15 @@ def _flags(argv: list[str]) -> set[str]:
             if a[1:].isalpha():  # combined short flags: -rn -> -r, -n
                 flags.update(f"-{c}" for c in a[1:])
     return flags
+
+
+def _single_file(argv: list[str], base: str) -> str | None:
+    from .rerank import pattern_and_paths
+
+    _, paths = pattern_and_paths(argv)
+    if len(paths) == 1 and os.path.isfile(os.path.join(base, os.path.expanduser(paths[0]))):
+        return paths[0]
+    return None
 
 
 def _extra_flags(argv: list[str]) -> list[str] | None:
