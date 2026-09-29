@@ -13,6 +13,8 @@
 Every failure path (bad input, missing rg, timeout) returns no output so the
 original tool call runs unchanged. `SEARCHSLIM=off` in the environment
 disables the hook; `SEARCHSLIM_MAX_TOKENS` sets the budget.
+`SEARCHSLIM_RERANK=lexical|claude` turns on rules+model mode, with the intent
+taken from the session transcript.
 """
 
 from __future__ import annotations
@@ -54,8 +56,17 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     tool_input = event.get("tool_input") or {}
     cwd = event.get("cwd") or os.getcwd()
 
+    rerank = os.environ.get("SEARCHSLIM_RERANK", "").lower()
+    rerank = rerank if rerank in ("lexical", "claude") else ""
+    transcript = event.get("transcript_path") or ""
+
     if tool == "Bash":
-        new_command = rewrite_command(tool_input.get("command", ""))
+        run_args = [f"--max-tokens={config.max_tokens}"]
+        if rerank:
+            run_args.append(f"--rerank={rerank}")
+            if transcript:
+                run_args.append(f"--transcript={transcript}")
+        new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args)
         if not new_command:
             return None
         return {
@@ -81,7 +92,14 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     raw = postprocess(raw)
     if estimate_tokens(raw) <= config.max_tokens:
         return None  # small enough: let the real tool answer
-    reduced = slim(raw, kind=kind, config=config)
+    scorer = query = None
+    if rerank:
+        from .rerank import Query, make_scorer, query_from_transcript
+
+        scorer = make_scorer(rerank)
+        pattern = tool_input.get("pattern", "")
+        query = query_from_transcript(transcript, pattern) if transcript else Query(pattern=pattern)
+    reduced = slim(raw, kind=kind, config=config, scorer=scorer, query=query)
     return {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",

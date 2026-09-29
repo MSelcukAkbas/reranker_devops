@@ -13,8 +13,8 @@ an agent that must decide from it whether to search again.
 3. Drop-in integration via a Claude Code PreToolUse hook; no new tool. **Done** (`rewrite.py`, `hooks.py`, `.claude/settings.json`).
 4. Benchmark harness: raw vs rules vs rules+model on tokens, latency, cost,
    extra searches, and lost critical evidence.
-5. Optional light-model reranker on top of rules. It may only reorder or
-   select existing blocks; it must never rewrite code or produce new results.
+5. Optional light-model reranker on top of rules (rules+model mode). It may only reorder or
+   select existing blocks; it must never rewrite code or produce new results. **Done** (`rerank.py`).
 
 ## Invariants (tests enforce these; do not break them)
 
@@ -36,7 +36,9 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/rules.py`    SearchResult -> reduced text + stats
 - `src/searchslim/rewrite.py`  wraps plain rg/grep/fd/find shell commands in `searchslim run --`
 - `src/searchslim/hooks.py`    PreToolUse hook for Bash, Grep, Glob
-- `src/searchslim/cli.py`      `searchslim filter` (stdin), `searchslim run -- <cmd>`, `searchslim hook`
+- `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
+- `src/searchslim/cli.py`      `searchslim filter` (stdin), `searchslim run -- <cmd>`, `searchslim hook`,
+                               `searchslim bench-model` (the benchmark's `--model-cmd` contract)
 - `tests/`                     pytest; one test runs real `rg` if installed
 
 ## Hook behaviour (this repo dogfoods it via `.claude/settings.json`)
@@ -56,6 +58,23 @@ an agent that must decide from it whether to search again.
 - Hook stdin is the event JSON: any subprocess the hook starts must get
   `stdin=DEVNULL` and an explicit path, or `rg` will search the JSON.
 
+## rules+model (rerank.py)
+
+- Only runs when the rules layer would drop something; otherwise output is identical to rules.
+- Blocks are split into units (a cluster of up to 5 nearby matches plus the context lines
+  closest to it). A scorer returns one score per unit; the model never returns text, so
+  output is always rendered from parsed input lines.
+- Selection: best units keep context while they fit in half the budget, then only match
+  lines are added. Files are printed best-first, lines in file order; the note lists
+  omitted files most-relevant-first.
+- `LexicalScorer` (default, no deps): BM25 over identifier-split, lightly stemmed terms of
+  intent + subtask, plus a bonus for definitions (bigger when the defined name is a query
+  term), and down-weights for comment-only matches, test code, docs and changelogs.
+- `ClaudeScorer`: lexical top-60 shortlist, then `claude-haiku-4-5` returns an ordering of
+  unit ids (`pip install 'searchslim[claude]'`, API credentials needed). Unknown ids are ignored.
+- Hook: `SEARCHSLIM_RERANK=lexical|claude`; intent = last user message and subtask = last
+  assistant text from the hook's `transcript_path`.
+
 ## Commands
 
 ```sh
@@ -63,6 +82,7 @@ python3 -m pip install -e '.[dev]'
 python3 -m pytest -q
 rg -n -C2 foo src | searchslim filter --stats
 searchslim run --max-tokens 1500 -- rg -n -C2 foo src
+searchslim run --rerank lexical --intent "why does X fail" -- rg -n -C2 foo src
 ```
 
 No runtime dependencies; keep it that way for the rules layer. Token counts

@@ -28,6 +28,11 @@ def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--max-line-chars", type=int, default=Config.max_line_chars)
     p.add_argument("--default-path", default="", help="path for lines printed without a filename")
     p.add_argument("--stats", action="store_true", help="print reduction stats as JSON on stderr")
+    p.add_argument("--rerank", choices=["none", "lexical", "claude"], default="none", help="rules+model mode: rank by relevance before cutting")
+    p.add_argument("--intent", default="", help="user goal, for --rerank")
+    p.add_argument("--subtask", default="", help="agent's current step, for --rerank")
+    p.add_argument("--query", default="", help="search pattern, for --rerank")
+    p.add_argument("--transcript", default="", help="Claude Code transcript (JSONL) to take intent/subtask from, for --rerank")
 
 
 def _config(args: argparse.Namespace) -> Config:
@@ -42,7 +47,25 @@ def _config(args: argparse.Namespace) -> Config:
 def _emit(raw: str, args: argparse.Namespace) -> None:
     if not raw.strip():
         return
-    reduced = slim(raw, kind=Kind(args.kind) if args.kind else None, config=_config(args), default_path=args.default_path)
+    scorer = query = None
+    if args.rerank != "none":
+        from .rerank import Query, make_scorer
+
+        scorer = make_scorer(args.rerank)
+        if args.transcript:
+            from .rerank import query_from_transcript
+
+            query = query_from_transcript(args.transcript, args.query)
+        else:
+            query = Query(args.intent, args.subtask, args.query)
+    reduced = slim(
+        raw,
+        kind=Kind(args.kind) if args.kind else None,
+        config=_config(args),
+        default_path=args.default_path,
+        scorer=scorer,
+        query=query,
+    )
     sys.stdout.write(reduced.text)
     if reduced.text and not reduced.text.endswith("\n"):
         sys.stdout.write("\n")
@@ -63,12 +86,23 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("hook", help="Claude Code PreToolUse hook: JSON event on stdin")
 
+    p_bench = sub.add_parser("bench-model", help="rules+model entry for benchmark/bench.py --model-cmd (JSON on stdin)")
+    p_bench.add_argument("--scorer", choices=["lexical", "claude"], default="lexical")
+
     args = parser.parse_args(argv)
 
     if args.cmd == "hook":
         from .hooks import main as hook_main
 
         return hook_main()
+
+    if args.cmd == "bench-model":
+        from .rerank import make_scorer, run_for_benchmark
+
+        text, usage = run_for_benchmark(json.load(sys.stdin), make_scorer(args.scorer))
+        sys.stdout.write(text + ("\n" if text and not text.endswith("\n") else ""))
+        sys.stderr.write(json.dumps({k: usage[k] for k in ("input_tokens", "output_tokens") if k in usage}) + "\n")
+        return 0
 
     if args.cmd == "filter":
         _emit(sys.stdin.read(), args)

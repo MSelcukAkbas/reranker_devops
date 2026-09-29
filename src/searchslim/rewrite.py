@@ -29,7 +29,7 @@ _RG_NO_LINE_MODES = {"-l", "--files-with-matches", "--files-without-match", "-c"
 _GREP_NO_LINE_MODES = {"-l", "--files-with-matches", "-L", "--files-without-match", "-c", "--count"}
 
 
-def rewrite_command(command: str, runner: str | None = None) -> str | None:
+def rewrite_command(command: str, runner: str | None = None, run_args: list[str] | None = None) -> str | None:
     """Return the wrapped command, or None when it should run unchanged."""
     stripped = command.strip()
     if not stripped or stripped.startswith(OFF_PREFIX.strip()):
@@ -64,7 +64,8 @@ def rewrite_command(command: str, runner: str | None = None) -> str | None:
         return None
     head = " ".join([argv[0], *extra])
     runner = runner or default_runner()
-    return f"{prefix}{runner} run -- {head}{rest}"
+    opts = "".join(f" {shlex.quote(a)}" for a in run_args or [])
+    return f"{prefix}{runner} run{opts} -- {head}{rest}"
 
 
 def default_runner() -> str:

@@ -6,9 +6,9 @@ kritik kod kanıtını kaybetmeden küçülten drop-in katman. Yeni bir tool ekl
 
 ## Durum
 
-Phase 1'in ilk üç adımı hazır: ortak veri modeli ve ayrıştırıcılar,
-deterministik kural katmanı ve Claude Code hook'u ile drop-in entegrasyon.
-Sırada benchmark ve opsiyonel model ile sıralama var. Ayrıntılar ve değişmez kurallar için
+Phase 1'in adımları hazır: ortak veri modeli ve ayrıştırıcılar, deterministik
+kural katmanı, Claude Code hook'u ile drop-in entegrasyon ve modelle sıralama
+(rules+model). Benchmark ayrı PR'da. Ayrıntılar ve değişmez kurallar için
 [CLAUDE.md](CLAUDE.md).
 
 ## Kullanım
@@ -57,3 +57,17 @@ dosyasına şunu ekle:
   sığıyorsa hiçbir şey yapmaz, gerçek araç çalışır. Sığmıyorsa küçültülmüş
   sonucu modele verir.
 - Kapatmak için `SEARCHSLIM=off`, bütçe için `SEARCHSLIM_MAX_TOKENS`.
+
+## Modelle sıralama (rules+model)
+
+Kurallar bir şey atmak zorunda kaldığında, bloklar kullanıcının amacına göre
+sıralanır ve bütçeye en alakalı olanlar girer. Model yalnızca skor ya da blok
+numarası döndürür; çıktıdaki her satır ham çıktıdan gelir.
+
+```sh
+searchslim run --rerank lexical --intent "res.redirect varsayılan status'u değiştir" -- rg -n -C2 redirect lib
+SEARCHSLIM_RERANK=lexical   # hook'ta açmak için; amaç oturum kaydından okunur
+```
+
+- `lexical` (varsayılan): bağımlılıksız, deterministik.
+- `claude`: `claude-haiku-4-5` ile sıralar; `pip install 'searchslim[claude]'` ve API anahtarı gerekir.
