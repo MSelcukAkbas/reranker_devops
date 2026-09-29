@@ -72,13 +72,27 @@
           "path": "src/_pytest/python_api.py",
           "line": 794,
           "text": "def raises(",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "src/_pytest/python_api.py",
+              778,
+              802
+            ]
+          ]
         },
         {
           "path": "src/_pytest/python_api.py",
           "line": 979,
           "text": "class RaisesContext",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "src/_pytest/python_api.py",
+              962,
+              962
+            ]
+          ]
         },
         {
           "path": "src/_pytest/python_api.py",
@@ -174,12 +188,16 @@
       ],
       "evidence": [
         {
-          "path": "src/_pytest/fixtures.py",
+          "path": "src/pytest/__init__.py",
           "critical": true
         },
         {
+          "path": "src/_pytest/fixtures.py",
+          "critical": false
+        },
+        {
           "path": "src/_pytest/python_api.py",
-          "critical": true
+          "critical": false
         }
       ]
     },
@@ -228,7 +246,14 @@
           "path": "crates/printer/src/standard.rs",
           "line": 1267,
           "text": "exceeds_max_columns(line)",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "crates/printer/src/standard.rs",
+              1354,
+              1416
+            ]
+          ]
         }
       ]
     },
@@ -254,7 +279,7 @@
     {
       "id": "ripgrep-unwrap-counts",
       "repo": "ripgrep",
-      "intent": "Reduce panics from unwrap() in library crates.",
+      "intent": "Which file in this repository has the most unwrap() calls?",
       "subtask": "Count unwrap() calls per file.",
       "cmd": [
         "rg",
@@ -263,8 +288,12 @@
       ],
       "evidence": [
         {
-          "path": "crates/printer/src/standard.rs",
+          "path": "crates/core/flags/defs.rs",
           "critical": true
+        },
+        {
+          "path": "crates/printer/src/standard.rs",
+          "critical": false
         }
       ]
     },
@@ -286,7 +315,14 @@
           "path": "lib/response.js",
           "line": 946,
           "text": "res.redirect = function redirect(url)",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "lib/response.js",
+              946,
+              975
+            ]
+          ]
         },
         {
           "path": "lib/response.js",
@@ -333,7 +369,14 @@
           "path": "command.go",
           "line": 1737,
           "text": "func (c *Command) PersistentFlags()",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "command.go",
+              1860,
+              1880
+            ]
+          ]
         },
         {
           "path": "command.go",
@@ -386,13 +429,30 @@
           "path": "src/_pytest/fixtures.py",
           "line": 1129,
           "text": "def pytest_fixture_setup(",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "src/_pytest/fixtures.py",
+              1129,
+              1152
+            ],
+            [
+              "src/_pytest/fixtures.py",
+              882,
+              901
+            ],
+            [
+              "src/_pytest/fixtures.py",
+              1037,
+              1037
+            ]
+          ]
         },
         {
           "path": "src/_pytest/fixtures.py",
           "line": 549,
           "text": "def _get_active_fixturedef(",
-          "critical": true
+          "critical": false
         },
         {
           "path": "src/_pytest/fixtures.py",
@@ -440,7 +500,7 @@
         },
         {
           "path": "src/_pytest/python.py",
-          "critical": true
+          "critical": false
         }
       ]
     },
@@ -511,7 +571,7 @@
           "path": "lib/router/index.js",
           "line": 338,
           "text": "proto.process_params = function process_params(",
-          "critical": true
+          "critical": false
         }
       ]
     },
@@ -532,19 +592,183 @@
           "path": "command.go",
           "line": 876,
           "text": "func (c *Command) execute(a []string) (err error)",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "command.go",
+              876,
+              1016
+            ]
+          ]
         },
         {
           "path": "command.go",
           "line": 1141,
           "text": "func (c *Command) ValidateArgs(",
-          "critical": true
+          "critical": true,
+          "accept": [
+            [
+              "command.go",
+              938,
+              938
+            ]
+          ]
         },
         {
           "path": "command.go",
           "line": 728,
           "text": "func (c *Command) Find(",
           "critical": false
+        }
+      ]
+    },
+    {
+      "id": "express-redirect-tests-glob",
+      "repo": "express",
+      "intent": "Find the tests for res.redirect.",
+      "subtask": "List JavaScript files under test.",
+      "cmd": [
+        "rg",
+        "--files",
+        "-g",
+        "test/**/*.js"
+      ],
+      "evidence": [
+        {
+          "path": "test/res.redirect.js",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "cobra-completion-tests-find",
+      "repo": "cobra",
+      "intent": "Find the tests for bash completion.",
+      "subtask": "List Go test files.",
+      "cmd": [
+        "find",
+        ".",
+        "-name",
+        "*_test.go"
+      ],
+      "evidence": [
+        {
+          "path": "bash_completions_test.go",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ripgrep-globset-glob",
+      "repo": "ripgrep",
+      "intent": "Find the file where ripgrep's glob matcher type is implemented.",
+      "subtask": "List Rust source files.",
+      "cmd": [
+        "rg",
+        "--files",
+        "-g",
+        "*.rs"
+      ],
+      "evidence": [
+        {
+          "path": "crates/globset/src/glob.rs",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-all-files-find",
+      "repo": "pytest",
+      "intent": "Find the module that implements pytest's assertion rewriting.",
+      "subtask": "List every file in the repository.",
+      "cmd": [
+        "find",
+        ".",
+        "-type",
+        "f",
+        "-not",
+        "-path",
+        "./.git/*"
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/assertion/rewrite.py",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-scope-mismatch-2step",
+      "repo": "pytest",
+      "intent": "Find where pytest reports a ScopeMismatch error.",
+      "subtask": "Find the file that mentions ScopeMismatch, then the line inside it.",
+      "steps": [
+        {
+          "cmd": [
+            "rg",
+            "-l",
+            "ScopeMismatch",
+            "src"
+          ]
+        },
+        {
+          "cmd": [
+            "rg",
+            "-n",
+            "ScopeMismatch",
+            "src/_pytest/fixtures.py"
+          ],
+          "default_path": "src/_pytest/fixtures.py"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 771,
+          "text": "ScopeMismatch: You tried to access",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "express-redirect-2step",
+      "repo": "express",
+      "intent": "Find where res.redirect picks its default status code.",
+      "subtask": "Find files mentioning redirect, then read res.redirect with context.",
+      "steps": [
+        {
+          "cmd": [
+            "rg",
+            "-l",
+            "redirect",
+            "lib",
+            "test"
+          ]
+        },
+        {
+          "cmd": [
+            "rg",
+            "-n",
+            "-C3",
+            "res.redirect = ",
+            "lib/response.js"
+          ],
+          "default_path": "lib/response.js"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "lib/response.js",
+          "line": 949,
+          "text": "var status = 302;",
+          "critical": true,
+          "accept": [
+            [
+              "lib/response.js",
+              946,
+              975
+            ]
+          ]
         }
       ]
     }

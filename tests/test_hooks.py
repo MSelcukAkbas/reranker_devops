@@ -153,3 +153,25 @@ def test_glob_reason_has_its_own_header(repo):
     event = {"tool_name": "Glob", "cwd": str(repo), "tool_input": {"pattern": "*.py"}}
     reason = handle(event, Config(max_tokens=100))["hookSpecificOutput"]["permissionDecisionReason"]
     assert reason.startswith(GLOB_REASON_HEADER)
+
+
+@needs_rg
+def test_single_file_grep_keeps_pathless_lines(repo):
+    event = {"tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": "content", "path": "mod00.py"}}
+    # 30 matches, ~35 chars each: fits 800 tokens without filenames, not with them.
+    assert handle(event, Config(max_tokens=800)) is None
+
+
+@needs_rg
+def test_single_file_bash_search_keeps_pathless_lines(tmp_path):
+    (tmp_path / "f.rs").write_text("fn a() {}\n")
+    (tmp_path / "d").mkdir()
+    (tmp_path / "d" / "g.rs").write_text("fn b() {}\n")
+
+    def run(command):
+        cmd = handle({"tool_name": "Bash", "cwd": str(tmp_path), "tool_input": {"command": command}})["hookSpecificOutput"]["updatedInput"]["command"]
+        return subprocess.run(cmd, shell=True, cwd=tmp_path, capture_output=True, text=True).stdout
+
+    # Anchor flags are chosen at run time: one file stays pathless, a directory gets paths.
+    assert run("rg -n 'fn ' f.rs") == "1:fn a() {}\n"
+    assert run("rg 'fn ' d") == "d/g.rs:1:fn b() {}\n"

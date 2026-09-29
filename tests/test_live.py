@@ -50,3 +50,12 @@ def test_parse_transcript_counts_calls_and_result():
 def test_hook_settings_points_at_src(tmp_path):
     cmd = live.hook_settings(tmp_path)["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
     assert str(tmp_path) in cmd and cmd.endswith("-m searchslim hook")
+
+
+def test_cited_accepts_alternative_ranges():
+    ev = {"path": "command.go", "line": 1141, "accept": [["command.go", 938, 938]]}
+    assert live.cited("validation is called at command.go:938", ev)
+    assert live.cited("defined at command.go:1141", ev)
+    assert not live.cited("command.go:700", ev)
+    body = {"path": "lib/response.js", "line": 946, "accept": [["lib/response.js", 946, 975]]}
+    assert live.cited("lib/response.js:949 sets it", body)

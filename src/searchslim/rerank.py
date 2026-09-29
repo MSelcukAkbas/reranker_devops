@@ -32,15 +32,15 @@ from .models import Block, Kind, Line, SearchResult
 from .rules import (
     NOTE_PREFIX,
     _assemble,
-    _format_dirs,
-    rollup_dirs,
     Config,
     Reduced,
     build_blocks,
     dedupe_lines,
     estimate_tokens,
+    format_dirs,
     reduce,
     render_blocks,
+    rollup_dirs,
 )
 
 
@@ -378,7 +378,9 @@ def _rank_content(result: SearchResult, query: Query, scorer: Scorer, config: Co
         note += " Omitted matches, most relevant first: " + ", ".join(f"{name(p)} ({n})" for p, n in listed)
         rest = list(omitted.items())[len(listed):]
         if rest:
-            note += f", +{len(rest)} more files ({sum(n for _, n in rest)} matches)"
+            # Same guarantee as the rules note: every omitted file is under a named directory.
+            dirs = format_dirs(rollup_dirs(rest, config.note_max_files))
+            note += f"; {len(rest)} more files by directory: {dirs}"
         note += ". Narrow the search (path/glob) to see them."
     return Reduced(
         text=_assemble(result, body, note),
@@ -438,10 +440,8 @@ def _rank_paths(result: SearchResult, query: Query, scorer: Scorer, config: Conf
     note = f"{NOTE_PREFIX} {len(kept)}/{len(paths)} paths shown, ranked by relevance ({scorer.name})."
     if missing:
         kept_set = set(kept)
-        # Directories of the most relevant omitted paths first; rolled up so
-        # every omitted path is covered by a named directory.
         rest = [(paths[i], 1) for i in order if i not in kept_set]
-        note += " Not shown, by directory: " + _format_dirs(rollup_dirs(rest, config.note_max_files))
+        note += " Not shown, by directory: " + format_dirs(rollup_dirs(rest, config.note_max_files))
         note += ". Narrow the pattern to see them."
     return Reduced(
         text=_assemble(result, body, note),

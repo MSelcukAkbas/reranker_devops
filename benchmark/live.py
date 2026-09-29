@@ -171,7 +171,14 @@ def cited(answer: str, ev: dict, tolerance: int = 2) -> bool:
     name = os.path.basename(path)
     if "line" not in ev:
         return path in answer or re.search(rf"(?<![\w/.-]){re.escape(name)}\b", answer) is not None
-    return any(n == name and lo - tolerance <= ev["line"] <= hi + tolerance for n, lo, hi in line_refs(answer))
+    # `accept` lists other ranges that answer the same question equally well
+    # (a call site instead of the definition, the function body instead of its line).
+    targets = [(name, ev["line"], ev["line"])] + [(os.path.basename(p), a, b) for p, a, b in ev.get("accept", [])]
+    return any(
+        n == t_name and lo - tolerance <= t_hi and t_lo <= hi + tolerance
+        for n, lo, hi in line_refs(answer)
+        for t_name, t_lo, t_hi in targets
+    )
 
 
 def run_one(task: dict, repo_dir: Path, mode: str, src: Path, args) -> dict:

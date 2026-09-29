@@ -24,7 +24,7 @@ hash'ini doğrular.
 
 ## 2. Görevler
 
-Her görev, ajanın gerçekten yapacağı bir alt işe karşılık gelir ve 21 görev
+Her görev, ajanın gerçekten yapacağı bir alt işe karşılık gelir ve 27 görev
 bütün çıktı şekillerini kapsar: `content` (`-n`, `-C2/-C3`), dosya listesi
 (`rg -l`, `rg --files`, `find`), sayım (`rg -c`), tek dosyada arama. Küçük
 çıktılar da bilerek var: pass-through davranışını ölçmek için.
@@ -42,6 +42,16 @@ Görev alanları:
   - yalnızca `path`: dosya listesi ve sayım görevleri için.
   - `critical: true` olanlar asıl metriğe girer; `false` olanlar destekleyici
     kanıttır, ayrı raporlanır.
+
+- `accept` (opsiyonel): aynı soruyu eşit derecede cevaplayan başka aralıklar
+  (`[path, ilk, son]`), ör. tanım yerine çağrı yeri ya da fonksiyonun gövdesi.
+  Yalnızca canlı katmandaki atıf kontrolünde kullanılır; katman A ana satıra bakar.
+- `steps` (opsiyonel, `cmd` yerine): ajanın ardışık aramaları, ör. önce `rg -l`,
+  sonra bulunan dosyada `rg -n`. Her adımın kendi fixture'ı var; token ve süre
+  toplanır, her kanıt adımlar içindeki en iyi durumunu alır.
+
+Görevler: 16 içerik araması (4'ü tek dosya), 7 dosya listesi (`rg -l`,
+`rg --files -g` ile Glob karşılığı, `find`), 2 sayım, 2 iki adımlı arama.
 
 Yeni görev eklerken kural: kanıt, görevin cevabı için gerçekten gerekli
 satırdır; "eşleşen ilk satır" değil. Kritik kanıt ham çıktıda bulunmak
@@ -205,6 +215,21 @@ atmadığı (çıktıyı aynen geçirdiği) görevlerde model çağrılmaz.
   edilebilir satır kümesi genişletilmeli; o zamana kadar `success` iki modu
   ayırt etmekte zayıf.
 
+### 27 görev, main (2026-09-29, rules sıralama ile birlikte)
+
+`benchmark/results/2026-09-29-tasks27.md`:
+
+| mod | token | raw'a göre | kritik kept | recoverable | lost | tahmini ek arama |
+|---|---|---|---|---|---|---|
+| raw | 76565 | %100 | 36/36 | 0 | 0 | 0 |
+| rules | 30552 | %40 | 32/36 | 4 | 0 | 3 |
+| rules+model (lexical) | 32303 | %42 | 36/36 | 0 | 0 | 0 |
+
+Eski canlı koşunun cevapları yeni `accept` aralıklarıyla yeniden puanlanınca
+başarı off 17/21, on 16/21 oluyor (önce 11/21 ve 11/21); kalan farklar
+gerçek cevap farkı. Yeni canlı koşu, arama araçlarının tamamı ve çoklu istek
+desteği main'e girince yapılacak.
+
 ## 6. Kullanım
 
 ```sh
@@ -224,7 +249,8 @@ python3 benchmark/bench.py stability --runs 10
   `rules`, `max_tokens`) alır, küçültülmüş çıktıyı stdout'a yazar; stderr'in son
   satırına `{"input_tokens": N, "output_tokens": M}` yazarsa maliyeti Haiku 4.5
   fiyatıyla sayılır. Gövdede ham girdide olmayan satır varsa koşu geçersiz
-  sayılır. Kuralların hiçbir şey atmadığı görevlerde model çağrılmaz.
+  sayılır; aynı kontrol `rules` çıktısına da uygulanır (`./x` → `x` yol
+  normalleştirmesi aynı satır sayılır). Kuralların hiçbir şey atmadığı görevlerde model çağrılmaz.
 - Katman B: `python3 benchmark/live.py --repeat 3 --jsonl live.jsonl`. Hook
   bu dalda yoksa `--searchslim-src` hook'u içeren bir checkout'un `src`'sini
   göstermeli. Her koşu gerçek API harcar (görev başına ~$0.05-0.15);
