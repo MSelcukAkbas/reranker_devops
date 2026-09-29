@@ -371,7 +371,8 @@ def _rank_content(result: SearchResult, query: Query, scorer: Scorer, config: Co
     note = f"{NOTE_PREFIX} {len(result.lines)} -> {body.count(chr(10)) + 1 if body else 0} lines, {kept_matches}/{total} matches shown, ranked by relevance ({scorer.name})."
     if omitted:
         listed = list(omitted.items())[: config.note_max_files]
-        note += " Omitted matches, most relevant first: " + ", ".join(f"{p} ({n})" for p, n in listed)
+        name = lambda p: p or getattr(result, "default_path", "") or "this file"  # noqa: E731
+        note += " Omitted matches, most relevant first: " + ", ".join(f"{name(p)} ({n})" for p, n in listed)
         rest = list(omitted.items())[len(listed):]
         if rest:
             note += f", +{len(rest)} more files ({sum(n for _, n in rest)} matches)"
