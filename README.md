@@ -33,6 +33,14 @@ Bu repo hook'u kendi `.claude/settings.json` dosyasıyla zaten kullanıyor.
   bloklar kullanıcının amacına göre sıralanır, bütçeye en alakalıları girer.
   Amaç oturum kaydındaki son kullanıcı mesajından okunur. Model yalnızca skor
   döndürür; çıktıdaki her satır ham çıktıdan gelir, kod yeniden yazılmaz.
+- **Oturum hafızası (çoklu arama):** aynı oturumdaki aramalar, daha önce
+  gösterilmiş satırları hatırlar. Bütçeyi aşan bir arama bu satırları tekrar
+  basmaz; notta `yol:satır` aralıklarıyla anar ve bütçeyi yeni satırlara
+  harcar. Aynı aramayı tekrarlamak böylece sonraki sayfayı getirir. Metni
+  değişen satır yeni sayılır, küçük çıktılar yine aynen geçer. Paralel araç
+  çağrıları kilitsiz ve Windows'ta da güvenli çalışır (her çağrı kendi
+  dosyasını atomik yazar). Claude Code bağlamı sıkıştırınca (`PreCompact`)
+  hafıza silinir; alt ajanların (`agent_id`) hafızası ayrıdır.
 - Hook bir hata alırsa sessizce çekilir, orijinal çağrı değişmeden çalışır.
 
 Ayarlar (ortam değişkeni):
@@ -42,6 +50,8 @@ Ayarlar (ortam değişkeni):
 | `SEARCHSLIM=off` | hook'u kapatır (komutun başına da yazılabilir) |
 | `SEARCHSLIM_MAX_TOKENS` | bütçe, varsayılan 2000 |
 | `SEARCHSLIM_RERANK` | `lexical` (varsayılan), `claude` veya `off` |
+| `SEARCHSLIM_SESSION=off` | oturum hafızasını kapatır |
+| `SEARCHSLIM_CACHE_DIR` | hafızanın yeri, varsayılan geçici dizinde `searchslim-<kullanıcı>` |
 
 `claude` sıralayıcısı `claude-haiku-4-5` kullanır; `pip install 'searchslim[claude] @ git+https://github.com/MSelcukAkbas/reranker_devops'` ve bir API anahtarı gerekir.
 
@@ -83,10 +93,27 @@ Daha küçük bütçelerde fark büyüyor:
 Kurallar arama başına ~4 ms, sözcüksel sıralama süreç içinde ~5-15 ms ekliyor
 (benchmark'taki ~120 ms, sıralayıcının ayrı bir Python süreci olarak başlatılmasından).
 
+### Çoklu arama oturumları
+
+Aynı görevde 4-5 arama yapan 5 ajan oturumu (daralt, `-C` ile genişlet,
+tekrarla), varsayılan bütçe. Tam tablo ve gecikme ölçümü:
+[benchmark/results/2026-09-29-sessions.md](benchmark/results/2026-09-29-sessions.md).
+
+| hafıza | gönderilen token | tekrar gönderilen satır | görülen farklı satır | kritik kanıt |
+|---|---|---|---|---|
+| kapalı | 33.7k | 1010 | 817 | 9/9 |
+| açık | 33.5k | 600 | 1209 (+%48) | 9/9 |
+
+Aynı token ile ajan %48 daha fazla farklı kod satırı görüyor; yeni satır başına
+maliyet 41 tokendan 28 tokena iniyor. 8 paralel büyük Grep çağrısında hook
+en fazla ~1 sn sürüyor (öncesinde parser darboğazıyla ~1.6 sn).
+
 Benchmark'ı yeniden koşturmak için:
 
 ```sh
 python3 benchmark/bench.py run --model-cmd "python3 -m searchslim bench-model"
+python3 benchmark/sessions.py run        # çoklu arama oturumları
+python3 benchmark/sessions.py latency    # paralel hook gecikmesi
 ```
 
 ## Geliştirme

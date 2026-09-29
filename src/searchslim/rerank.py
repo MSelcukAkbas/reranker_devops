@@ -26,6 +26,7 @@ import os
 import re
 from collections import Counter, OrderedDict
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Protocol
 
 from .models import Block, Kind, Line, SearchResult
@@ -135,15 +136,23 @@ _TEST_PATH = re.compile(r"(^|/)(tests?|testing|__tests__|spec)/|(_test|\.test|\.
 
 
 def terms(text: str) -> list[str]:
-    out = []
+    out: list[str] = []
     for word in _WORD.findall(text):
-        parts = [word] + [p for p in _CAMEL.findall(word) if p != word]
-        for p in parts:
-            for q in p.split("_"):
-                q = q.lower()
-                if len(q) > 1 and q not in _STOP:
-                    out.append(_stem(q))
+        out.extend(_word_terms(word))
     return out
+
+
+@lru_cache(maxsize=65536)
+def _word_terms(word: str) -> tuple[str, ...]:
+    # Cached: big outputs repeat the same identifiers thousands of times.
+    out = []
+    parts = [word] + [p for p in _CAMEL.findall(word) if p != word]
+    for p in parts:
+        for q in p.split("_"):
+            q = q.lower()
+            if len(q) > 1 and q not in _STOP:
+                out.append(_stem(q))
+    return tuple(out)
 
 
 def _stem(word: str) -> str:
