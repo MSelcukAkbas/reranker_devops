@@ -29,11 +29,60 @@ def test_path_printed_once_per_file_and_every_line_kept():
     assert estimate_tokens(out.text) < 0.7 * estimate_tokens(raw)
 
 
-def test_single_line_files_stay_flat():
+def test_single_line_files_go_under_their_directory():
     raw = flat(1, 6) + "\n" + "\n".join(f"lib/other_{i}.py:3:x = compute_something_long({i})" for i in range(4))
+    raw += "\nREADME.md:1:x = compute_something_long(readme)"
     out = slim(raw, config=LOSSLESS).text
-    assert "lib/other_2.py:3:x = compute_something_long(2)" in out.splitlines()
+    lines = out.splitlines()
+    assert "lib/" in lines and "  other_2.py:3:x = compute_something_long(2)" in lines
+    assert "README.md:1:x = compute_something_long(readme)" in lines  # alone in its directory: flat
     assert keys(out) == keys(raw)
+
+
+def test_directory_group_with_multi_line_files_reads_back():
+    raw = "\n".join(
+        f"services\\gateway\\scripts\\f{i}.js:{n}:require('pkg{n}')" for i in range(6) for n in range(1, 2 + (i % 2) * 3)
+    )
+    out = slim(raw, config=LOSSLESS).text
+    assert out.splitlines()[0] == "services\\gateway\\scripts\\"
+    assert "  f0.js:1:require('pkg1')" in out.splitlines()
+    assert keys(out) == keys(raw)
+
+
+def test_output_without_line_numbers_passes_through():
+    # Grep with -o and -n false: `path:text`. A dated file name looked like a
+    # context line and the rest like headings; 887 lines became 3 (0.6.0).
+    raw = "\n".join(
+        f"services\\gateway\\scripts\\reconcile_role_permissions_2026-0{i % 9 + 1}-18.js:require('mysql2/promise')"
+        for i in range(40)
+    ) + "\n" + "\n".join(f"services\\gateway\\src\\m{i}.js:require('express')" for i in range(400))
+    for kind in (None, Kind.CONTENT):
+        out = slim(raw, kind=kind, config=LOSSLESS)
+        assert out.text == raw
+    event = {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Grep",
+        "cwd": ".",
+        "tool_input": {"pattern": "require", "output_mode": "content", "-o": True, "-n": False},
+        "tool_response": {"mode": "content", "content": raw, "numLines": 440, "numFiles": 0, "filenames": []},
+    }
+    assert handle(event, Config(view="lossless", max_tokens=7000, trigger_tokens=1500)) is None
+
+
+def test_huge_require_listing_is_projected_by_file_then_summarized():
+    lines = [
+        f"services\\{d}\\handler_module_{f:03d}.js:{k * 3 + 1}:const m = require('pkg-{(f + k) % 30}')"
+        for f in range(400)
+        for d in ["gateway\\src\\routes"] if True
+        for k in range(1 if f % 3 else 4)
+    ]
+    raw = "\n".join(lines)
+    out = slim(raw, config=Config(view="lossless", max_tokens=5000, trigger_tokens=0), pattern="require\\(")
+    assert out.stats["level"] == "L2" and out.stats["matches_kept"] == len(lines)
+    assert "  services\\gateway\\src\\routes\\" in out.text.splitlines()
+    out = slim(raw, config=Config(view="lossless", max_tokens=600, trigger_tokens=0), pattern="require\\(")
+    assert out.stats["level"] == "L2-summary"
+    assert any(ln.startswith("  pkg-0  ") and " in " in ln for ln in out.text.splitlines())
 
 
 def test_overlapping_context_is_printed_once():

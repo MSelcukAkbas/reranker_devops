@@ -3,7 +3,7 @@
 from dataclasses import replace
 
 from .models import Block, Kind, Line, PathCount, SearchResult
-from .parsers import detect_kind, parse
+from .parsers import detect_kind, parse, reliable
 from .rules import Config, Reduced, estimate_tokens, for_output, reduce
 
 __all__ = [
@@ -52,6 +52,9 @@ def slim(
     """
     config = config or Config()
     pattern = pattern or getattr(query, "pattern", "") or ""
+    if not reliable(parse(raw, kind=kind, default_path=default_path)):
+        # e.g. `path:text` without line numbers: reshaping it could lose lines.
+        return Reduced(text=raw, stats={"level": "L0", "unparsed_shape": True, "raw_tokens": estimate_tokens(raw)})
     if config.view == "lossless":
         reduced = _slim_lossless(raw, kind, config, default_path, pattern, session, cwd)
         if reduced is not None:

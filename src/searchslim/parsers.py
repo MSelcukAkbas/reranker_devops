@@ -5,6 +5,8 @@ Supported content shapes:
   path-12-text        context line (-A/-B/-C)
   --                  separator between context groups
   path                heading line, followed by `12:text` / `12-text` (rg --heading)
+  dir/                directory line, then indented `  name:12:text`, or `  name`
+                      with `    12:text` lines under it (lossless.py)
   12:text             no filename (single-file search); kept without a path,
                       `default_path` only names the file in the note
   [searchslim] 3 matches are this same line: text
@@ -36,6 +38,7 @@ _CONTEXT = re.compile(r"^(?P<path>.+?)-(?P<num>\d+)-(?P<text>.*)$")
 _BARE = re.compile(r"^(?P<num>\d+)(?P<sep>[:-])(?P<text>.*)$")
 _COUNT = re.compile(r"^(?P<path>.+):(?P<count>\d+)$")
 _SEPARATOR = "--"
+_PLAIN_PATH = re.compile(r"^(?:[A-Za-z]:)?[^:]*$")
 # Lossless view (lossless.py): one line text found at several places, written once.
 SAME_LINE = "matches are this same line: "
 _GROUP_HEAD = re.compile(r"^\[searchslim\] \d+ " + re.escape(SAME_LINE) + r"(?P<text>.*)$")
@@ -148,10 +151,22 @@ def parse_content(raw: str) -> SearchResult:
         if m:
             known_paths.add(m["path"])
 
+    heading_used = False
+    sub_heading: str | None = None  # a file under a directory group
+
+    def drop_heading() -> None:
+        # A "heading" no `N:text` line followed was not one (e.g. `path:text`
+        # output without line numbers): keep it verbatim instead of losing it.
+        nonlocal heading, sub_heading
+        if heading is not None and not heading_used:
+            pending_context.append(heading)
+        heading = sub_heading = None
+
     for ln in raw_lines:
         head = _GROUP_HEAD.match(ln)
         if head:
-            group_text, heading = head["text"], None
+            drop_heading()
+            group_text = head["text"]
             continue
         place = _GROUP_PLACE.match(ln) if group_text is not None else None
         if place:
@@ -162,15 +177,41 @@ def parse_content(raw: str) -> SearchResult:
         if ln == _SEPARATOR:
             continue
         if not ln.strip():
-            heading = None  # rg --heading puts a blank line between files
+            drop_heading()  # rg --heading puts a blank line between files
             continue
+
+        if heading is not None and heading.endswith(("/", "\\")) and ln.startswith("  "):
+            # Directory group (lossless.py): `dir/`, then `  name:N:text`, or
+            # `  name` with `    N:text` lines under it.
+            if ln.startswith("    ") and sub_heading is not None:
+                sub = ln[4:]
+                if sub == _SEPARATOR:
+                    continue
+                sb = _BARE.match(sub)
+                if sb:
+                    result.lines.append(Line(sub_heading, int(sb["num"]), sb["text"], sb["sep"] == ":"))
+                    heading_used = True
+                    continue
+            elif not ln.startswith("   "):
+                full = heading + ln[2:]
+                line = _MATCH.match(full)
+                ctx = None if line else _split_context(full, known_paths)
+                if line or ctx:
+                    result.lines.append(Line(line["path"], int(line["num"]), line["text"], True) if line else ctx)
+                    heading_used = True
+                    continue
+                if looks_like_path(full):
+                    sub_heading = full
+                    continue
 
         bare = _BARE.match(ln)
         if heading is not None and bare:
             result.lines.append(
                 Line(heading, int(bare["num"]), bare["text"], bare["sep"] == ":")
             )
+            heading_used = True
             continue
+        drop_heading()
 
         m = _MATCH.match(ln)
         if m:
@@ -187,15 +228,37 @@ def parse_content(raw: str) -> SearchResult:
             result.lines.append(Line("", int(bare["num"]), bare["text"], bare["sep"] == ":"))
             continue
 
-        if not bare and looks_like_path(ln):
-            heading = ln
+        if looks_like_path(ln):
+            heading, heading_used = ln, False
             known_paths.add(ln)
             continue
 
         pending_context.append(ln)
 
+    drop_heading()
     result.unparsed.extend(pending_context)
     return result
+
+
+def reliable(result: SearchResult) -> bool:
+    """Whether a content parse can be trusted to account for the output.
+
+    Output without line numbers (`path:text`, Grep with -n false) does not
+    parse as content: its lines end up unparsed, or look like context lines
+    of a dated file name (`x_2026-07-18.js:...`). Reducing such a parse would
+    reshape or lose lines, so callers pass the raw output through instead.
+    """
+    if result.kind is Kind.PATHS:
+        # `path:text` lines auto-detected as paths: a real path has no ":" past a drive letter.
+        return all(_PLAIN_PATH.match(p) for p in result.paths)
+    if result.kind is not Kind.CONTENT:
+        return True
+    total = len(result.lines) + len(result.unparsed)
+    if not total:
+        return True
+    if result.lines and not any(ln.is_match for ln in result.lines):
+        return False  # context lines with no match: not real search output
+    return len(result.unparsed) <= max(2, 0.05 * total)
 
 
 def parse_rg_json(raw: str) -> SearchResult:
