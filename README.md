@@ -57,6 +57,21 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   kendi sonucu olarak görür. Bu alanı desteklemeyen eski Claude Code
   sürümlerinde `SEARCHSLIM_GREP_MODE=deny` eski davranışı geri getirir
   (çağrı reddedilir, küçültülmüş sonuç gerekçede gelir).
+- **Test/derleme çıktısı (0.5):** Bash/PowerShell komutunun çıktısı (stdout ve
+  stderr) PostToolUse'ta incelenir. Çıktının kendisi pytest, jest, vitest,
+  mocha, go test, cargo test, dotnet test özeti ya da çok sayıda cargo/pip/maven/
+  dotnet ilerleme satırı içeriyorsa geçen ve atlanan testlerin satırları ile
+  ilerleme satırları atılır; hatalar, traceback'ler, assert farkları, uyarılar
+  ve özet sayılar olduğu gibi kalır. Zaman damgası dışında aynı olan 5+ ardışık
+  log satırı ilk ve son satırıyla kalır. Sonda tek bir `[searchslim] not shown:
+  ...` satırı neyin atıldığını sayar. Komuta değil çıktıya bakılır, yani
+  modelin kendi yazdığı özet betikleri ve diğer çıktılar değişmez. Yalnızca
+  2000 token üstünde ve en az %20 kazanç varsa devreye girer
+  (`SEARCHSLIM_COMPACT_TRIGGER_TOKENS`, kapatmak için `SEARCHSLIM_COMPACT=off`).
+  Not: pytest'in varsayılan çıktısı ve jest/vitest'in terminal dışı varsayılan
+  çıktısı zaten kısa; kazanç `-v`/`--verbose`, `-rA`, `go test -v` ve
+  `cargo test` gibi test başına satır basan çalıştırmalarda. Elle:
+  `pytest -v | searchslim compact --stats`.
 - **Kurallar:** tekrarlar atılır, örtüşen satır aralıkları birleşir. Bütçe
   aşılırsa önce bağlam satırları, sonra fazla eşleşmeler, sonra dosyalar atılır.
 - **Kapsam görünümü (0.4, varsayılan):** bütçeyi aşan bir içerik araması

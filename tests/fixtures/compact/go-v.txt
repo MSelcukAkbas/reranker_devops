@@ -1,0 +1,409 @@
+=== RUN   TestMany
+=== RUN   TestMany/case0
+=== RUN   TestMany/case1
+=== RUN   TestMany/case2
+=== RUN   TestMany/case3
+=== RUN   TestMany/case4
+=== RUN   TestMany/case5
+=== RUN   TestMany/case6
+=== RUN   TestMany/case7
+=== RUN   TestMany/case8
+=== RUN   TestMany/case9
+=== RUN   TestMany/case10
+=== RUN   TestMany/case11
+=== RUN   TestMany/case12
+=== RUN   TestMany/case13
+=== RUN   TestMany/case14
+=== RUN   TestMany/case15
+=== RUN   TestMany/case16
+=== RUN   TestMany/case17
+=== RUN   TestMany/case18
+=== RUN   TestMany/case19
+=== RUN   TestMany/case20
+=== RUN   TestMany/case21
+=== RUN   TestMany/case22
+=== RUN   TestMany/case23
+=== RUN   TestMany/case24
+=== RUN   TestMany/case25
+=== RUN   TestMany/case26
+=== RUN   TestMany/case27
+=== RUN   TestMany/case28
+=== RUN   TestMany/case29
+=== RUN   TestMany/case30
+=== RUN   TestMany/case31
+=== RUN   TestMany/case32
+=== RUN   TestMany/case33
+=== RUN   TestMany/case34
+=== RUN   TestMany/case35
+=== RUN   TestMany/case36
+=== RUN   TestMany/case37
+=== RUN   TestMany/case38
+=== RUN   TestMany/case39
+=== RUN   TestMany/case40
+=== RUN   TestMany/case41
+=== RUN   TestMany/case42
+=== RUN   TestMany/case43
+=== RUN   TestMany/case44
+=== RUN   TestMany/case45
+=== RUN   TestMany/case46
+=== RUN   TestMany/case47
+=== RUN   TestMany/case48
+=== RUN   TestMany/case49
+=== RUN   TestMany/case50
+=== RUN   TestMany/case51
+=== RUN   TestMany/case52
+=== RUN   TestMany/case53
+=== RUN   TestMany/case54
+=== RUN   TestMany/case55
+=== RUN   TestMany/case56
+=== RUN   TestMany/case57
+=== RUN   TestMany/case58
+=== RUN   TestMany/case59
+=== RUN   TestMany/case60
+=== RUN   TestMany/case61
+=== RUN   TestMany/case62
+=== RUN   TestMany/case63
+=== RUN   TestMany/case64
+=== RUN   TestMany/case65
+=== RUN   TestMany/case66
+=== RUN   TestMany/case67
+=== RUN   TestMany/case68
+=== RUN   TestMany/case69
+=== RUN   TestMany/case70
+=== RUN   TestMany/case71
+=== RUN   TestMany/case72
+=== RUN   TestMany/case73
+=== RUN   TestMany/case74
+=== RUN   TestMany/case75
+=== RUN   TestMany/case76
+=== RUN   TestMany/case77
+    a_test.go:3: got 77 want 0
+=== RUN   TestMany/case78
+=== RUN   TestMany/case79
+=== RUN   TestMany/case80
+=== RUN   TestMany/case81
+=== RUN   TestMany/case82
+=== RUN   TestMany/case83
+=== RUN   TestMany/case84
+=== RUN   TestMany/case85
+=== RUN   TestMany/case86
+=== RUN   TestMany/case87
+=== RUN   TestMany/case88
+=== RUN   TestMany/case89
+=== RUN   TestMany/case90
+=== RUN   TestMany/case91
+=== RUN   TestMany/case92
+=== RUN   TestMany/case93
+=== RUN   TestMany/case94
+=== RUN   TestMany/case95
+=== RUN   TestMany/case96
+=== RUN   TestMany/case97
+=== RUN   TestMany/case98
+=== RUN   TestMany/case99
+=== RUN   TestMany/case100
+=== RUN   TestMany/case101
+=== RUN   TestMany/case102
+=== RUN   TestMany/case103
+=== RUN   TestMany/case104
+=== RUN   TestMany/case105
+=== RUN   TestMany/case106
+=== RUN   TestMany/case107
+=== RUN   TestMany/case108
+=== RUN   TestMany/case109
+=== RUN   TestMany/case110
+=== RUN   TestMany/case111
+=== RUN   TestMany/case112
+=== RUN   TestMany/case113
+=== RUN   TestMany/case114
+=== RUN   TestMany/case115
+=== RUN   TestMany/case116
+=== RUN   TestMany/case117
+=== RUN   TestMany/case118
+=== RUN   TestMany/case119
+=== RUN   TestMany/case120
+=== RUN   TestMany/case121
+=== RUN   TestMany/case122
+=== RUN   TestMany/case123
+=== RUN   TestMany/case124
+=== RUN   TestMany/case125
+=== RUN   TestMany/case126
+=== RUN   TestMany/case127
+=== RUN   TestMany/case128
+=== RUN   TestMany/case129
+=== RUN   TestMany/case130
+=== RUN   TestMany/case131
+=== RUN   TestMany/case132
+=== RUN   TestMany/case133
+=== RUN   TestMany/case134
+=== RUN   TestMany/case135
+=== RUN   TestMany/case136
+=== RUN   TestMany/case137
+=== RUN   TestMany/case138
+=== RUN   TestMany/case139
+=== RUN   TestMany/case140
+=== RUN   TestMany/case141
+=== RUN   TestMany/case142
+=== RUN   TestMany/case143
+=== RUN   TestMany/case144
+=== RUN   TestMany/case145
+=== RUN   TestMany/case146
+=== RUN   TestMany/case147
+=== RUN   TestMany/case148
+=== RUN   TestMany/case149
+=== RUN   TestMany/case150
+=== RUN   TestMany/case151
+=== RUN   TestMany/case152
+=== RUN   TestMany/case153
+=== RUN   TestMany/case154
+=== RUN   TestMany/case155
+=== RUN   TestMany/case156
+=== RUN   TestMany/case157
+=== RUN   TestMany/case158
+=== RUN   TestMany/case159
+=== RUN   TestMany/case160
+=== RUN   TestMany/case161
+=== RUN   TestMany/case162
+=== RUN   TestMany/case163
+=== RUN   TestMany/case164
+=== RUN   TestMany/case165
+=== RUN   TestMany/case166
+=== RUN   TestMany/case167
+=== RUN   TestMany/case168
+=== RUN   TestMany/case169
+=== RUN   TestMany/case170
+=== RUN   TestMany/case171
+=== RUN   TestMany/case172
+=== RUN   TestMany/case173
+=== RUN   TestMany/case174
+=== RUN   TestMany/case175
+=== RUN   TestMany/case176
+=== RUN   TestMany/case177
+=== RUN   TestMany/case178
+=== RUN   TestMany/case179
+=== RUN   TestMany/case180
+=== RUN   TestMany/case181
+=== RUN   TestMany/case182
+=== RUN   TestMany/case183
+=== RUN   TestMany/case184
+=== RUN   TestMany/case185
+=== RUN   TestMany/case186
+=== RUN   TestMany/case187
+=== RUN   TestMany/case188
+=== RUN   TestMany/case189
+=== RUN   TestMany/case190
+=== RUN   TestMany/case191
+=== RUN   TestMany/case192
+=== RUN   TestMany/case193
+=== RUN   TestMany/case194
+=== RUN   TestMany/case195
+=== RUN   TestMany/case196
+=== RUN   TestMany/case197
+=== RUN   TestMany/case198
+=== RUN   TestMany/case199
+--- FAIL: TestMany (0.01s)
+    --- PASS: TestMany/case0 (0.00s)
+    --- PASS: TestMany/case1 (0.00s)
+    --- PASS: TestMany/case2 (0.00s)
+    --- PASS: TestMany/case3 (0.00s)
+    --- PASS: TestMany/case4 (0.00s)
+    --- PASS: TestMany/case5 (0.00s)
+    --- PASS: TestMany/case6 (0.00s)
+    --- PASS: TestMany/case7 (0.00s)
+    --- PASS: TestMany/case8 (0.00s)
+    --- PASS: TestMany/case9 (0.00s)
+    --- PASS: TestMany/case10 (0.00s)
+    --- PASS: TestMany/case11 (0.00s)
+    --- PASS: TestMany/case12 (0.00s)
+    --- PASS: TestMany/case13 (0.00s)
+    --- PASS: TestMany/case14 (0.00s)
+    --- PASS: TestMany/case15 (0.00s)
+    --- PASS: TestMany/case16 (0.00s)
+    --- PASS: TestMany/case17 (0.00s)
+    --- PASS: TestMany/case18 (0.00s)
+    --- PASS: TestMany/case19 (0.00s)
+    --- PASS: TestMany/case20 (0.00s)
+    --- PASS: TestMany/case21 (0.00s)
+    --- PASS: TestMany/case22 (0.00s)
+    --- PASS: TestMany/case23 (0.00s)
+    --- PASS: TestMany/case24 (0.00s)
+    --- PASS: TestMany/case25 (0.00s)
+    --- PASS: TestMany/case26 (0.00s)
+    --- PASS: TestMany/case27 (0.00s)
+    --- PASS: TestMany/case28 (0.00s)
+    --- PASS: TestMany/case29 (0.00s)
+    --- PASS: TestMany/case30 (0.00s)
+    --- PASS: TestMany/case31 (0.00s)
+    --- PASS: TestMany/case32 (0.00s)
+    --- PASS: TestMany/case33 (0.00s)
+    --- PASS: TestMany/case34 (0.00s)
+    --- PASS: TestMany/case35 (0.00s)
+    --- PASS: TestMany/case36 (0.00s)
+    --- PASS: TestMany/case37 (0.00s)
+    --- PASS: TestMany/case38 (0.00s)
+    --- PASS: TestMany/case39 (0.00s)
+    --- PASS: TestMany/case40 (0.00s)
+    --- PASS: TestMany/case41 (0.00s)
+    --- PASS: TestMany/case42 (0.00s)
+    --- PASS: TestMany/case43 (0.00s)
+    --- PASS: TestMany/case44 (0.00s)
+    --- PASS: TestMany/case45 (0.00s)
+    --- PASS: TestMany/case46 (0.00s)
+    --- PASS: TestMany/case47 (0.00s)
+    --- PASS: TestMany/case48 (0.00s)
+    --- PASS: TestMany/case49 (0.00s)
+    --- PASS: TestMany/case50 (0.00s)
+    --- PASS: TestMany/case51 (0.00s)
+    --- PASS: TestMany/case52 (0.00s)
+    --- PASS: TestMany/case53 (0.00s)
+    --- PASS: TestMany/case54 (0.00s)
+    --- PASS: TestMany/case55 (0.00s)
+    --- PASS: TestMany/case56 (0.00s)
+    --- PASS: TestMany/case57 (0.00s)
+    --- PASS: TestMany/case58 (0.00s)
+    --- PASS: TestMany/case59 (0.00s)
+    --- PASS: TestMany/case60 (0.00s)
+    --- PASS: TestMany/case61 (0.00s)
+    --- PASS: TestMany/case62 (0.00s)
+    --- PASS: TestMany/case63 (0.00s)
+    --- PASS: TestMany/case64 (0.00s)
+    --- PASS: TestMany/case65 (0.00s)
+    --- PASS: TestMany/case66 (0.00s)
+    --- PASS: TestMany/case67 (0.00s)
+    --- PASS: TestMany/case68 (0.00s)
+    --- PASS: TestMany/case69 (0.00s)
+    --- PASS: TestMany/case70 (0.00s)
+    --- PASS: TestMany/case71 (0.00s)
+    --- PASS: TestMany/case72 (0.00s)
+    --- PASS: TestMany/case73 (0.00s)
+    --- PASS: TestMany/case74 (0.00s)
+    --- PASS: TestMany/case75 (0.00s)
+    --- PASS: TestMany/case76 (0.00s)
+    --- FAIL: TestMany/case77 (0.00s)
+    --- PASS: TestMany/case78 (0.00s)
+    --- PASS: TestMany/case79 (0.00s)
+    --- PASS: TestMany/case80 (0.00s)
+    --- PASS: TestMany/case81 (0.00s)
+    --- PASS: TestMany/case82 (0.00s)
+    --- PASS: TestMany/case83 (0.00s)
+    --- PASS: TestMany/case84 (0.00s)
+    --- PASS: TestMany/case85 (0.00s)
+    --- PASS: TestMany/case86 (0.00s)
+    --- PASS: TestMany/case87 (0.00s)
+    --- PASS: TestMany/case88 (0.00s)
+    --- PASS: TestMany/case89 (0.00s)
+    --- PASS: TestMany/case90 (0.00s)
+    --- PASS: TestMany/case91 (0.00s)
+    --- PASS: TestMany/case92 (0.00s)
+    --- PASS: TestMany/case93 (0.00s)
+    --- PASS: TestMany/case94 (0.00s)
+    --- PASS: TestMany/case95 (0.00s)
+    --- PASS: TestMany/case96 (0.00s)
+    --- PASS: TestMany/case97 (0.00s)
+    --- PASS: TestMany/case98 (0.00s)
+    --- PASS: TestMany/case99 (0.00s)
+    --- PASS: TestMany/case100 (0.00s)
+    --- PASS: TestMany/case101 (0.00s)
+    --- PASS: TestMany/case102 (0.00s)
+    --- PASS: TestMany/case103 (0.00s)
+    --- PASS: TestMany/case104 (0.00s)
+    --- PASS: TestMany/case105 (0.00s)
+    --- PASS: TestMany/case106 (0.00s)
+    --- PASS: TestMany/case107 (0.00s)
+    --- PASS: TestMany/case108 (0.00s)
+    --- PASS: TestMany/case109 (0.00s)
+    --- PASS: TestMany/case110 (0.00s)
+    --- PASS: TestMany/case111 (0.00s)
+    --- PASS: TestMany/case112 (0.00s)
+    --- PASS: TestMany/case113 (0.00s)
+    --- PASS: TestMany/case114 (0.00s)
+    --- PASS: TestMany/case115 (0.00s)
+    --- PASS: TestMany/case116 (0.00s)
+    --- PASS: TestMany/case117 (0.00s)
+    --- PASS: TestMany/case118 (0.00s)
+    --- PASS: TestMany/case119 (0.00s)
+    --- PASS: TestMany/case120 (0.00s)
+    --- PASS: TestMany/case121 (0.00s)
+    --- PASS: TestMany/case122 (0.00s)
+    --- PASS: TestMany/case123 (0.00s)
+    --- PASS: TestMany/case124 (0.00s)
+    --- PASS: TestMany/case125 (0.00s)
+    --- PASS: TestMany/case126 (0.00s)
+    --- PASS: TestMany/case127 (0.00s)
+    --- PASS: TestMany/case128 (0.00s)
+    --- PASS: TestMany/case129 (0.00s)
+    --- PASS: TestMany/case130 (0.00s)
+    --- PASS: TestMany/case131 (0.00s)
+    --- PASS: TestMany/case132 (0.00s)
+    --- PASS: TestMany/case133 (0.00s)
+    --- PASS: TestMany/case134 (0.00s)
+    --- PASS: TestMany/case135 (0.00s)
+    --- PASS: TestMany/case136 (0.00s)
+    --- PASS: TestMany/case137 (0.00s)
+    --- PASS: TestMany/case138 (0.00s)
+    --- PASS: TestMany/case139 (0.00s)
+    --- PASS: TestMany/case140 (0.00s)
+    --- PASS: TestMany/case141 (0.00s)
+    --- PASS: TestMany/case142 (0.00s)
+    --- PASS: TestMany/case143 (0.00s)
+    --- PASS: TestMany/case144 (0.00s)
+    --- PASS: TestMany/case145 (0.00s)
+    --- PASS: TestMany/case146 (0.00s)
+    --- PASS: TestMany/case147 (0.00s)
+    --- PASS: TestMany/case148 (0.00s)
+    --- PASS: TestMany/case149 (0.00s)
+    --- PASS: TestMany/case150 (0.00s)
+    --- PASS: TestMany/case151 (0.00s)
+    --- PASS: TestMany/case152 (0.00s)
+    --- PASS: TestMany/case153 (0.00s)
+    --- PASS: TestMany/case154 (0.00s)
+    --- PASS: TestMany/case155 (0.00s)
+    --- PASS: TestMany/case156 (0.00s)
+    --- PASS: TestMany/case157 (0.00s)
+    --- PASS: TestMany/case158 (0.00s)
+    --- PASS: TestMany/case159 (0.00s)
+    --- PASS: TestMany/case160 (0.00s)
+    --- PASS: TestMany/case161 (0.00s)
+    --- PASS: TestMany/case162 (0.00s)
+    --- PASS: TestMany/case163 (0.00s)
+    --- PASS: TestMany/case164 (0.00s)
+    --- PASS: TestMany/case165 (0.00s)
+    --- PASS: TestMany/case166 (0.00s)
+    --- PASS: TestMany/case167 (0.00s)
+    --- PASS: TestMany/case168 (0.00s)
+    --- PASS: TestMany/case169 (0.00s)
+    --- PASS: TestMany/case170 (0.00s)
+    --- PASS: TestMany/case171 (0.00s)
+    --- PASS: TestMany/case172 (0.00s)
+    --- PASS: TestMany/case173 (0.00s)
+    --- PASS: TestMany/case174 (0.00s)
+    --- PASS: TestMany/case175 (0.00s)
+    --- PASS: TestMany/case176 (0.00s)
+    --- PASS: TestMany/case177 (0.00s)
+    --- PASS: TestMany/case178 (0.00s)
+    --- PASS: TestMany/case179 (0.00s)
+    --- PASS: TestMany/case180 (0.00s)
+    --- PASS: TestMany/case181 (0.00s)
+    --- PASS: TestMany/case182 (0.00s)
+    --- PASS: TestMany/case183 (0.00s)
+    --- PASS: TestMany/case184 (0.00s)
+    --- PASS: TestMany/case185 (0.00s)
+    --- PASS: TestMany/case186 (0.00s)
+    --- PASS: TestMany/case187 (0.00s)
+    --- PASS: TestMany/case188 (0.00s)
+    --- PASS: TestMany/case189 (0.00s)
+    --- PASS: TestMany/case190 (0.00s)
+    --- PASS: TestMany/case191 (0.00s)
+    --- PASS: TestMany/case192 (0.00s)
+    --- PASS: TestMany/case193 (0.00s)
+    --- PASS: TestMany/case194 (0.00s)
+    --- PASS: TestMany/case195 (0.00s)
+    --- PASS: TestMany/case196 (0.00s)
+    --- PASS: TestMany/case197 (0.00s)
+    --- PASS: TestMany/case198 (0.00s)
+    --- PASS: TestMany/case199 (0.00s)
+=== RUN   TestLog
+    a_test.go:4: warning: slow path
+--- PASS: TestLog (0.00s)
+FAIL
+FAIL	ex	0.008s
+FAIL

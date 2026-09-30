@@ -1,0 +1,240 @@
+   Compiling rs v0.1.0 (/tmp/claude-0/sc/rs)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.20s
+     Running unittests src/lib.rs (target/debug/deps/rs-91623163730cd6b8)
+
+running 200 tests
+test tests::t0 ... ok
+test tests::t100 ... ok
+test tests::t1 ... ok
+test tests::t10 ... ok
+test tests::t101 ... ok
+test tests::t102 ... ok
+test tests::t105 ... ok
+test tests::t103 ... ok
+test tests::t104 ... ok
+test tests::t107 ... ok
+test tests::t106 ... ok
+test tests::t11 ... ok
+test tests::t109 ... ok
+test tests::t108 ... ok
+test tests::t113 ... ok
+test tests::t110 ... ok
+test tests::t111 ... ok
+test tests::t112 ... ok
+test tests::t114 ... ok
+test tests::t115 ... ok
+test tests::t116 ... ok
+test tests::t117 ... ok
+test tests::t118 ... ok
+test tests::t119 ... ok
+test tests::t12 ... ok
+test tests::t120 ... ok
+test tests::t121 ... ok
+test tests::t122 ... ok
+test tests::t123 ... ok
+test tests::t124 ... ok
+test tests::t125 ... ok
+test tests::t126 ... ok
+test tests::t127 ... ok
+test tests::t128 ... ok
+test tests::t129 ... ok
+test tests::t13 ... ok
+test tests::t130 ... ok
+test tests::t131 ... ok
+test tests::t132 ... ok
+test tests::t133 ... ok
+test tests::t134 ... ok
+test tests::t135 ... ok
+test tests::t136 ... ok
+test tests::t137 ... ok
+test tests::t138 ... ok
+test tests::t139 ... ok
+test tests::t14 ... ok
+test tests::t140 ... ok
+test tests::t141 ... ok
+test tests::t142 ... ok
+test tests::t143 ... ok
+test tests::t144 ... ok
+test tests::t145 ... ok
+test tests::t146 ... ok
+test tests::t148 ... ok
+test tests::t147 ... ok
+test tests::t149 ... ok
+test tests::t15 ... ok
+test tests::t150 ... ok
+test tests::t151 ... ok
+test tests::t152 ... ok
+test tests::t153 ... ok
+test tests::t154 ... ok
+test tests::t155 ... ok
+test tests::t156 ... ok
+test tests::t157 ... ok
+test tests::t158 ... ok
+test tests::t159 ... ok
+test tests::t16 ... ok
+test tests::t160 ... ok
+test tests::t161 ... ok
+test tests::t162 ... ok
+test tests::t163 ... ok
+test tests::t164 ... ok
+test tests::t165 ... ok
+test tests::t166 ... ok
+test tests::t167 ... ok
+test tests::t168 ... ok
+test tests::t169 ... ok
+test tests::t17 ... ok
+test tests::t170 ... ok
+test tests::t171 ... ok
+test tests::t172 ... ok
+test tests::t173 ... ok
+test tests::t175 ... ok
+test tests::t174 ... ok
+test tests::t176 ... ok
+test tests::t178 ... ok
+test tests::t177 ... ok
+test tests::t18 ... ok
+test tests::t179 ... ok
+test tests::t180 ... ok
+test tests::t181 ... ok
+test tests::t182 ... ok
+test tests::t183 ... ok
+test tests::t184 ... ok
+test tests::t185 ... ok
+test tests::t186 ... ok
+test tests::t187 ... ok
+test tests::t188 ... ok
+test tests::t189 ... ok
+test tests::t19 ... ok
+test tests::t190 ... ok
+test tests::t191 ... ok
+test tests::t192 ... ok
+test tests::t193 ... ok
+test tests::t194 ... ok
+test tests::t195 ... ok
+test tests::t197 ... ok
+test tests::t198 ... ok
+test tests::t199 ... ok
+test tests::t196 ... ok
+test tests::t2 ... ok
+test tests::t21 ... ok
+test tests::t22 ... ok
+test tests::t20 ... ok
+test tests::t23 ... ok
+test tests::t24 ... ok
+test tests::t25 ... ok
+test tests::t26 ... ok
+test tests::t27 ... ok
+test tests::t28 ... ok
+test tests::t29 ... ok
+test tests::t3 ... ok
+test tests::t30 ... ok
+test tests::t31 ... ok
+test tests::t32 ... ok
+test tests::t33 ... ok
+test tests::t34 ... ok
+test tests::t35 ... ok
+test tests::t36 ... ok
+test tests::t37 ... ok
+test tests::t38 ... ok
+test tests::t39 ... ok
+test tests::t4 ... ok
+test tests::t40 ... ok
+test tests::t41 ... ok
+test tests::t42 ... ok
+test tests::t43 ... ok
+test tests::t44 ... ok
+test tests::t45 ... ok
+test tests::t46 ... ok
+test tests::t47 ... ok
+test tests::t48 ... ok
+test tests::t49 ... ok
+test tests::t5 ... ok
+test tests::t51 ... ok
+test tests::t53 ... ok
+test tests::t55 ... ok
+test tests::t52 ... ok
+test tests::t54 ... ok
+test tests::t56 ... ok
+test tests::t57 ... ok
+test tests::t58 ... ok
+test tests::t59 ... ok
+test tests::t6 ... ok
+test tests::t60 ... ok
+test tests::t61 ... ok
+test tests::t62 ... ok
+test tests::t63 ... ok
+test tests::t64 ... ok
+test tests::t65 ... ok
+test tests::t66 ... ok
+test tests::t67 ... ok
+test tests::t68 ... ok
+test tests::t69 ... ok
+test tests::t7 ... ok
+test tests::t70 ... ok
+test tests::t71 ... ok
+test tests::t72 ... ok
+test tests::t73 ... ok
+test tests::t74 ... ok
+test tests::t75 ... ok
+test tests::t76 ... ok
+test tests::t77 ... ok
+test tests::t79 ... ok
+test tests::t78 ... ok
+test tests::t8 ... ok
+test tests::t80 ... ok
+test tests::t81 ... ok
+test tests::t82 ... ok
+test tests::t83 ... ok
+test tests::t84 ... ok
+test tests::t85 ... ok
+test tests::t86 ... ok
+test tests::t87 ... ok
+test tests::t88 ... ok
+test tests::t89 ... ok
+test tests::t9 ... ok
+test tests::t90 ... ok
+test tests::t91 ... ok
+test tests::t92 ... ok
+test tests::t93 ... ok
+test tests::t94 ... ok
+test tests::t95 ... ok
+test tests::t96 ... ok
+test tests::t97 ... ok
+test tests::t98 ... ok
+test tests::t99 ... ok
+test tests::t50 ... FAILED
+
+failures:
+
+---- tests::t50 stdout ----
+
+thread 'tests::t50' (3308) panicked at src/lib.rs:53:24:
+assertion `left == right` failed
+  left: 50
+ right: 0
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+             at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/std/src/panicking.rs:689:5
+   1: core::panicking::panic_fmt
+             at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/core/src/panicking.rs:80:14
+   2: core::panicking::assert_failed_inner
+             at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/core/src/panicking.rs:439:17
+   3: core::panicking::assert_failed
+             at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/core/src/panicking.rs:394:5
+   4: rs::tests::t50
+             at ./src/lib.rs:53:24
+   5: rs::tests::t50::{{closure}}
+             at ./src/lib.rs:53:21
+   6: core::ops::function::FnOnce::call_once
+             at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/core/src/ops/function.rs:250:5
+   7: core::ops::function::FnOnce::call_once
+             at /rustc/e408947bfd200af42db322daf0fadfe7e26d3bd1/library/core/src/ops/function.rs:250:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+
+
+failures:
+    tests::t50
+
+test result: FAILED. 199 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+error: test failed, to rerun pass `--lib`

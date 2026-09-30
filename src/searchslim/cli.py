@@ -3,6 +3,7 @@
   searchslim filter [opts] < raw_output     reduce output read from stdin
   searchslim run [opts] -- rg -n foo src    run a search command, reduce its stdout
   searchslim run --shell -- 'rg -n foo | grep -v test'   same, for a filter pipeline
+  searchslim compact [opts] < test_output    drop passing-test/progress noise from test/build output
   searchslim hook < event.json              Claude Code PreToolUse hook (see hooks.py)
   searchslim install [--user | DIR]         enable the hook in Claude Code settings
 
@@ -175,6 +176,10 @@ def main(argv: list[str] | None = None) -> int:
     p_run.add_argument("--no-anchor", action="store_true", help="do not add the flags that keep path:line on every line (rg/grep/git grep)")
     p_run.add_argument("command", nargs=argparse.REMAINDER, help="command to run, after --")
 
+    p_compact = sub.add_parser("compact", help="compact test/build output read from stdin (see compact.py)")
+    p_compact.add_argument("--trigger-tokens", type=int, default=None, help="compact only above this many tokens (default 2000)")
+    p_compact.add_argument("--stats", action="store_true", help="print stats as JSON on stderr")
+
     sub.add_parser("hook", help="Claude Code PreToolUse hook: JSON event on stdin")
 
     for name, help_text in (("install", "enable the hook in Claude Code settings"), ("uninstall", "remove the hook")):
@@ -208,6 +213,21 @@ def main(argv: list[str] | None = None) -> int:
         text, usage = run_for_benchmark(json.loads(_decode(sys.stdin.buffer.read())), make_scorer(args.scorer))
         _write(text + ("\n" if text and not text.endswith("\n") else ""))
         sys.stderr.write(json.dumps({k: usage[k] for k in ("input_tokens", "output_tokens") if k in usage}) + "\n")
+        return 0
+
+    if args.cmd == "compact":
+        from .compact import DEFAULT_COMPACT_TRIGGER_TOKENS, compact
+
+        raw = _decode(sys.stdin.buffer.read())
+        trigger = DEFAULT_COMPACT_TRIGGER_TOKENS if args.trigger_tokens is None else args.trigger_tokens
+        try:
+            result = compact(raw, trigger_tokens=trigger)
+        except Exception as exc:  # fail open: the raw output
+            sys.stderr.write(f"searchslim: {type(exc).__name__}: {exc}; showing raw output\n")
+            result = None
+        _write(result.text if result else raw)
+        if args.stats:
+            _write(json.dumps(result.stats if result else {"unchanged": True}) + "\n", sys.stderr)
         return 0
 
     if args.cmd == "filter":

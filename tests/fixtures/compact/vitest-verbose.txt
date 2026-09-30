@@ -1,0 +1,362 @@
+
+ RUN  v5.0.2 /tmp/claude-0/sc/js
+
+stderr | s9.test.js > suite 9 > warns
+deprecated api used
+
+ ✓ s21.test.js > suite 21 > case 0 2ms
+ ✓ s21.test.js > suite 21 > case 1 0ms
+ ✓ s21.test.js > suite 21 > case 2 0ms
+ ✓ s21.test.js > suite 21 > case 3 0ms
+ ✓ s21.test.js > suite 21 > case 4 0ms
+ ✓ s21.test.js > suite 21 > case 5 0ms
+ ✓ s21.test.js > suite 21 > case 6 0ms
+ ✓ s21.test.js > suite 21 > case 7 0ms
+ ✓ s9.test.js > suite 9 > case 0 2ms
+ ✓ s9.test.js > suite 9 > case 1 0ms
+ ✓ s9.test.js > suite 9 > case 2 0ms
+ ✓ s9.test.js > suite 9 > case 3 0ms
+ ✓ s9.test.js > suite 9 > case 4 0ms
+ ✓ s9.test.js > suite 9 > case 5 0ms
+ ✓ s9.test.js > suite 9 > case 6 0ms
+ ✓ s9.test.js > suite 9 > case 7 0ms
+ ✓ s9.test.js > suite 9 > warns 1ms
+ ✓ s7.test.js > suite 7 > case 0 2ms
+ ✓ s7.test.js > suite 7 > case 1 0ms
+ ✓ s7.test.js > suite 7 > case 2 0ms
+ ✓ s7.test.js > suite 7 > case 3 0ms
+ ✓ s7.test.js > suite 7 > case 4 0ms
+ ✓ s7.test.js > suite 7 > case 5 0ms
+ ✓ s7.test.js > suite 7 > case 6 0ms
+ ✓ s7.test.js > suite 7 > case 7 0ms
+ × s7.test.js > suite 7 > broken 8ms
+   → expected { a: 1 } to deeply equal { a: 2 }
+ ✓ s38.test.js > suite 38 > case 0 2ms
+ ✓ s38.test.js > suite 38 > case 1 0ms
+ ✓ s38.test.js > suite 38 > case 2 0ms
+ ✓ s38.test.js > suite 38 > case 3 0ms
+ ✓ s38.test.js > suite 38 > case 4 0ms
+ ✓ s38.test.js > suite 38 > case 5 0ms
+ ✓ s38.test.js > suite 38 > case 6 0ms
+ ✓ s38.test.js > suite 38 > case 7 0ms
+ ✓ s11.test.js > suite 11 > case 0 2ms
+ ✓ s11.test.js > suite 11 > case 1 0ms
+ ✓ s11.test.js > suite 11 > case 2 0ms
+ ✓ s11.test.js > suite 11 > case 3 0ms
+ ✓ s11.test.js > suite 11 > case 4 0ms
+ ✓ s11.test.js > suite 11 > case 5 0ms
+ ✓ s11.test.js > suite 11 > case 6 0ms
+ ✓ s11.test.js > suite 11 > case 7 0ms
+ ✓ s22.test.js > suite 22 > case 0 2ms
+ ✓ s22.test.js > suite 22 > case 1 0ms
+ ✓ s22.test.js > suite 22 > case 2 0ms
+ ✓ s22.test.js > suite 22 > case 3 0ms
+ ✓ s22.test.js > suite 22 > case 4 0ms
+ ✓ s22.test.js > suite 22 > case 5 0ms
+ ✓ s22.test.js > suite 22 > case 6 0ms
+ ✓ s22.test.js > suite 22 > case 7 0ms
+ ✓ s23.test.js > suite 23 > case 0 2ms
+ ✓ s23.test.js > suite 23 > case 1 0ms
+ ✓ s23.test.js > suite 23 > case 2 0ms
+ ✓ s23.test.js > suite 23 > case 3 0ms
+ ✓ s23.test.js > suite 23 > case 4 0ms
+ ✓ s23.test.js > suite 23 > case 5 0ms
+ ✓ s23.test.js > suite 23 > case 6 0ms
+ ✓ s23.test.js > suite 23 > case 7 0ms
+ ✓ s31.test.js > suite 31 > case 0 2ms
+ ✓ s31.test.js > suite 31 > case 1 0ms
+ ✓ s31.test.js > suite 31 > case 2 0ms
+ ✓ s31.test.js > suite 31 > case 3 0ms
+ ✓ s31.test.js > suite 31 > case 4 0ms
+ ✓ s31.test.js > suite 31 > case 5 0ms
+ ✓ s31.test.js > suite 31 > case 6 0ms
+ ✓ s31.test.js > suite 31 > case 7 0ms
+ ✓ s37.test.js > suite 37 > case 0 2ms
+ ✓ s37.test.js > suite 37 > case 1 0ms
+ ✓ s37.test.js > suite 37 > case 2 0ms
+ ✓ s37.test.js > suite 37 > case 3 0ms
+ ✓ s37.test.js > suite 37 > case 4 0ms
+ ✓ s37.test.js > suite 37 > case 5 0ms
+ ✓ s37.test.js > suite 37 > case 6 0ms
+ ✓ s37.test.js > suite 37 > case 7 0ms
+ ✓ s5.test.js > suite 5 > case 0 2ms
+ ✓ s5.test.js > suite 5 > case 1 0ms
+ ✓ s5.test.js > suite 5 > case 2 0ms
+ ✓ s5.test.js > suite 5 > case 3 0ms
+ ✓ s5.test.js > suite 5 > case 4 0ms
+ ✓ s5.test.js > suite 5 > case 5 0ms
+ ✓ s5.test.js > suite 5 > case 6 0ms
+ ✓ s5.test.js > suite 5 > case 7 0ms
+ ✓ s25.test.js > suite 25 > case 0 2ms
+ ✓ s25.test.js > suite 25 > case 1 0ms
+ ✓ s25.test.js > suite 25 > case 2 0ms
+ ✓ s25.test.js > suite 25 > case 3 0ms
+ ✓ s25.test.js > suite 25 > case 4 0ms
+ ✓ s25.test.js > suite 25 > case 5 0ms
+ ✓ s25.test.js > suite 25 > case 6 0ms
+ ✓ s25.test.js > suite 25 > case 7 0ms
+ ✓ s30.test.js > suite 30 > case 0 2ms
+ ✓ s30.test.js > suite 30 > case 1 0ms
+ ✓ s30.test.js > suite 30 > case 2 0ms
+ ✓ s30.test.js > suite 30 > case 3 0ms
+ ✓ s30.test.js > suite 30 > case 4 0ms
+ ✓ s30.test.js > suite 30 > case 5 0ms
+ ✓ s30.test.js > suite 30 > case 6 0ms
+ ✓ s30.test.js > suite 30 > case 7 0ms
+ ✓ s4.test.js > suite 4 > case 0 2ms
+ ✓ s4.test.js > suite 4 > case 1 0ms
+ ✓ s4.test.js > suite 4 > case 2 0ms
+ ✓ s4.test.js > suite 4 > case 3 0ms
+ ✓ s4.test.js > suite 4 > case 4 0ms
+ ✓ s4.test.js > suite 4 > case 5 0ms
+ ✓ s4.test.js > suite 4 > case 6 0ms
+ ✓ s4.test.js > suite 4 > case 7 0ms
+ ✓ s34.test.js > suite 34 > case 0 2ms
+ ✓ s34.test.js > suite 34 > case 1 0ms
+ ✓ s34.test.js > suite 34 > case 2 0ms
+ ✓ s34.test.js > suite 34 > case 3 0ms
+ ✓ s34.test.js > suite 34 > case 4 0ms
+ ✓ s34.test.js > suite 34 > case 5 0ms
+ ✓ s34.test.js > suite 34 > case 6 0ms
+ ✓ s34.test.js > suite 34 > case 7 0ms
+ ✓ s6.test.js > suite 6 > case 0 2ms
+ ✓ s6.test.js > suite 6 > case 1 0ms
+ ✓ s6.test.js > suite 6 > case 2 0ms
+ ✓ s6.test.js > suite 6 > case 3 0ms
+ ✓ s6.test.js > suite 6 > case 4 0ms
+ ✓ s6.test.js > suite 6 > case 5 0ms
+ ✓ s6.test.js > suite 6 > case 6 0ms
+ ✓ s6.test.js > suite 6 > case 7 0ms
+ ✓ s16.test.js > suite 16 > case 0 2ms
+ ✓ s16.test.js > suite 16 > case 1 0ms
+ ✓ s16.test.js > suite 16 > case 2 0ms
+ ✓ s16.test.js > suite 16 > case 3 0ms
+ ✓ s16.test.js > suite 16 > case 4 0ms
+ ✓ s16.test.js > suite 16 > case 5 0ms
+ ✓ s16.test.js > suite 16 > case 6 0ms
+ ✓ s16.test.js > suite 16 > case 7 0ms
+ ✓ s18.test.js > suite 18 > case 0 2ms
+ ✓ s18.test.js > suite 18 > case 1 0ms
+ ✓ s18.test.js > suite 18 > case 2 0ms
+ ✓ s18.test.js > suite 18 > case 3 0ms
+ ✓ s18.test.js > suite 18 > case 4 0ms
+ ✓ s18.test.js > suite 18 > case 5 0ms
+ ✓ s18.test.js > suite 18 > case 6 0ms
+ ✓ s18.test.js > suite 18 > case 7 0ms
+ ✓ s10.test.js > suite 10 > case 0 2ms
+ ✓ s10.test.js > suite 10 > case 1 0ms
+ ✓ s10.test.js > suite 10 > case 2 0ms
+ ✓ s10.test.js > suite 10 > case 3 0ms
+ ✓ s10.test.js > suite 10 > case 4 0ms
+ ✓ s10.test.js > suite 10 > case 5 0ms
+ ✓ s10.test.js > suite 10 > case 6 0ms
+ ✓ s10.test.js > suite 10 > case 7 0ms
+ ✓ s19.test.js > suite 19 > case 0 2ms
+ ✓ s19.test.js > suite 19 > case 1 0ms
+ ✓ s19.test.js > suite 19 > case 2 0ms
+ ✓ s19.test.js > suite 19 > case 3 0ms
+ ✓ s19.test.js > suite 19 > case 4 0ms
+ ✓ s19.test.js > suite 19 > case 5 0ms
+ ✓ s19.test.js > suite 19 > case 6 0ms
+ ✓ s19.test.js > suite 19 > case 7 0ms
+ ✓ s14.test.js > suite 14 > case 0 2ms
+ ✓ s14.test.js > suite 14 > case 1 0ms
+ ✓ s14.test.js > suite 14 > case 2 0ms
+ ✓ s14.test.js > suite 14 > case 3 0ms
+ ✓ s14.test.js > suite 14 > case 4 0ms
+ ✓ s14.test.js > suite 14 > case 5 0ms
+ ✓ s14.test.js > suite 14 > case 6 0ms
+ ✓ s14.test.js > suite 14 > case 7 0ms
+ ✓ s8.test.js > suite 8 > case 0 2ms
+ ✓ s8.test.js > suite 8 > case 1 0ms
+ ✓ s8.test.js > suite 8 > case 2 0ms
+ ✓ s8.test.js > suite 8 > case 3 0ms
+ ✓ s8.test.js > suite 8 > case 4 0ms
+ ✓ s8.test.js > suite 8 > case 5 0ms
+ ✓ s8.test.js > suite 8 > case 6 0ms
+ ✓ s8.test.js > suite 8 > case 7 0ms
+ ✓ s24.test.js > suite 24 > case 0 2ms
+ ✓ s24.test.js > suite 24 > case 1 0ms
+ ✓ s24.test.js > suite 24 > case 2 0ms
+ ✓ s24.test.js > suite 24 > case 3 0ms
+ ✓ s24.test.js > suite 24 > case 4 0ms
+ ✓ s24.test.js > suite 24 > case 5 0ms
+ ✓ s24.test.js > suite 24 > case 6 0ms
+ ✓ s24.test.js > suite 24 > case 7 0ms
+ ✓ s17.test.js > suite 17 > case 0 2ms
+ ✓ s17.test.js > suite 17 > case 1 0ms
+ ✓ s17.test.js > suite 17 > case 2 0ms
+ ✓ s17.test.js > suite 17 > case 3 0ms
+ ✓ s17.test.js > suite 17 > case 4 0ms
+ ✓ s17.test.js > suite 17 > case 5 0ms
+ ✓ s17.test.js > suite 17 > case 6 0ms
+ ✓ s17.test.js > suite 17 > case 7 0ms
+ ✓ s27.test.js > suite 27 > case 0 2ms
+ ✓ s27.test.js > suite 27 > case 1 0ms
+ ✓ s27.test.js > suite 27 > case 2 0ms
+ ✓ s27.test.js > suite 27 > case 3 0ms
+ ✓ s27.test.js > suite 27 > case 4 0ms
+ ✓ s27.test.js > suite 27 > case 5 0ms
+ ✓ s27.test.js > suite 27 > case 6 0ms
+ ✓ s27.test.js > suite 27 > case 7 0ms
+ ✓ s26.test.js > suite 26 > case 0 2ms
+ ✓ s26.test.js > suite 26 > case 1 0ms
+ ✓ s26.test.js > suite 26 > case 2 0ms
+ ✓ s26.test.js > suite 26 > case 3 0ms
+ ✓ s26.test.js > suite 26 > case 4 0ms
+ ✓ s26.test.js > suite 26 > case 5 0ms
+ ✓ s26.test.js > suite 26 > case 6 0ms
+ ✓ s26.test.js > suite 26 > case 7 0ms
+ ✓ s35.test.js > suite 35 > case 0 2ms
+ ✓ s35.test.js > suite 35 > case 1 0ms
+ ✓ s35.test.js > suite 35 > case 2 0ms
+ ✓ s35.test.js > suite 35 > case 3 0ms
+ ✓ s35.test.js > suite 35 > case 4 0ms
+ ✓ s35.test.js > suite 35 > case 5 0ms
+ ✓ s35.test.js > suite 35 > case 6 0ms
+ ✓ s35.test.js > suite 35 > case 7 0ms
+ ✓ s32.test.js > suite 32 > case 0 2ms
+ ✓ s32.test.js > suite 32 > case 1 0ms
+ ✓ s32.test.js > suite 32 > case 2 0ms
+ ✓ s32.test.js > suite 32 > case 3 0ms
+ ✓ s32.test.js > suite 32 > case 4 0ms
+ ✓ s32.test.js > suite 32 > case 5 0ms
+ ✓ s32.test.js > suite 32 > case 6 0ms
+ ✓ s32.test.js > suite 32 > case 7 0ms
+ ✓ s28.test.js > suite 28 > case 0 2ms
+ ✓ s28.test.js > suite 28 > case 1 0ms
+ ✓ s28.test.js > suite 28 > case 2 0ms
+ ✓ s28.test.js > suite 28 > case 3 0ms
+ ✓ s28.test.js > suite 28 > case 4 0ms
+ ✓ s28.test.js > suite 28 > case 5 0ms
+ ✓ s28.test.js > suite 28 > case 6 0ms
+ ✓ s28.test.js > suite 28 > case 7 0ms
+ ✓ s1.test.js > suite 1 > case 0 2ms
+ ✓ s1.test.js > suite 1 > case 1 0ms
+ ✓ s1.test.js > suite 1 > case 2 0ms
+ ✓ s1.test.js > suite 1 > case 3 0ms
+ ✓ s1.test.js > suite 1 > case 4 0ms
+ ✓ s1.test.js > suite 1 > case 5 0ms
+ ✓ s1.test.js > suite 1 > case 6 0ms
+ ✓ s1.test.js > suite 1 > case 7 0ms
+ ✓ s40.test.js > suite 40 > case 0 2ms
+ ✓ s40.test.js > suite 40 > case 1 0ms
+ ✓ s40.test.js > suite 40 > case 2 0ms
+ ✓ s40.test.js > suite 40 > case 3 0ms
+ ✓ s40.test.js > suite 40 > case 4 0ms
+ ✓ s40.test.js > suite 40 > case 5 0ms
+ ✓ s40.test.js > suite 40 > case 6 0ms
+ ✓ s40.test.js > suite 40 > case 7 0ms
+ ✓ s3.test.js > suite 3 > case 0 2ms
+ ✓ s3.test.js > suite 3 > case 1 0ms
+ ✓ s3.test.js > suite 3 > case 2 0ms
+ ✓ s3.test.js > suite 3 > case 3 0ms
+ ✓ s3.test.js > suite 3 > case 4 0ms
+ ✓ s3.test.js > suite 3 > case 5 0ms
+ ✓ s3.test.js > suite 3 > case 6 0ms
+ ✓ s3.test.js > suite 3 > case 7 0ms
+ ✓ s12.test.js > suite 12 > case 0 2ms
+ ✓ s12.test.js > suite 12 > case 1 0ms
+ ✓ s12.test.js > suite 12 > case 2 0ms
+ ✓ s12.test.js > suite 12 > case 3 0ms
+ ✓ s12.test.js > suite 12 > case 4 0ms
+ ✓ s12.test.js > suite 12 > case 5 0ms
+ ✓ s12.test.js > suite 12 > case 6 0ms
+ ✓ s12.test.js > suite 12 > case 7 0ms
+ ✓ s36.test.js > suite 36 > case 0 2ms
+ ✓ s36.test.js > suite 36 > case 1 0ms
+ ✓ s36.test.js > suite 36 > case 2 0ms
+ ✓ s36.test.js > suite 36 > case 3 0ms
+ ✓ s36.test.js > suite 36 > case 4 0ms
+ ✓ s36.test.js > suite 36 > case 5 0ms
+ ✓ s36.test.js > suite 36 > case 6 0ms
+ ✓ s36.test.js > suite 36 > case 7 0ms
+ ✓ s2.test.js > suite 2 > case 0 2ms
+ ✓ s2.test.js > suite 2 > case 1 0ms
+ ✓ s2.test.js > suite 2 > case 2 0ms
+ ✓ s2.test.js > suite 2 > case 3 0ms
+ ✓ s2.test.js > suite 2 > case 4 0ms
+ ✓ s2.test.js > suite 2 > case 5 0ms
+ ✓ s2.test.js > suite 2 > case 6 0ms
+ ✓ s2.test.js > suite 2 > case 7 0ms
+ ✓ s15.test.js > suite 15 > case 0 2ms
+ ✓ s15.test.js > suite 15 > case 1 0ms
+ ✓ s15.test.js > suite 15 > case 2 0ms
+ ✓ s15.test.js > suite 15 > case 3 0ms
+ ✓ s15.test.js > suite 15 > case 4 0ms
+ ✓ s15.test.js > suite 15 > case 5 0ms
+ ✓ s15.test.js > suite 15 > case 6 0ms
+ ✓ s15.test.js > suite 15 > case 7 0ms
+ ✓ s13.test.js > suite 13 > case 0 2ms
+ ✓ s13.test.js > suite 13 > case 1 0ms
+ ✓ s13.test.js > suite 13 > case 2 0ms
+ ✓ s13.test.js > suite 13 > case 3 0ms
+ ✓ s13.test.js > suite 13 > case 4 0ms
+ ✓ s13.test.js > suite 13 > case 5 0ms
+ ✓ s13.test.js > suite 13 > case 6 0ms
+ ✓ s13.test.js > suite 13 > case 7 0ms
+ ✓ s39.test.js > suite 39 > case 0 2ms
+ ✓ s39.test.js > suite 39 > case 1 0ms
+ ✓ s39.test.js > suite 39 > case 2 0ms
+ ✓ s39.test.js > suite 39 > case 3 0ms
+ ✓ s39.test.js > suite 39 > case 4 0ms
+ ✓ s39.test.js > suite 39 > case 5 0ms
+ ✓ s39.test.js > suite 39 > case 6 0ms
+ ✓ s39.test.js > suite 39 > case 7 0ms
+ ✓ s20.test.js > suite 20 > case 0 2ms
+ ✓ s20.test.js > suite 20 > case 1 0ms
+ ✓ s20.test.js > suite 20 > case 2 0ms
+ ✓ s20.test.js > suite 20 > case 3 0ms
+ ✓ s20.test.js > suite 20 > case 4 0ms
+ ✓ s20.test.js > suite 20 > case 5 0ms
+ ✓ s20.test.js > suite 20 > case 6 0ms
+ ✓ s20.test.js > suite 20 > case 7 0ms
+ ✓ s29.test.js > suite 29 > case 0 2ms
+ ✓ s29.test.js > suite 29 > case 1 0ms
+ ✓ s29.test.js > suite 29 > case 2 0ms
+ ✓ s29.test.js > suite 29 > case 3 0ms
+ ✓ s29.test.js > suite 29 > case 4 0ms
+ ✓ s29.test.js > suite 29 > case 5 0ms
+ ✓ s29.test.js > suite 29 > case 6 0ms
+ ✓ s29.test.js > suite 29 > case 7 0ms
+ ✓ s33.test.js > suite 33 > case 0 2ms
+ ✓ s33.test.js > suite 33 > case 1 0ms
+ ✓ s33.test.js > suite 33 > case 2 0ms
+ ✓ s33.test.js > suite 33 > case 3 0ms
+ ✓ s33.test.js > suite 33 > case 4 0ms
+ ✓ s33.test.js > suite 33 > case 5 0ms
+ ✓ s33.test.js > suite 33 > case 6 0ms
+ ✓ s33.test.js > suite 33 > case 7 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  s7.test.js > suite 7 > broken
+AssertionError: expected { a: 1 } to deeply equal { a: 2 }
+
+- Expected
++ Received
+
+  {
+-   "a": 2,
++   "a": 1,
+  }
+
+ ❯ s7.test.js:3:38
+      1| describe('suite 7', () => {
+      2|   for (let i = 0; i < 8; i++) test('case ' + i, () => expect(i).toBe(i…
+      3|   test('broken', () => expect({a:1}).toEqual({a:2}));
+       |                                      ^
+      4|
+      5| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 39 passed (40)
+      Tests  1 failed | 321 passed (322)
+   Start at  02:20:02
+   Duration  2.26s (import 29%, transform 26%, worker 25%, tests 19%, environment 1%)
+
+    Isolate  40 workers spawned · ~128ms startup each (spawn + environment, per file)
+             at least ~1.58s faster with isolate: false — reuses workers across files instead of one per file
+

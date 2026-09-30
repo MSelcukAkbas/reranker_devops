@@ -37,7 +37,7 @@ def test_install_registers_post_tool_use_for_grep_and_glob(tmp_path):
     path = tmp_path / "settings.json"
     install(path)
     post = json.loads(path.read_text())["hooks"]["PostToolUse"]
-    assert post[0]["matcher"] == "Grep|Glob" and MARKER in post[0]["hooks"][0]["command"]
+    assert post[0]["matcher"] == "Bash|PowerShell|Grep|Glob" and MARKER in post[0]["hooks"][0]["command"]
 
 
 def test_windows_command_parses_in_powershell_and_bash():
@@ -68,3 +68,13 @@ def test_reinstall_keeps_hand_written_commands(tmp_path):
     path.write_text(json.dumps({"hooks": {"PreToolUse": [{"matcher": "Bash|Grep|Glob", "hooks": [{"type": "command", "command": mine}]}]}}))
     install(path)
     assert json.loads(path.read_text())["hooks"]["PreToolUse"][0]["hooks"][0]["command"] == mine
+
+
+def test_reinstall_widens_an_old_post_tool_use_matcher(tmp_path):
+    path = tmp_path / "settings.json"
+    install(path)
+    settings = json.loads(path.read_text())
+    settings["hooks"]["PostToolUse"][0]["matcher"] = "Grep|Glob"  # written by 0.4 and earlier
+    path.write_text(json.dumps(settings))
+    assert install(path) is True
+    assert json.loads(path.read_text())["hooks"]["PostToolUse"][0]["matcher"] == "Bash|PowerShell|Grep|Glob"
