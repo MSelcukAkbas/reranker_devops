@@ -1,0 +1,238 @@
+src/mod0.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod0.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod0.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod0.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod1.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod1.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod1.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod1.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod10.ts(2,25): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod10.ts(3,42): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod10.ts(4,56): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod10.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod11.ts(2,25): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod11.ts(3,42): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod11.ts(4,56): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod11.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod12.ts(2,25): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod12.ts(3,42): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod12.ts(4,56): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod12.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod13.ts(2,25): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod13.ts(3,42): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod13.ts(4,56): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod13.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod2.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod2.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod2.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod2.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod3.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod3.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod3.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod3.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod4.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod4.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod4.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod4.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod5.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod5.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod5.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod5.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod6.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod6.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod6.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod6.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod7.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod7.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod7.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod7.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod8.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod8.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod8.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod8.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+src/mod9.ts(2,24): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/mod9.ts(3,41): error TS2322: Type 'string' is not assignable to type 'number'.
+src/mod9.ts(4,55): error TS2339: Property 'nmae' does not exist on type '{ name: string; }'.
+src/mod9.ts(5,5): error TS2322: Type 'number' is not assignable to type 'string'.
+tests/mod0.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod0.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod0.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod0.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod0.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod0.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod0.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod0.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod0.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod0.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod0.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod0.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod0.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod1.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod1.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod1.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod1.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod1.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod1.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod1.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod1.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod1.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod1.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod1.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod1.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod1.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod10.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod10.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod10.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod10.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod10.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod10.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod10.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod10.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod10.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod10.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod10.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod10.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod10.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod11.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod11.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod11.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod11.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod11.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod11.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod11.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod11.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod11.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod11.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod11.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod11.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod11.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod12.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod12.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod12.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod12.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod12.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod12.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod12.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod12.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod12.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod12.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod12.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod12.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod12.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod13.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod13.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod13.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod13.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod13.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod13.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod13.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod13.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod13.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod13.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod13.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod13.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod13.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod2.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod2.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod2.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod2.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod2.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod2.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod2.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod2.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod2.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod2.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod2.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod2.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod2.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod3.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod3.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod3.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod3.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod3.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod3.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod3.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod3.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod3.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod3.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod3.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod3.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod3.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod4.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod4.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod4.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod4.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod4.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod4.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod4.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod4.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod4.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod4.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod4.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod4.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod4.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod5.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod5.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod5.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod5.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod5.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod5.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod5.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod5.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod5.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod5.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod5.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod5.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod5.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod6.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod6.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod6.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod6.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod6.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod6.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod6.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod6.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod6.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod6.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod6.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod6.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod6.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod7.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod7.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod7.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod7.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod7.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod7.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod7.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod7.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod7.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod7.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod7.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod7.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod7.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod8.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod8.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod8.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod8.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod8.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod8.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod8.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod8.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod8.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod8.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod8.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod8.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod8.test.ts(20,5): error TS2304: Cannot find name 'expect'.
+tests/mod9.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod9.test.ts(4,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod9.test.ts(5,5): error TS2304: Cannot find name 'expect'.
+tests/mod9.test.ts(7,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod9.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+tests/mod9.test.ts(10,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod9.test.ts(11,5): error TS2304: Cannot find name 'expect'.
+tests/mod9.test.ts(13,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod9.test.ts(14,5): error TS2304: Cannot find name 'expect'.
+tests/mod9.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod9.test.ts(17,5): error TS2304: Cannot find name 'expect'.
+tests/mod9.test.ts(19,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+tests/mod9.test.ts(20,5): error TS2304: Cannot find name 'expect'.

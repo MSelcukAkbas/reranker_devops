@@ -1,0 +1,653 @@
+   Compiling rs v0.1.0 (/home/dev/rs)
+warning: variable does not need to be mutable
+ --> src/main.rs:2:9
+  |
+2 |     let mut x = a;
+  |         ----^
+  |         |
+  |         help: remove this `mut`
+  |
+  = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `x`
+ --> src/main.rs:2:9
+  |
+2 |     let mut x = a;
+  |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+  |
+  = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `unused`
+ --> src/main.rs:3:9
+  |
+3 |     let unused = 3;
+  |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+ --> src/main.rs:7:9
+  |
+7 |     let mut x = a;
+  |         ----^
+  |         |
+  |         help: remove this `mut`
+
+warning: unused variable: `x`
+ --> src/main.rs:7:9
+  |
+7 |     let mut x = a;
+  |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+ --> src/main.rs:8:9
+  |
+8 |     let unused = 3;
+  |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:12:9
+   |
+12 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:12:9
+   |
+12 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:13:9
+   |
+13 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:17:9
+   |
+17 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:17:9
+   |
+17 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:18:9
+   |
+18 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:22:9
+   |
+22 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:22:9
+   |
+22 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:23:9
+   |
+23 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:27:9
+   |
+27 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:27:9
+   |
+27 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:28:9
+   |
+28 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:32:9
+   |
+32 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:32:9
+   |
+32 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:33:9
+   |
+33 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:37:9
+   |
+37 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:37:9
+   |
+37 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:38:9
+   |
+38 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:42:9
+   |
+42 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:42:9
+   |
+42 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:43:9
+   |
+43 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:47:9
+   |
+47 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:47:9
+   |
+47 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:48:9
+   |
+48 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:52:9
+   |
+52 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:52:9
+   |
+52 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:53:9
+   |
+53 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:57:9
+   |
+57 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:57:9
+   |
+57 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:58:9
+   |
+58 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:62:9
+   |
+62 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:62:9
+   |
+62 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:63:9
+   |
+63 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:67:9
+   |
+67 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:67:9
+   |
+67 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:68:9
+   |
+68 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:72:9
+   |
+72 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:72:9
+   |
+72 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:73:9
+   |
+73 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:77:9
+   |
+77 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:77:9
+   |
+77 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:78:9
+   |
+78 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:82:9
+   |
+82 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:82:9
+   |
+82 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:83:9
+   |
+83 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:87:9
+   |
+87 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:87:9
+   |
+87 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:88:9
+   |
+88 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:92:9
+   |
+92 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:92:9
+   |
+92 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:93:9
+   |
+93 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+  --> src/main.rs:97:9
+   |
+97 |     let mut x = a;
+   |         ----^
+   |         |
+   |         help: remove this `mut`
+
+warning: unused variable: `x`
+  --> src/main.rs:97:9
+   |
+97 |     let mut x = a;
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+  --> src/main.rs:98:9
+   |
+98 |     let unused = 3;
+   |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+   --> src/main.rs:102:9
+    |
+102 |     let mut x = a;
+    |         ----^
+    |         |
+    |         help: remove this `mut`
+
+warning: unused variable: `x`
+   --> src/main.rs:102:9
+    |
+102 |     let mut x = a;
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+   --> src/main.rs:103:9
+    |
+103 |     let unused = 3;
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+   --> src/main.rs:107:9
+    |
+107 |     let mut x = a;
+    |         ----^
+    |         |
+    |         help: remove this `mut`
+
+warning: unused variable: `x`
+   --> src/main.rs:107:9
+    |
+107 |     let mut x = a;
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+   --> src/main.rs:108:9
+    |
+108 |     let unused = 3;
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+   --> src/main.rs:112:9
+    |
+112 |     let mut x = a;
+    |         ----^
+    |         |
+    |         help: remove this `mut`
+
+warning: unused variable: `x`
+   --> src/main.rs:112:9
+    |
+112 |     let mut x = a;
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+   --> src/main.rs:113:9
+    |
+113 |     let unused = 3;
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+   --> src/main.rs:117:9
+    |
+117 |     let mut x = a;
+    |         ----^
+    |         |
+    |         help: remove this `mut`
+
+warning: unused variable: `x`
+   --> src/main.rs:117:9
+    |
+117 |     let mut x = a;
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+   --> src/main.rs:118:9
+    |
+118 |     let unused = 3;
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: variable does not need to be mutable
+   --> src/main.rs:122:9
+    |
+122 |     let mut x = a;
+    |         ----^
+    |         |
+    |         help: remove this `mut`
+
+warning: unused variable: `x`
+   --> src/main.rs:122:9
+    |
+122 |     let mut x = a;
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_x`
+
+warning: unused variable: `unused`
+   --> src/main.rs:123:9
+    |
+123 |     let unused = 3;
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_unused`
+
+warning: function `f1` is never used
+ --> src/main.rs:6:4
+  |
+6 | fn f1(a: i32) -> i32 {
+  |    ^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `f2` is never used
+  --> src/main.rs:11:4
+   |
+11 | fn f2(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f3` is never used
+  --> src/main.rs:16:4
+   |
+16 | fn f3(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f4` is never used
+  --> src/main.rs:21:4
+   |
+21 | fn f4(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f5` is never used
+  --> src/main.rs:26:4
+   |
+26 | fn f5(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f6` is never used
+  --> src/main.rs:31:4
+   |
+31 | fn f6(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f7` is never used
+  --> src/main.rs:36:4
+   |
+36 | fn f7(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f8` is never used
+  --> src/main.rs:41:4
+   |
+41 | fn f8(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f9` is never used
+  --> src/main.rs:46:4
+   |
+46 | fn f9(a: i32) -> i32 {
+   |    ^^
+
+warning: function `f10` is never used
+  --> src/main.rs:51:4
+   |
+51 | fn f10(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f11` is never used
+  --> src/main.rs:56:4
+   |
+56 | fn f11(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f12` is never used
+  --> src/main.rs:61:4
+   |
+61 | fn f12(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f13` is never used
+  --> src/main.rs:66:4
+   |
+66 | fn f13(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f14` is never used
+  --> src/main.rs:71:4
+   |
+71 | fn f14(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f15` is never used
+  --> src/main.rs:76:4
+   |
+76 | fn f15(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f16` is never used
+  --> src/main.rs:81:4
+   |
+81 | fn f16(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f17` is never used
+  --> src/main.rs:86:4
+   |
+86 | fn f17(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f18` is never used
+  --> src/main.rs:91:4
+   |
+91 | fn f18(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f19` is never used
+  --> src/main.rs:96:4
+   |
+96 | fn f19(a: i32) -> i32 {
+   |    ^^^
+
+warning: function `f20` is never used
+   --> src/main.rs:101:4
+    |
+101 | fn f20(a: i32) -> i32 {
+    |    ^^^
+
+warning: function `f21` is never used
+   --> src/main.rs:106:4
+    |
+106 | fn f21(a: i32) -> i32 {
+    |    ^^^
+
+warning: function `f22` is never used
+   --> src/main.rs:111:4
+    |
+111 | fn f22(a: i32) -> i32 {
+    |    ^^^
+
+warning: function `f23` is never used
+   --> src/main.rs:116:4
+    |
+116 | fn f23(a: i32) -> i32 {
+    |    ^^^
+
+warning: function `f24` is never used
+   --> src/main.rs:121:4
+    |
+121 | fn f24(a: i32) -> i32 {
+    |    ^^^
+
+warning: `rs` (bin "rs") generated 99 warnings (run `cargo fix --bin "rs" -p rs` to apply 75 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.01s
