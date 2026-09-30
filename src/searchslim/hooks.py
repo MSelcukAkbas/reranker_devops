@@ -32,7 +32,7 @@ original tool call runs unchanged. `SEARCHSLIM=off` in the environment
 disables the hook. Search output is regrouped losslessly by default
 (lossless.py): above `SEARCHSLIM_TRIGGER_TOKENS` (default 1500) and only when
 that saves 20%; matches are dropped only above `SEARCHSLIM_MAX_TOKENS`
-(default 7000). `SEARCHSLIM_VIEW=coverage|notes` restores the 0.4 / 0.3
+(default 4800). `SEARCHSLIM_VIEW=coverage|notes` restores the 0.4 / 0.3
 behaviour (trigger 6000, budget 2000).
 `SEARCHSLIM_RERANK=lexical|claude|off` picks the ranking (default lexical), with
 the intent taken from the session transcript.

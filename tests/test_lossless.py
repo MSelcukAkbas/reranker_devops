@@ -183,7 +183,7 @@ def test_env_listing_is_projected_when_still_too_big():
     out = slim(raw, config=config, pattern="process.env")
     assert out.stats["level"] == "L2" and out.stats["recognizer"] == "env"
     assert out.stats["matches_kept"] == out.stats["matches_total"] == 440
-    assert "KEY_1, KEY_10, KEY_11, KEY_2" in out.text.splitlines()[0]  # every name, once
+    assert "KEY_1, KEY_10, KEY_11, KEY_2" in out.text.splitlines()[-1]  # every name, once, at the end
     assert "  apps/backend/src/modules/m39/config/settings.ts  KEY_1:1 KEY_2:2" in out.text
     # Without an env-like pattern there is no projection: L1 over budget (within 3x), every line kept.
     out = slim(raw, config=config, pattern="settings")

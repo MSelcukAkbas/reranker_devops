@@ -354,7 +354,7 @@ def project(result: SearchResult, config: Config, pattern: str) -> Reduced | Non
     for name in names:
         locs = " ".join(f"{p}:{','.join(map(str, ns))}" if p else ",".join(map(str, ns)) for p, ns in places[name].items())
         by_name.append(f"{INDENT}{name}  {locs}")
-    by_file = [f"{lead}: {', '.join(names)}. Each file with name:line for its matches{tail}"]
+    by_file = [f"{lead}; each file with name:line for its matches, all names listed at the end{tail}"]
     per_file: OrderedDict[str, list[str]] = OrderedDict()
     for ln in matches:
         for name in named[(ln.path, ln.number)]:
@@ -371,7 +371,10 @@ def project(result: SearchResult, config: Config, pattern: str) -> Reduced | Non
     rows = min(by_name, by_file, key=lambda r: len("\n".join(r)))
     rest_body = render_grouped(build_blocks(rest), max(config.max_line_chars, LINE_CHARS), False) if rest else ""
     head, rows = rows[0], rows[1:]
-    text = "\n".join(p for p in [*result.header, head, *rows, rest_body, *result.footer] if p)
+    # The name list goes last: past Claude Code's inline limit only the first
+    # ~2 KB of a result is shown, and that should be locations, not names.
+    names_line = f"{NOTE_PREFIX} all {len(names)} {rec.name} names: {', '.join(names)}" if rows is not by_name[1:] else ""
+    text = "\n".join(p for p in [*result.header, head, *rows, rest_body, names_line, *result.footer] if p)
     return Reduced(
         text=text,
         stats={
