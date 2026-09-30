@@ -39,7 +39,10 @@ the intent taken from the session transcript.
 
 Searches in one session share a memory of lines already shown (session.py), so
 an over-budget search does not re-send them. On `PreCompact` that memory is
-cleared, since compaction drops the earlier results from the agent's context.
+cleared, since compaction drops the earlier results from the agent's context
+(the content cache of file hashes stays). PostToolUse Edit/Write/MultiEdit/
+NotebookEdit invalidates the edited file's lines. A Grep result the hook lets
+through unchanged is recorded too, since it is exactly what the agent saw.
 """
 
 from __future__ import annotations
@@ -56,6 +59,9 @@ from .models import Kind
 from .rewrite import rewrite_command, rewrite_powershell, rewrite_test_command
 from .rules import DEFAULT_VIEW, NOTE_PREFIX, view_defaults, view_from_env, Config, estimate_tokens
 from .session import SessionStore, enabled as session_enabled
+
+# Tools that change a file: its lines shown earlier no longer count as shown.
+EDIT_TOOLS = {"Edit": "file_path", "Write": "file_path", "MultiEdit": "file_path", "NotebookEdit": "notebook_path"}
 
 RG_TIMEOUT_S = 20
 # Claude Code shows a Grep/Glob result inline up to this many characters (measured
@@ -101,12 +107,17 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         session_id = f"{session_id}.{event['agent_id']}"
     if event.get("hook_event_name") == "PreCompact":
         if session_id:
-            SessionStore(session_id).clear()
+            SessionStore(session_id).clear_visible()
         return None
     config = config or config_from_env()
     tool = event.get("tool_name")
     tool_input = event.get("tool_input") or {}
     cwd = event.get("cwd") or os.getcwd()
+    if tool in EDIT_TOOLS:
+        path = tool_input.get(EDIT_TOOLS[tool])
+        if event.get("hook_event_name") == "PostToolUse" and session_id and session_enabled() and isinstance(path, str) and path:
+            SessionStore(session_id).invalidate(os.path.join(cwd, path))
+        return None
 
     rerank = os.environ.get("SEARCHSLIM_RERANK", DEFAULT_RERANK).lower()
     rerank = rerank if rerank in ("lexical", "claude") else ""
@@ -171,6 +182,8 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         run_cwd = cwd
     small = config.trigger_tokens if config.view == "lossless" else max(config.max_tokens, config.trigger_tokens)
     if estimate_tokens(raw) <= small:
+        if use_session and kind is Kind.CONTENT and isinstance(response, dict):
+            _record_passthrough(SessionStore(session_id), raw, default_path, run_cwd)
         return None  # small enough: let the real tool answer
     scorer = query = None
     if rerank:
@@ -211,6 +224,14 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
             "permissionDecisionReason": f"{header}{DENY_NOTE}\n\n{reduced.text}",
         }
     }
+
+
+def _record_passthrough(session: SessionStore, raw: str, default_path: str, cwd: str) -> None:
+    """The tool's own result reaches the agent unchanged: its lines count as shown."""
+    from .parsers import parse, reliable
+
+    if reliable(parse(raw, kind=Kind.CONTENT, default_path=default_path)):
+        session.record_output(raw, default_path, cwd)
 
 
 def compact_enabled() -> bool:

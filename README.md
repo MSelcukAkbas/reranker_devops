@@ -151,8 +151,16 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   harcar. Aynı aramayı tekrarlamak böylece sonraki sayfayı getirir. Metni
   değişen satır yeni sayılır, küçük çıktılar yine aynen geçer. Paralel araç
   çağrıları kilitsiz ve Windows'ta da güvenli çalışır (her çağrı kendi
-  dosyasını atomik yazar). Claude Code bağlamı sıkıştırınca (`PreCompact`)
-  hafıza silinir; alt ajanların (`agent_id`) hafızası ayrıdır.
+  dosyasını atomik yazar). İki ayrı önbellek tutulur: dosya içeriği önbelleği
+  (dosya başına içerik hash'i; diskteki gerçeği anlatır, sıkıştırmada kalır) ve
+  modelin gördüğü kanıt önbelleği. Claude Code bağlamı sıkıştırınca
+  (`PreCompact`) yalnızca ikincisi silinir; Edit/Write/MultiEdit/NotebookEdit
+  o dosyanın satırlarını geçersiz kılar, dosya başka yoldan değişirse (Bash
+  `sed -i`, checkout) hash tutmadığı için onlar da düşer. Kalıcı dosyaya
+  yazılan büyük sonuçlardan yalnızca modelin gördüğü ~2 KB önizleme sayılır.
+  Kayıpsız görünüm hiçbir satırı "gösterildi" diye atlamaz (yalnızca son
+  seviyesi olan kapsama görünümü atlar). Alt ajanların (`agent_id`) hafızası
+  ayrıdır.
 - Hook bir hata alırsa sessizce çekilir, orijinal çağrı değişmeden çalışır.
 
 Ayarlar (ortam değişkeni):

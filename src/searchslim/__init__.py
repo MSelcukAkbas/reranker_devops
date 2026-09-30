@@ -48,7 +48,8 @@ def slim(
 
     With a `session` (see `session.SessionStore`), an over-budget result leaves
     out lines earlier searches already showed, referencing them in the note,
-    and the lines shown now are recorded. `cwd` resolves relative paths.
+    and the lines shown now are recorded (the lossless view only records: it
+    never leaves out a line for having been shown). `cwd` resolves relative paths.
     """
     config = config or Config()
     pattern = pattern or getattr(query, "pattern", "") or ""
@@ -85,13 +86,13 @@ def slim(
     if reduced is None:
         reduced = evidence(config)
     if session is not None:
-        from .session import attach_note, seen_note, shown_keys
+        from .session import attach_note, seen_note
 
         if shown:
             reduced = attach_note(reduced, seen_note(shown, result.default_path, config))
             reduced.stats["seen_lines_skipped"] = len(shown)
         if result.kind is Kind.CONTENT:
-            session.record(shown_keys(parse(reduced.text, kind=Kind.CONTENT, default_path=default_path), cwd))
+            session.record_output(reduced.text, default_path, cwd)
     return reduced
 
 
@@ -107,7 +108,5 @@ def _slim_lossless(raw, kind, config, default_path, pattern, session, cwd) -> Re
     if reduced is None:
         return None
     if session is not None and result.kind is Kind.CONTENT:
-        from .session import shown_keys
-
-        session.record(shown_keys(parse(reduced.text, kind=Kind.CONTENT, default_path=default_path), cwd))
+        session.record_output(reduced.text, default_path, cwd)
     return reduced

@@ -2,7 +2,7 @@ import json
 import subprocess
 import sys
 
-from searchslim.install import MARKER, hook_command, install, uninstall
+from searchslim.install import MARKER, POST_MATCHER, hook_command, install, uninstall
 
 
 def test_install_merges_and_is_idempotent(tmp_path):
@@ -37,7 +37,8 @@ def test_install_registers_post_tool_use_for_grep_and_glob(tmp_path):
     path = tmp_path / "settings.json"
     install(path)
     post = json.loads(path.read_text())["hooks"]["PostToolUse"]
-    assert post[0]["matcher"] == "Bash|PowerShell|Grep|Glob" and MARKER in post[0]["hooks"][0]["command"]
+    assert post[0]["matcher"] == POST_MATCHER and MARKER in post[0]["hooks"][0]["command"]
+    assert "Edit|Write" in POST_MATCHER
 
 
 def test_windows_command_parses_in_powershell_and_bash():
@@ -77,4 +78,16 @@ def test_reinstall_widens_an_old_post_tool_use_matcher(tmp_path):
     settings["hooks"]["PostToolUse"][0]["matcher"] = "Grep|Glob"  # written by 0.4 and earlier
     path.write_text(json.dumps(settings))
     assert install(path) is True
-    assert json.loads(path.read_text())["hooks"]["PostToolUse"][0]["matcher"] == "Bash|PowerShell|Grep|Glob"
+    assert json.loads(path.read_text())["hooks"]["PostToolUse"][0]["matcher"] == POST_MATCHER
+
+
+def test_reinstall_adds_edit_tools_to_a_0_6_post_tool_use_matcher(tmp_path):
+    path = tmp_path / "settings.json"
+    install(path)
+    settings = json.loads(path.read_text())
+    settings["hooks"]["PostToolUse"][0]["matcher"] = "Bash|PowerShell|Grep|Glob"  # 0.5 - 0.6
+    path.write_text(json.dumps(settings))
+    assert install(path) is True
+    hooks = json.loads(path.read_text())["hooks"]
+    assert hooks["PostToolUse"][0]["matcher"] == POST_MATCHER
+    assert hooks["PreToolUse"][0]["matcher"] == "Bash|PowerShell|Grep|Glob"
