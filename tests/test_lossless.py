@@ -249,3 +249,23 @@ def test_glob_hook_keeps_tool_truncated_flag(tmp_path):
 def test_lossless_content_stats():
     out = lossless_content(parse(flat(3, 4)), Config())
     assert out.stats["matches_total"] == 12 and out.stats["files_total"] == 3
+
+
+def test_hook_keeps_an_inline_result_ours_would_push_near_the_limit(monkeypatch):
+    import searchslim.hooks as hooks
+    from searchslim.rules import Reduced
+
+    raw = flat(200, 3)
+    raw = raw[: raw.rfind("\n", 0, 19900)]
+    event = {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Grep",
+        "cwd": ".",
+        "tool_input": {"pattern": "compute", "output_mode": "content"},
+        "tool_response": {"mode": "content", "content": raw, "numLines": raw.count("\n") + 1, "numFiles": 0, "filenames": []},
+    }
+    config = Config(view="lossless", max_tokens=4800, trigger_tokens=0)
+    monkeypatch.setattr(hooks, "slim", lambda *a, **k: Reduced(text="x" * 19600, stats={}))
+    assert handle(event, config) is None  # 19.6k chars is too close to the 20k inline limit
+    monkeypatch.setattr(hooks, "slim", lambda *a, **k: Reduced(text="x" * 12000, stats={}))
+    assert handle(event, config) is not None

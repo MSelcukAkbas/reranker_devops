@@ -58,6 +58,9 @@ from .rules import DEFAULT_VIEW, NOTE_PREFIX, view_defaults, view_from_env, Conf
 from .session import SessionStore, enabled as session_enabled
 
 RG_TIMEOUT_S = 20
+# Claude Code shows a Grep/Glob result inline up to this many characters (measured
+# live: 19,873 inline, 20,067 persisted with a ~2 KB preview).
+GREP_INLINE_CHARS = 20000
 # Lexical ranking kept more critical evidence than rules alone at every budget
 # on the benchmark set (e.g. 20/22 at 1200 tokens vs 16/22 at 2000), so it is on
 # by default. SEARCHSLIM_RERANK=off gives the plain rules mode.
@@ -182,6 +185,10 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     )
     if reduced.text == raw:
         return None  # nothing worth changing: the real tool's own result stands
+    if len(raw) <= GREP_INLINE_CHARS < len(reduced.text) + 500:
+        # The tool's own result is shown inline; ours would be (or nearly be)
+        # persisted with only a ~2 KB preview. Keep the tool's result.
+        return None
     header = GLOB_REASON_HEADER if tool == "Glob" else GREP_REASON_HEADER
     if default_path:
         header += f" All lines are from {default_path}."
