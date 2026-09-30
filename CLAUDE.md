@@ -73,7 +73,8 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/hooks.py`    hook: PreToolUse Bash/PowerShell, PostToolUse Grep/Glob/Bash/PowerShell, PreCompact
 - `src/searchslim/lossless.py` lossless view: grouped/factored output (L1), projection (L2), driver
 - `src/searchslim/coverage.py` coverage view: file index (lossless) + selected evidence (lossy)
-- `src/searchslim/compact.py`  test/build output compaction (Bash/PowerShell PostToolUse, `searchslim compact`)
+- `src/searchslim/compact.py`  test/build output compaction incl. repeated compiler/linter diagnostics
+                               (Bash/PowerShell PostToolUse, `searchslim run --compact`, `searchslim compact`)
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
 - `src/searchslim/session.py`  session memory: lines already shown in this agent session (lock-free store)
 - `src/searchslim/install.py`  `searchslim install [--user|DIR]` merges the hook into Claude Code settings
@@ -147,6 +148,25 @@ an agent that must decide from it whether to search again.
   error/fail/warn/exception/assert in a dropped section stay, with their test/suite header.
   go `=== RUN X` stays when log lines follow it. Kept lines are verbatim, in order; one trailing
   `[searchslim] not shown: ...` count.
+- Also dropped (0.6.7): coverage rows at 100% (istanbul table / pytest-cov, totals row kept), maven
+  surefire passing classes (`Running X` + `Tests run: ... Failures: 0 ... - in X`), gradle `> Task`
+  and vite/webpack asset lines (>= 10), and the body of a failure jest repeats verbatim under
+  `Summary of all failing tests` (its `FAIL` line stays).
+- Diagnostics (0.6.7, `_group_diagnostics`): records of tsc (plain `a.ts(3,5): error TS..` with its
+  indented chain, and `--pretty`), MSBuild/cl `a.cs(3,5): warning CS..`, gcc/clang/go/mypy/ruff
+  `a.c:3:5: warning: ..` (+ code frame, `note:` lines), rustc `warning: ..` + ` --> loc` block, ESLint
+  stylish rows under their file heading. A record whose message plus the rest of the record (quoted
+  source lines, gutters and column markers aside) repeats at >= 3 places stays whole the first time;
+  the others are dropped and listed after it (ESLint: after that file's list) as
+  `[searchslim] N more places with this same diagnostic (<msg>)[, under <common dir>]: path pos pos; path pos`,
+  only when that is shorter. Same place + same record again (MSBuild summary) is dropped as a
+  duplicate. A context line (gcc `In function`, go `# pkg`, ESLint file heading) left with no record
+  goes too. MSBuild heads take no continuation (the indented lines after them are progress/counts).
+  Invariant (tests): every diagnostic location of the raw output is a kept line or in a note.
+- PreToolUse also wraps build/type-check/lint commands (`rewrite.is_build_command`: tsc, vue-tsc, eslint,
+  npm run / pnpm / yarn / bun build|lint|typecheck|type-check|tsc|check|compile, next/vite build, webpack,
+  go build/vet, cargo build/check/clippy, dotnet build, mvn/gradle(w) goals, mypy, flake8, pyright,
+  ruff check; never with watch/dev/serve/start/preview) the same way as test commands.
 - PreToolUse also wraps plain test-runner commands (`rewrite.is_test_command`: pytest, python -m pytest,
   uv/poetry run, npx/pnpm/yarn jest|vitest|mocha, npm/yarn/pnpm test, go test, cargo test/nextest,
   dotnet test; not watch/--pdb) as `searchslim run --compact -- <cmd>` (Bash: optional `cd x &&`/`cd x;`,
@@ -160,6 +180,7 @@ an agent that must decide from it whether to search again.
 - Runs only above 2000 tokens (`SEARCHSLIM_COMPACT_TRIGGER_TOKENS`) and when it saves >= 20%;
   `SEARCHSLIM_COMPACT=off` disables. Default pytest and non-TTY jest/vitest output is already
   short; the gain is on verbose runs. Real runner outputs are in `tests/fixtures/compact/`.
+  Offline per-category numbers: `python3 benchmark/compact_bench.py` (benchmark/results/2026-09-30-compact.md).
 
 ## Session memory (session.py)
 

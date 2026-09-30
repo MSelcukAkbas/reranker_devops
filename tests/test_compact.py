@@ -67,8 +67,13 @@ def test_pytest_passing_output_keeps_its_test_header():
 
 
 def test_non_tty_jest_output_is_already_compact():
-    # Jest prints only failures and the summary when stdout is not a terminal.
-    assert compact(fixture("jest.txt"), trigger_tokens=0) is None
+    # Jest prints only failures and the summary when stdout is not a terminal;
+    # the one thing left to drop is the failure repeated under its summary.
+    raw = fixture("jest.txt")
+    out = compact(raw, trigger_tokens=0)
+    assert set(out.stats["dropped"]) == {"failure lines repeated in jest's summary"}
+    assert out.text.count("● suite 7 › broken") == 1 and out.text.count("FAIL ./s7.test.js") == 2
+    assert_subsequence(out.text, raw)
 
 
 def test_jest_verbose_pass_suites():
@@ -289,3 +294,260 @@ def test_hook_compacts_the_persisted_full_output(tmp_path):
     updated = handle(event)["hookSpecificOutput"]["updatedToolOutput"]
     assert "1 failed, 301 passed" in updated["stdout"] and "test_bad FAILED" in updated["stdout"]
     assert not any(k.startswith("persistedOutput") for k in updated)
+
+
+# --- build/lint diagnostics and other build output ----------------------------
+
+import random  # noqa: E402
+import re  # noqa: E402
+
+from searchslim.compact import ANSI_RE  # noqa: E402
+from searchslim.rewrite import is_build_command  # noqa: E402
+
+# Real outputs (tsc 6.0, ESLint 10, gcc 13, cargo 1.9x, go 1.24 vet, jest 30
+# --coverage), paths anonymized. dotnet-build.txt is hand-built in MSBuild's
+# format (no .NET SDK where the fixtures were made): warnings, then the same
+# warnings and error again under `Build FAILED.`.
+DIAGNOSTIC_FIXTURES = ["tsc.txt", "tsc-pretty.txt", "eslint.txt", "gcc.txt", "cargo-build.txt", "go-vet.txt", "dotnet-build.txt"]
+
+# Independent of compact.py: where each tool puts a diagnostic's location.
+_ONE_LINE = [
+    re.compile(r"^\s*(?P<path>[^\s(][^(]*?)(?P<pos>\(\d+,\d+\)): (?P<msg>(?:error|warning) .*)$"),  # tsc, MSBuild
+    re.compile(r"^(?P<path>\S+?):(?P<pos>\d+:\d+) - (?P<msg>error .*)$"),  # tsc --pretty
+    re.compile(r"^(?P<path>\S+?):(?P<pos>\d+:\d+): (?P<msg>(?:warning|error): .*)$"),  # gcc
+    re.compile(r"^(?P<path>\S+\.go):(?P<pos>\d+:\d+): (?P<msg>.*)$"),  # go vet
+]
+_ESLINT_ROW = re.compile(r"^\s+(\d+:\d+)\s+((?:error|warning)\s+\S.*)$")
+_RUST_HEAD = re.compile(r"^(?:error|warning)(?:\[\w+\])?: \S")
+_RUST_LOC = re.compile(r"^\s*--> (\S+?):(\d+:\d+)$")
+_NOTE = re.compile(
+    rf"^{re.escape(NOTE_PREFIX)} (?P<n>\d+) more places with this same diagnostic \((?P<msg>.*)\)(?:, under (?P<under>\S+))?: (?P<where>.*)$"
+)
+_POS = re.compile(r"^(\(\d+(,\d+)*\)|\d+(:\d+)?)$")
+
+
+def locations(text: str) -> set[tuple[str, str, str]]:
+    """(path, position, message) of every diagnostic the text shows or lists."""
+    found = set()
+    lines = [ANSI_RE.sub("", ln) for ln in text.splitlines()]
+    heading = None
+    for i, ln in enumerate(lines):
+        note = _NOTE.match(ln)
+        if note:
+            places = []
+            for entry in note["where"].split("; "):
+                words = entry.split(" ")
+                k = len(words)
+                while k > 1 and _POS.match(words[k - 1]):
+                    k -= 1
+                path = (note["under"] or "") + " ".join(words[:k])
+                places += [(path, pos, note["msg"]) for pos in words[k:]]
+            assert len(places) == int(note["n"]), ln
+            found.update(places)
+            continue
+        row = _ESLINT_ROW.match(ln)
+        if row and heading:
+            found.add((heading, row[1], re.sub(r"\s{2,}", "  ", row[2].strip())))
+            continue
+        heading = ln.strip() if ln.strip() and not ln[0].isspace() and i + 1 < len(lines) and _ESLINT_ROW.match(lines[i + 1]) else None
+        if _RUST_HEAD.match(ln) and i + 1 < len(lines) and _RUST_LOC.match(lines[i + 1]):
+            loc = _RUST_LOC.match(lines[i + 1])
+            found.add((loc[1], loc[2], ln))
+            continue
+        for pattern in _ONE_LINE:
+            m = pattern.match(ln)
+            if m:
+                found.add((m["path"], m["pos"], m["msg"]))
+                break
+    return found
+
+
+@pytest.mark.parametrize("name", DIAGNOSTIC_FIXTURES)
+def test_every_diagnostic_location_of_the_raw_output_is_kept_or_listed(name):
+    raw = fixture(name)
+    out = compact(raw, trigger_tokens=0)
+    assert out is not None and "diagnostics" in out.stats["tools"]
+    assert out.stats["tokens"] < out.stats["raw_tokens"] * 0.4, out.stats
+    expected = locations(raw)
+    assert len(expected) >= 30
+    assert locations(out.text) == expected
+    assert_subsequence(out.text, raw)
+    # Error-level diagnostics that are not repeated are never touched.
+    kept = set(out.text.splitlines())
+    for ln in raw.splitlines():
+        if "error" in ln and raw.count(ln.split(": ", 1)[-1]) == 1 and not ln.startswith(" "):
+            assert ln in kept, ln
+
+
+def test_diagnostic_invariant_holds_on_shuffled_mixed_output():
+    # Lines of every tool shuffled together: nothing crashes and no location is lost.
+    # (ESLint is left out: its rows mean something only under their file heading.)
+    pool = [ln for name in DIAGNOSTIC_FIXTURES if name != "eslint.txt" for ln in fixture(name).splitlines()]
+    for seed in range(20):
+        rng = random.Random(seed)
+        raw = "\n".join(rng.sample(pool, 600))
+        out = compact(raw, trigger_tokens=0)
+        text = out.text if out else raw
+        assert locations(text) == locations(raw), seed
+
+
+def test_first_diagnostic_of_a_group_stays_whole_with_its_code_frame():
+    out = compact(fixture("gcc.txt"), trigger_tokens=0).text.splitlines()
+    i = out.index("m0.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]")
+    assert out[i + 1] == "    7 |     if (a < u) return b;" and out[i + 2].strip() == "|           ^"
+    assert out[i + 3].startswith(f"{NOTE_PREFIX} 39 more places with this same diagnostic (warning: comparison")
+    assert "m0.c 14:11 21:11 28:11 35:11; m1.c 7:11" in out[i + 3]
+
+
+def test_rustc_errors_with_different_labels_never_group():
+    # Same header, different `expected X, found Y` labels: all three stay whole.
+    blocks = []
+    for n, (want, got) in enumerate([("i32", "&str"), ("u8", "String"), ("i32", "&str"), ("bool", "i32")] * 60):
+        blocks += ["error[E0308]: mismatched types", f" --> src/lib.rs:{n + 1}:9", "  |", f"{n + 1} |     let x: {want} = v;", f"  |            ---   ^ expected `{want}`, found `{got}`", ""]
+    raw = "\n".join(blocks)
+    out = compact(raw, trigger_tokens=0)
+    assert locations(out.text) == locations(raw)
+    notes = [ln for ln in out.text.splitlines() if "more places" in ln]
+    assert len(notes) == 3  # one group per distinct label, i32/&str merged
+    assert sum(ln.startswith("error[E0308]") for ln in out.text.splitlines()) == 3
+
+
+def test_tsc_chained_messages_are_part_of_the_diagnostic():
+    lines = []
+    for n in range(80):
+        lines += [f"src/a{n}.ts(3,5): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Opts'.",
+                  f"  Type 'string' has no properties in common with type '{'Opts' if n % 2 else 'Config'}'."]
+    out = compact("\n".join(lines), trigger_tokens=0)
+    notes = [ln for ln in out.text.splitlines() if "more places" in ln]
+    assert len(notes) == 2 and all("39 more places" in ln for ln in notes)
+    kept = out.text.splitlines()
+    assert "  Type 'string' has no properties in common with type 'Config'." in kept
+    assert "  Type 'string' has no properties in common with type 'Opts'." in kept
+
+
+def test_msbuild_summary_repeats_are_shown_once():
+    out = compact(fixture("dotnet-build.txt"), trigger_tokens=0)
+    lines = out.text.splitlines()
+    error = [ln for ln in lines if "error CS0246" in ln]
+    assert len(error) == 1
+    assert "Build FAILED." in lines and "    1 Error(s)" in lines and "Time Elapsed 00:00:04.87" in lines
+    assert out.stats["dropped"]["duplicate diagnostic lines"] >= 70
+    # Every CS8618 names a different property: none is grouped.
+    assert sum("CS8618" in ln for ln in lines) == 8
+
+
+def test_eslint_groups_go_after_the_first_files_list():
+    out = compact(fixture("eslint.txt"), trigger_tokens=0).text.splitlines()
+    first = out.index("/home/dev/web/src/api/m0.js")
+    notes = [i for i, ln in enumerate(out) if ln.startswith(NOTE_PREFIX) and "more places" in ln]
+    assert notes and all(ESLINT_ROW_OR_NOTE(ln) for ln in out[first + 1 : notes[-1] + 1])
+    assert ", under /home/dev/web/src/: " in out[notes[0]]
+    assert any(ln.startswith("✖ 593 problems (465 errors, 128 warnings)") for ln in out[-5:])
+
+
+def ESLINT_ROW_OR_NOTE(line: str) -> bool:
+    return bool(_ESLINT_ROW.match(line)) or line.startswith(NOTE_PREFIX)
+
+
+def test_messages_repeated_twice_are_left_alone():
+    raw = "\n".join(f"src/m{n}.ts({n + 1},1): error TS2304: Cannot find name 'x{n // 2}'." for n in range(400))
+    assert compact(raw, trigger_tokens=0) is None
+
+
+def test_search_output_is_not_mistaken_for_diagnostics():
+    # rg output of lines that look like compiler messages keeps its own shape
+    # unless a message truly repeats with a location: then it is only grouped.
+    grep = "\n".join(f"docs/errors.md:{n}:error: see section {n}" for n in range(1, 2000))
+    assert compact(grep, trigger_tokens=0) is None
+
+
+def test_jest_coverage_and_summary_repeat():
+    raw = fixture("jest-coverage.txt")
+    out = compact(raw, trigger_tokens=0)
+    lines = out.text.splitlines()
+    assert "  m1.cjs  |     100 |      100 |     100 |     100 |                   " not in lines
+    assert "  m0.cjs  |      75 |       50 |     100 |     100 | 2                 " in lines
+    assert any(ln.startswith("All files |") for ln in lines)
+    assert sum(ln == "    Expected: 3" for ln in lines) == 1  # summary copy dropped
+    assert lines.count("FAIL src/store/m3.test.js") == 2  # both headers stay
+    assert "Tests:       1 failed, 449 passed, 450 total" in lines
+    assert_subsequence(out.text, raw)
+
+
+def test_pytest_cov_full_rows():
+    rows = [f"src/pkg/mod{n}.py{' ' * 10}{10 + n}{' ' * 6}0{' ' * 4}100%" for n in range(300)]
+    raw = "\n".join(["Name                 Stmts   Miss  Cover", "-" * 40] + rows[:150] + ["src/pkg/bad.py          40     12    70%"] + rows[150:] + ["-" * 40, "TOTAL                 9999     12    99%"])
+    out = compact(raw, trigger_tokens=0)
+    assert "src/pkg/bad.py          40     12    70%" in out.text and "TOTAL                 9999     12    99%" in out.text
+    assert "mod7.py" not in out.text and out.stats["dropped"]["fully covered coverage rows"] == 300
+
+
+def test_maven_surefire_passing_classes():
+    lines = []
+    for n in range(120):
+        lines += [f"[INFO] Running com.shop.T{n}Test", f"[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.0{n % 10} s - in com.shop.T{n}Test"]
+    lines += ["[INFO] Running com.shop.BadTest", "[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.1 s <<< FAILURE! - in com.shop.BadTest",
+              "[ERROR] com.shop.BadTest.total  Time elapsed: 0.01 s  <<< FAILURE!", "org.opentest4j.AssertionFailedError: expected: <3> but was: <2>",
+              "[INFO] Results:", "[ERROR] Tests run: 482, Failures: 1, Errors: 0, Skipped: 0"]
+    out = compact("\n".join(lines), trigger_tokens=0)
+    assert "Running com.shop.T5Test" not in out.text
+    for text in ("[INFO] Running com.shop.BadTest", "<<< FAILURE! - in com.shop.BadTest", "AssertionFailedError", "Tests run: 482, Failures: 1"):
+        assert text in out.text
+
+
+def test_gradle_and_bundle_progress():
+    raw = "\n".join(
+        [f"> Task :app:compile{n} UP-TO-DATE" for n in range(40)]
+        + [f"dist/assets/chunk-{n:03d}-a1b2c3.js   {n}.21 kB │ gzip: 1.{n % 10}0 kB" for n in range(60)]
+        + ["> Task :app:test FAILED", "FAILURE: Build failed with an exception."]
+    )
+    out = compact(raw, trigger_tokens=0)
+    assert out.stats["dropped"] == {"gradle progress lines": 40, "bundle asset lines": 60}
+    assert "> Task :app:test FAILED" in out.text and "FAILURE: Build failed" in out.text
+
+
+@pytest.mark.parametrize(
+    "command",
+    ["tsc", "tsc -p . --noEmit", "npx tsc", "npx eslint src", "eslint .", "npm run build", "npm run lint", "pnpm build",
+     "yarn lint", "pnpm run typecheck", "npx next build", "npx vite build", "go build ./...", "go vet ./...",
+     "cargo build", "cargo clippy", "cargo check", "dotnet build", "mvn -q test", "./gradlew build", "mypy src",
+     "python -m mypy src", "ruff check .", "uv run mypy ."],
+)
+def test_build_commands_are_recognized(command):
+    assert is_build_command(command.split())
+
+
+@pytest.mark.parametrize(
+    "command",
+    ["tsc -w", "tsc --watch", "npm run dev", "npm start", "vite", "npx vite", "next dev", "go run .", "cargo run",
+     "dotnet run", "npm install", "yarn", "webpack serve", "ruff format", "npx prettier --write .", "go test ./...",
+     "mvn exec:java", "npm run build -- --watch"],
+)
+def test_other_commands_are_not_builds(command):
+    assert not is_build_command(command.split())
+
+
+def test_build_commands_are_wrapped():
+    assert rewrite_test_command("cd web && npx tsc --noEmit 2>&1", runner="S") == "cd web && S run --compact -- npx tsc --noEmit 2>&1"
+    assert rewrite_test_command("npm run build | tail -5", runner="S") is None
+    out = rewrite_powershell("Set-Location web; npm run build 2>&1", python="py")
+    assert out.endswith("; Set-Location web; & 'py' -m searchslim run --compact npm run build 2>&1")
+
+
+def test_run_compact_groups_a_failing_builds_diagnostics(tmp_path):
+    script = tmp_path / "build.py"
+    script.write_text(
+        "import sys\n"
+        "for n in range(300):\n"
+        "    print(f'src/m{n % 30}.ts({n + 1},5): error TS2304: Cannot find name \\'expect\\'.')\n"
+        "print('src/app.ts(9,1): error TS2322: Type \\'string\\' is not assignable to type \\'number\\'.')\n"
+        "print('Found 301 errors in 31 files.')\n"
+        "sys.exit(2)\n"
+    )
+    proc = run_compact(tmp_path, sys.executable, str(script))
+    out = proc.stdout.decode()
+    assert proc.returncode == 2
+    assert "src/app.ts(9,1): error TS2322" in out and "Found 301 errors in 31 files." in out
+    assert "299 more places with this same diagnostic (error TS2304: Cannot find name 'expect'.)" in out
+    raw = subprocess.run([sys.executable, str(script)], capture_output=True).stdout.decode()
+    assert locations(out) == locations(raw) and len(locations(raw)) == 301

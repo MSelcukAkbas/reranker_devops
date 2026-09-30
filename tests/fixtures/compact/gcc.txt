@@ -1,0 +1,680 @@
+m0.c: In function 'g0_0':
+m0.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m0.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m0.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m0.c: In function 'g0_1':
+m0.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m0.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m0.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m0.c: In function 'g0_2':
+m0.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m0.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m0.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m0.c: In function 'g0_3':
+m0.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m0.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m0.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m0.c: In function 'g0_4':
+m0.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m0.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m0.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m0.c: In function 'g0_0':
+m0.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m0.c: In function 'g0_1':
+m0.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m0.c: In function 'g0_2':
+m0.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m0.c: In function 'g0_3':
+m0.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m0.c: In function 'g0_4':
+m0.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^
+m1.c: In function 'g1_0':
+m1.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m1.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m1.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m1.c: In function 'g1_1':
+m1.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m1.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m1.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m1.c: In function 'g1_2':
+m1.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m1.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m1.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m1.c: In function 'g1_3':
+m1.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m1.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m1.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m1.c: In function 'g1_4':
+m1.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m1.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m1.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m1.c: In function 'g1_0':
+m1.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m1.c: In function 'g1_1':
+m1.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m1.c: In function 'g1_2':
+m1.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m1.c: In function 'g1_3':
+m1.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m1.c: In function 'g1_4':
+m1.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^
+m2.c: In function 'g2_0':
+m2.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m2.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m2.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m2.c: In function 'g2_1':
+m2.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m2.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m2.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m2.c: In function 'g2_2':
+m2.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m2.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m2.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m2.c: In function 'g2_3':
+m2.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m2.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m2.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m2.c: In function 'g2_4':
+m2.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m2.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m2.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m2.c: In function 'g2_0':
+m2.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m2.c: In function 'g2_1':
+m2.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m2.c: In function 'g2_2':
+m2.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m2.c: In function 'g2_3':
+m2.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m2.c: In function 'g2_4':
+m2.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^
+m3.c: In function 'g3_0':
+m3.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m3.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m3.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m3.c: In function 'g3_1':
+m3.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m3.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m3.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m3.c: In function 'g3_2':
+m3.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m3.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m3.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m3.c: In function 'g3_3':
+m3.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m3.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m3.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m3.c: In function 'g3_4':
+m3.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m3.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m3.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m3.c: In function 'g3_0':
+m3.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m3.c: In function 'g3_1':
+m3.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m3.c: In function 'g3_2':
+m3.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m3.c: In function 'g3_3':
+m3.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m3.c: In function 'g3_4':
+m3.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^
+m4.c: In function 'g4_0':
+m4.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m4.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m4.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m4.c: In function 'g4_1':
+m4.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m4.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m4.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m4.c: In function 'g4_2':
+m4.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m4.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m4.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m4.c: In function 'g4_3':
+m4.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m4.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m4.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m4.c: In function 'g4_4':
+m4.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m4.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m4.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m4.c: In function 'g4_0':
+m4.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m4.c: In function 'g4_1':
+m4.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m4.c: In function 'g4_2':
+m4.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m4.c: In function 'g4_3':
+m4.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m4.c: In function 'g4_4':
+m4.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^
+m5.c: In function 'g5_0':
+m5.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m5.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m5.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m5.c: In function 'g5_1':
+m5.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m5.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m5.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m5.c: In function 'g5_2':
+m5.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m5.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m5.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m5.c: In function 'g5_3':
+m5.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m5.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m5.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m5.c: In function 'g5_4':
+m5.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m5.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m5.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m5.c: In function 'g5_0':
+m5.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m5.c: In function 'g5_1':
+m5.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m5.c: In function 'g5_2':
+m5.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m5.c: In function 'g5_3':
+m5.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m5.c: In function 'g5_4':
+m5.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^
+m6.c: In function 'g6_0':
+m6.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m6.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m6.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m6.c: In function 'g6_1':
+m6.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m6.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m6.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m6.c: In function 'g6_2':
+m6.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m6.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m6.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m6.c: In function 'g6_3':
+m6.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m6.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m6.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m6.c: In function 'g6_4':
+m6.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m6.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m6.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m6.c: In function 'g6_0':
+m6.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m6.c: In function 'g6_1':
+m6.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m6.c: In function 'g6_2':
+m6.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m6.c: In function 'g6_3':
+m6.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m6.c: In function 'g6_4':
+m6.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^
+m7.c: In function 'g7_0':
+m7.c:7:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+    7 |     if (a < u) return b;
+      |           ^
+m7.c:8:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+    8 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m7.c:5:9: warning: unused variable 'unused' [-Wunused-variable]
+    5 |     int unused;
+      |         ^~~~~~
+m7.c: In function 'g7_1':
+m7.c:14:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   14 |     if (a < u) return b;
+      |           ^
+m7.c:15:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   15 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m7.c:12:9: warning: unused variable 'unused' [-Wunused-variable]
+   12 |     int unused;
+      |         ^~~~~~
+m7.c: In function 'g7_2':
+m7.c:21:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   21 |     if (a < u) return b;
+      |           ^
+m7.c:22:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   22 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m7.c:19:9: warning: unused variable 'unused' [-Wunused-variable]
+   19 |     int unused;
+      |         ^~~~~~
+m7.c: In function 'g7_3':
+m7.c:28:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   28 |     if (a < u) return b;
+      |           ^
+m7.c:29:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   29 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m7.c:26:9: warning: unused variable 'unused' [-Wunused-variable]
+   26 |     int unused;
+      |         ^~~~~~
+m7.c: In function 'g7_4':
+m7.c:35:11: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   35 |     if (a < u) return b;
+      |           ^
+m7.c:36:14: warning: format '%d' expects argument of type 'int', but argument 2 has type 'const char *' [-Wformat=]
+   36 |     printf("%d\n", s);
+      |             ~^     ~
+      |              |     |
+      |              int   const char *
+      |             %s
+m7.c:33:9: warning: unused variable 'unused' [-Wunused-variable]
+   33 |     int unused;
+      |         ^~~~~~
+m7.c: In function 'g7_0':
+m7.c:9:1: warning: control reaches end of non-void function [-Wreturn-type]
+    9 | }
+      | ^
+m7.c: In function 'g7_1':
+m7.c:16:1: warning: control reaches end of non-void function [-Wreturn-type]
+   16 | }
+      | ^
+m7.c: In function 'g7_2':
+m7.c:23:1: warning: control reaches end of non-void function [-Wreturn-type]
+   23 | }
+      | ^
+m7.c: In function 'g7_3':
+m7.c:30:1: warning: control reaches end of non-void function [-Wreturn-type]
+   30 | }
+      | ^
+m7.c: In function 'g7_4':
+m7.c:37:1: warning: control reaches end of non-void function [-Wreturn-type]
+   37 | }
+      | ^

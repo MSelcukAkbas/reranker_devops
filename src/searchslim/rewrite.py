@@ -163,8 +163,54 @@ def is_test_command(argv: list[str]) -> bool:
     return False
 
 
+# Build, type-check and lint commands: compact.py groups their repeated
+# diagnostics and drops their progress lines.
+_BUILD_TOOLS = {"tsc", "vue-tsc", "eslint", "webpack", "mypy", "flake8", "pyright"}
+_BUILD_SUBCOMMANDS = {
+    "next": {"build", "lint"},
+    "vite": {"build"},
+    "go": {"build", "vet"},
+    "cargo": {"build", "check", "clippy"},
+    "dotnet": {"build"},
+    "ruff": {"check"},
+}
+_BUILD_SCRIPTS = {"build", "lint", "typecheck", "type-check", "tsc", "check", "compile"}
+_JVM_BUILDS = {"mvn", "mvnw", "gradle", "gradlew"}
+_JVM_GOALS = {"compile", "test-compile", "test", "package", "verify", "install", "build", "check", "assemble"}
+# Servers and watchers: their output never ends, so it must stream.
+_BUILD_NO_WRAP = _TEST_NO_WRAP | {"serve", "start", "preview", "--serve"}
+
+
+def is_build_command(argv: list[str]) -> bool:
+    """True for a plain build, type-check or lint run (tsc, eslint, npm run build,
+    pnpm lint, next/vite build, go build/vet, cargo build/check/clippy, dotnet
+    build, mvn/gradle goals, mypy, ruff check ...)."""
+    if not argv or any(a in _BUILD_NO_WRAP for a in argv[1:]):
+        return False
+    name = re.sub(r"\.(exe|cmd|bat)$", "", Path(argv[0].replace("\\", "/")).name.lower())
+    rest = argv[1:]
+    words = [a for a in rest if not a.startswith("-")]
+    if name in _BUILD_TOOLS:
+        return True
+    if name in _BUILD_SUBCOMMANDS:
+        return words[:1] != [] and words[0] in _BUILD_SUBCOMMANDS[name] and rest[:1] == words[:1]
+    if name in _PYTHONS or re.fullmatch(r"python3(\.\d+)?", name):
+        return rest[:1] == ["-m"] and rest[1:2] in (["mypy"], ["flake8"], ["ruff"]) and is_build_command(rest[1:])
+    if name in ("uv", "poetry", "pipenv") and rest[:1] == ["run"]:
+        return is_build_command(rest[1:])
+    if name in _JVM_BUILDS:
+        return any(w.split(":")[-1] in _JVM_GOALS for w in words)
+    if name in _JS_EXEC or name == "npm":
+        if words[:2] and words[0] == "run":
+            return words[1:2] != [] and words[1] in _BUILD_SCRIPTS
+        if name != "npm" and words and (words[0] in _BUILD_TOOLS or words[0] in ("next", "vite")):
+            return is_build_command(rest[rest.index(words[0]):])
+        return name in ("pnpm", "yarn", "bun") and words[:1] != [] and words[0] in _BUILD_SCRIPTS
+    return False
+
+
 def rewrite_test_command(command: str, runner: str | None = None, check_path: bool = False) -> str | None:
-    """Wrap a plain test-runner command in `searchslim run --compact`, or return None.
+    """Wrap a plain test-runner or build command in `searchslim run --compact`, or return None.
 
     Allowed around it: a leading `cd x &&`, leading VAR=value assignments and
     `2>&1`/`2>/dev/null`; no pipes, other redirects, chaining or substitutions.
@@ -186,7 +232,7 @@ def rewrite_test_command(command: str, runner: str | None = None, check_path: bo
     envs = []
     while argv and _ENV_ASSIGN.match(argv[0]):
         envs.append(argv.pop(0))
-    if not is_test_command(argv):
+    if not (is_test_command(argv) or is_build_command(argv)):
         return None
     if check_path and shutil.which(argv[0]) is None:
         return None
@@ -526,7 +572,7 @@ def _ps_test_command(stripped: str, python: str | None, check_path: bool) -> str
     if not body or not _ps_unquoted(body)[1] or "|" in _ps_unquoted(body)[0]:
         return None
     argv = _ps_argv(body)
-    if not is_test_command(argv) or (check_path and shutil.which(argv[0]) is None):
+    if not (is_test_command(argv) or is_build_command(argv)) or (check_path and shutil.which(argv[0]) is None):
         return None
     runner = f"& {ps_quote((python or sys.executable).replace(chr(92), '/'))} -m searchslim"
     # The encoding assignment goes first: an assignment can't follow `&&`.

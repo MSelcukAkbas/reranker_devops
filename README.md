@@ -79,6 +79,20 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   Sebep: kalan testte (exit ≠ 0) Claude Code PostToolUse çalıştırmıyor, 30 KB
   üstü çıktıyı da hook'a kesik veriyor. Sarılmayan komutlarda PostToolUse,
   `persistedOutputPath` varsa tam çıktıyı o dosyadan okur.
+  0.6.7: derleme, tip denetimi ve lint çıktısı. `tsc`, `eslint`, `npm run
+  build/lint/typecheck`, `pnpm/yarn build`, `next/vite build`, `go build/vet`,
+  `cargo build/check/clippy`, `dotnet build`, `mvn`/`gradle`, `mypy`, `ruff
+  check` de aynı şekilde sarılır (watch/dev/serve modları hariç). Aynı tanı
+  (mesaj ve kaynak satırı dışındaki kod çerçevesi) 3+ yerde geçiyorsa ilki
+  olduğu gibi kalır, diğer yerler tek satırda listelenir:
+  `[searchslim] 83 more places with this same diagnostic (error TS2304: Cannot
+  find name 'expect'.): tests/a.test.ts (8,5) (11,5); tests/b.test.ts (5,5)`.
+  MSBuild'in özet bölümünde tekrar bastığı uyarılar bir kez gösterilir. %100
+  kapsanmış coverage satırları, maven surefire'ın geçen sınıfları, gradle
+  `> Task` ve vite/webpack asset satırları, jest'in "Summary of all failing
+  tests" altında aynen tekrarladığı hata gövdesi de atılır. Ham çıktıdaki her
+  tanı konumu ya satır olarak kalır ya da bir `more places` notunda yazar
+  (testlerle zorunlu). Kategori bazlı ölçüm: `python3 benchmark/compact_bench.py`.
 - **Kayıpsız görünüm (0.6, varsayılan):** arama çıktısı hiçbir eşleşme
   atılmadan küçültülür; yalnızca tekrar çıkarılır. Yol her dosya için bir kez
   yazılır (rg'nin kendi `--heading` biçimi), örtüşen `-C` pencereleri tek kez

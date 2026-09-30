@@ -1,0 +1,1292 @@
+[96msrc/mod0.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse0(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod0.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg0: { port: number } = { port: '800' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod0.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg0: { port: number } = { port: '800' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod0.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user0(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod0.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x0: string = 0;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod1.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse1(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod1.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg1: { port: number } = { port: '801' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod1.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg1: { port: number } = { port: '801' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod1.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user1(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod1.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x1: string = 1;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod10.ts[0m:[93m2[0m:[93m25[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse10(s) { return JSON.parse(s); }
+[7m [0m [91m                        ~[0m
+
+[96msrc/mod10.ts[0m:[93m3[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg10: { port: number } = { port: '8010' };
+[7m [0m [91m                                         ~~~~[0m
+
+  [96msrc/mod10.ts[0m:[93m3[0m:[93m23[0m
+    [7m3[0m export const cfg10: { port: number } = { port: '8010' };
+    [7m [0m [96m                      ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod10.ts[0m:[93m4[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user10(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                       ~~~~[0m
+
+[96msrc/mod10.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x10: string = 10;
+[7m [0m [91m    ~~~[0m
+
+[96msrc/mod11.ts[0m:[93m2[0m:[93m25[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse11(s) { return JSON.parse(s); }
+[7m [0m [91m                        ~[0m
+
+[96msrc/mod11.ts[0m:[93m3[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg11: { port: number } = { port: '8011' };
+[7m [0m [91m                                         ~~~~[0m
+
+  [96msrc/mod11.ts[0m:[93m3[0m:[93m23[0m
+    [7m3[0m export const cfg11: { port: number } = { port: '8011' };
+    [7m [0m [96m                      ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod11.ts[0m:[93m4[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user11(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                       ~~~~[0m
+
+[96msrc/mod11.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x11: string = 11;
+[7m [0m [91m    ~~~[0m
+
+[96msrc/mod12.ts[0m:[93m2[0m:[93m25[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse12(s) { return JSON.parse(s); }
+[7m [0m [91m                        ~[0m
+
+[96msrc/mod12.ts[0m:[93m3[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg12: { port: number } = { port: '8012' };
+[7m [0m [91m                                         ~~~~[0m
+
+  [96msrc/mod12.ts[0m:[93m3[0m:[93m23[0m
+    [7m3[0m export const cfg12: { port: number } = { port: '8012' };
+    [7m [0m [96m                      ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod12.ts[0m:[93m4[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user12(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                       ~~~~[0m
+
+[96msrc/mod12.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x12: string = 12;
+[7m [0m [91m    ~~~[0m
+
+[96msrc/mod13.ts[0m:[93m2[0m:[93m25[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse13(s) { return JSON.parse(s); }
+[7m [0m [91m                        ~[0m
+
+[96msrc/mod13.ts[0m:[93m3[0m:[93m42[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg13: { port: number } = { port: '8013' };
+[7m [0m [91m                                         ~~~~[0m
+
+  [96msrc/mod13.ts[0m:[93m3[0m:[93m23[0m
+    [7m3[0m export const cfg13: { port: number } = { port: '8013' };
+    [7m [0m [96m                      ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod13.ts[0m:[93m4[0m:[93m56[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user13(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                       ~~~~[0m
+
+[96msrc/mod13.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x13: string = 13;
+[7m [0m [91m    ~~~[0m
+
+[96msrc/mod2.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse2(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod2.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg2: { port: number } = { port: '802' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod2.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg2: { port: number } = { port: '802' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod2.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user2(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod2.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x2: string = 2;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod3.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse3(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod3.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg3: { port: number } = { port: '803' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod3.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg3: { port: number } = { port: '803' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod3.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user3(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod3.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x3: string = 3;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod4.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse4(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod4.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg4: { port: number } = { port: '804' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod4.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg4: { port: number } = { port: '804' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod4.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user4(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod4.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x4: string = 4;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod5.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse5(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod5.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg5: { port: number } = { port: '805' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod5.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg5: { port: number } = { port: '805' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod5.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user5(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod5.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x5: string = 5;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod6.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse6(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod6.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg6: { port: number } = { port: '806' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod6.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg6: { port: number } = { port: '806' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod6.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user6(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod6.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x6: string = 6;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod7.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse7(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod7.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg7: { port: number } = { port: '807' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod7.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg7: { port: number } = { port: '807' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod7.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user7(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod7.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x7: string = 7;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod8.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse8(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod8.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg8: { port: number } = { port: '808' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod8.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg8: { port: number } = { port: '808' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod8.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user8(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod8.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x8: string = 8;
+[7m [0m [91m    ~~[0m
+
+[96msrc/mod9.ts[0m:[93m2[0m:[93m24[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m2[0m export function parse9(s) { return JSON.parse(s); }
+[7m [0m [91m                       ~[0m
+
+[96msrc/mod9.ts[0m:[93m3[0m:[93m41[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
+
+[7m3[0m export const cfg9: { port: number } = { port: '809' };
+[7m [0m [91m                                        ~~~~[0m
+
+  [96msrc/mod9.ts[0m:[93m3[0m:[93m22[0m
+    [7m3[0m export const cfg9: { port: number } = { port: '809' };
+    [7m [0m [96m                     ~~~~[0m
+    The expected type comes from property 'port' which is declared here on type '{ port: number; }'
+
+[96msrc/mod9.ts[0m:[93m4[0m:[93m55[0m - [91merror[0m[90m TS2339: [0mProperty 'nmae' does not exist on type '{ name: string; }'.
+
+[7m4[0m export function user9(u: { name: string }) { return u.nmae; }
+[7m [0m [91m                                                      ~~~~[0m
+
+[96msrc/mod9.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
+
+[7m5[0m let x9: string = 9;
+[7m [0m [91m    ~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod0', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add0(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add0(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add0(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add0(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add0(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod0.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add0(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod1', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add1(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add1(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add1(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add1(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add1(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod1.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add1(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod10', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add10(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add10(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add10(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add10(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add10(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod10.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add10(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod11', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add11(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add11(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add11(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add11(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add11(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod11.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add11(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod12', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add12(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add12(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add12(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add12(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add12(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod12.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add12(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod13', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add13(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add13(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add13(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add13(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add13(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod13.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add13(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod2', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add2(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add2(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add2(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add2(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add2(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod2.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add2(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod3', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add3(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add3(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add3(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add3(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add3(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod3.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add3(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod4', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add4(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add4(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add4(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add4(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add4(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod4.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add4(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod5', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add5(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add5(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add5(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add5(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add5(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod5.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add5(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod6', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add6(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add6(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add6(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add6(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add6(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod6.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add6(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod7', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add7(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add7(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add7(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add7(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add7(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod7.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add7(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod8', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add8(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add8(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add8(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add8(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add8(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod8.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add8(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m3[0m:[93m1[0m - [91merror[0m[90m TS2593: [0mCannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m3[0m describe('mod9', () => {
+[7m [0m [91m~~~~~~~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m4[0m   it('adds case 0', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m5[0m     expect(add9(0, 1)).toBe(1);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m7[0m   it('adds case 1', () => {
+[7m [0m [91m  ~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m8[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m8[0m     expect(add9(1, 2)).toBe(3);
+[7m [0m [91m    ~~~~~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m10[0m   it('adds case 2', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m11[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m11[0m     expect(add9(2, 3)).toBe(5);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m13[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m13[0m   it('adds case 3', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m14[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m14[0m     expect(add9(3, 4)).toBe(7);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m16[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m16[0m   it('adds case 4', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m17[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m17[0m     expect(add9(4, 5)).toBe(9);
+[7m  [0m [91m    ~~~~~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m19[0m:[93m3[0m - [91merror[0m[90m TS2593: [0mCannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+
+[7m19[0m   it('adds case 5', () => {
+[7m  [0m [91m  ~~[0m
+
+[96mtests/mod9.test.ts[0m:[93m20[0m:[93m5[0m - [91merror[0m[90m TS2304: [0mCannot find name 'expect'.
+
+[7m20[0m     expect(add9(5, 6)).toBe(11);
+[7m  [0m [91m    ~~~~~~[0m
+
+
+Found 238 errors in 28 files.
+
+Errors  Files
+     4  src/mod0.ts[90m:2[0m
+     4  src/mod1.ts[90m:2[0m
+     4  src/mod10.ts[90m:2[0m
+     4  src/mod11.ts[90m:2[0m
+     4  src/mod12.ts[90m:2[0m
+     4  src/mod13.ts[90m:2[0m
+     4  src/mod2.ts[90m:2[0m
+     4  src/mod3.ts[90m:2[0m
+     4  src/mod4.ts[90m:2[0m
+     4  src/mod5.ts[90m:2[0m
+     4  src/mod6.ts[90m:2[0m
+     4  src/mod7.ts[90m:2[0m
+     4  src/mod8.ts[90m:2[0m
+     4  src/mod9.ts[90m:2[0m
+    13  tests/mod0.test.ts[90m:3[0m
+    13  tests/mod1.test.ts[90m:3[0m
+    13  tests/mod10.test.ts[90m:3[0m
+    13  tests/mod11.test.ts[90m:3[0m
+    13  tests/mod12.test.ts[90m:3[0m
+    13  tests/mod13.test.ts[90m:3[0m
+    13  tests/mod2.test.ts[90m:3[0m
+    13  tests/mod3.test.ts[90m:3[0m
+    13  tests/mod4.test.ts[90m:3[0m
+    13  tests/mod5.test.ts[90m:3[0m
+    13  tests/mod6.test.ts[90m:3[0m
+    13  tests/mod7.test.ts[90m:3[0m
+    13  tests/mod8.test.ts[90m:3[0m
+    13  tests/mod9.test.ts[90m:3[0m
