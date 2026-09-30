@@ -24,6 +24,9 @@ an agent that must decide from it whether to search again.
   truncation notices) are kept verbatim around the body.
 - Every emitted body line is a line from the raw input (only very long lines
   are clipped, with a `…[+N chars]` marker). Nothing is rewritten or invented.
+  The lossless view changes only the layout: parsed back, each (path, line, text)
+  is a raw line (text up to indentation for a line written once for many places);
+  only its L2 projection writes names instead of text, and says so.
 - Rules never reorder by guessed relevance. When over budget they drop in a
   fixed order: context lines, then matches beyond N per file (N is the largest
   cap that fits the budget, at least `max_matches_per_file`, or 1 for a
@@ -35,8 +38,20 @@ an agent that must decide from it whether to search again.
   directories, so input order (rg is unordered without `--sort path`) never
   hides where evidence went.
 - Small outputs pass through unchanged.
-- Coverage view (`coverage.py`, `Config.view="coverage"`; hook and CLI default, `SEARCHSLIM_VIEW=notes`
-  restores the note): when matches would be dropped, output leads with one `[searchslim]` summary line
+- Lossless view (`lossless.py`, `Config.view="lossless"`; hook and CLI default since 0.6,
+  max_tokens 7000, trigger 1500; `SEARCHSLIM_VIEW=coverage|notes` restores 0.4/0.3 with 2000/6000):
+  every match kept, only repetition removed. L1: dedupe, overlapping context merged, path once per file
+  (rg `--heading`: `path` line, `N:text`/`N-text`, blank line between files; a one-line file or a path
+  that would not parse back as a heading stays flat `path:N:text`), a match text (stripped, >= 16 chars)
+  on >= 3 lines written once as `[searchslim] N matches are this same line: <text>` + indented
+  `  path:n,m` rows (no-context outputs only); path lists grouped as `dir/` + indented names. Used only
+  when it saves >= 20% (else raw passes). Still over max_tokens: the same without context lines (lead
+  `[searchslim] all N matches in F files; context lines left out.`), then L2 projection (recognizers
+  env/require/import, only when the search pattern names that kind and >= 50% of match lines are read;
+  names with every location, by name or by file, whichever is shorter; other match lines kept as L1),
+  then L3 = the coverage view below. The parser reads headings, same-line groups and grouped path lists
+  back, so session memory and the benchmark see every line. Glob keeps its own `truncated` flag on L1.
+- Coverage view (`coverage.py`, `Config.view="coverage"`; 0.4 default, now the lossless view's L3): when matches would be dropped, output leads with one `[searchslim]` summary line
   and indented index rows (`  path  N matches  La-b  def Lx  (k expanded)`, directory rows when many
   files) covering every matching file, then the evidence body in the tool's format. `coverage.split_note`
   separates index from body. Library `Config()` keeps `view="notes"`, so rules tests are unchanged.
@@ -49,6 +64,7 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/rewrite.py`  wraps shell search commands (and filter pipelines) in `searchslim run --`;
                                `prepare` adds anchor flags at run time
 - `src/searchslim/hooks.py`    hook: PreToolUse Bash/PowerShell, PostToolUse Grep/Glob/Bash/PowerShell, PreCompact
+- `src/searchslim/lossless.py` lossless view: grouped/factored output (L1), projection (L2), driver
 - `src/searchslim/coverage.py` coverage view: file index (lossless) + selected evidence (lossy)
 - `src/searchslim/compact.py`  test/build output compaction (Bash/PowerShell PostToolUse, `searchslim compact`)
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
@@ -94,9 +110,11 @@ an agent that must decide from it whether to search again.
   Re-running install rewrites older install-written commands.
 - Any failure returns nothing, so the original call runs. `SEARCHSLIM=off` (env, or
   as a command prefix) disables it; `SEARCHSLIM_MAX_TOKENS` sets the budget.
-- Hook and CLI only reduce outputs above `Config.trigger_tokens` (default 6000,
-  `SEARCHSLIM_TRIGGER_TOKENS`, `--trigger-tokens`); below it output passes unchanged. Trimming
-  mid-sized results made agents search again for what was cut (benchmark/results/2026-09-29-trigger.md).
+- Hook and CLI only touch outputs above `Config.trigger_tokens` (lossless default 1500, coverage/notes
+  6000; `SEARCHSLIM_TRIGGER_TOKENS`, `--trigger-tokens`); below it output passes unchanged. Trimming
+  mid-sized results made agents search again for what was cut (benchmark/results/2026-09-29-trigger.md);
+  the lossless view cuts nothing below max_tokens, so its trigger is lower. A hook result equal to the
+  raw text returns nothing.
   Library `Config()` keeps trigger 0 (= max_tokens), so tests and the benchmark are unchanged.
 - The note is a neutral count (what is not shown, how many, where) with no advice: any
   wording about truncation or narrowing led agents to search again in live runs. Net gain
@@ -168,7 +186,7 @@ an agent that must decide from it whether to search again.
 - Hook: ranking is on by default (`SEARCHSLIM_RERANK=lexical|claude|off`); intent = last user message and subtask = last
   assistant text from the hook's `transcript_path`.
 
-Benchmark results live in `benchmark/results/` (latest: 2026-09-29, rules+model keeps 34/34 critical lines at the default budget vs 30/34 for rules).
+Benchmark results live in `benchmark/results/` (latest: 2026-09-30-lossless.md: hook defaults 76.6k -> 42.9k tokens, 36/36 critical lines kept; 0.4 coverage 48.5k).
 
 ## Commands
 

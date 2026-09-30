@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import statistics
 import subprocess
 import sys
@@ -31,6 +32,7 @@ sys.path.insert(0, str(ROOT.parent / "src"))
 
 from searchslim import Config, Kind, detect_kind, estimate_tokens, parse, slim  # noqa: E402
 from searchslim.coverage import split_note as _split_note  # noqa: E402
+from searchslim.rerank import pattern_and_paths  # noqa: E402
 
 TASKS = ROOT / "tasks.json"
 FIXTURES = ROOT / "fixtures"
@@ -156,7 +158,9 @@ def split_note(text: str) -> tuple[str, str]:
 def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
     """kept, recoverable or lost, as defined in docs/benchmark-design.md."""
     body, note = split_note(output)
-    parsed = parse(body, kind=kind, default_path=dpath)
+    # Content: parse the whole output, so lines the lossless view writes once
+    # for several places ("[searchslim] N matches are this same line") count.
+    parsed = parse(output if kind is Kind.CONTENT else body, kind=kind, default_path=dpath)
     path = ev["path"]
     # Single-file output has no filename; the parser leaves path "" for those lines.
     line_path = lambda ln: _norm(ln.path or dpath)  # noqa: E731
@@ -172,7 +176,7 @@ def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
     elif path in {_norm(c.path) for c in parsed.counts}:
         return "kept"
     body_paths = {line_path(ln) for ln in parsed.lines} | {_norm(p) for p in parsed.paths} | {_norm(c.path) for c in parsed.counts}
-    note_paths = {_norm(tok.rstrip(",.:;()")) for tok in note.split()}
+    note_paths = {_norm(re.sub(r":[\d,]+$", "", tok.rstrip(",.:;()"))) for tok in note.split()}
     if path in note_paths or path in body_paths:
         return "recoverable"
     parent = os.path.dirname(path)
@@ -184,7 +188,25 @@ def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
 
 
 def validate_subset(output: str, raw: str) -> list[str]:
-    """Body lines of a model's output that are not lines of the raw input."""
+    """Body lines of a model's output that are not lines of the raw input.
+
+    Lossless output (path once per file, repeated lines written once) is
+    compared line by line after parsing: path, number and text must match a
+    raw line (text up to indentation for a line written once for many places).
+    """
+    kind = detect_kind(raw)
+    if kind is Kind.CONTENT and detect_kind(split_note(output)[0]) is Kind.CONTENT:
+        raw_keys = {(_norm(ln.path), ln.number): ln.text for ln in parse(raw, kind=Kind.CONTENT).lines}
+        bad = []
+        for ln in parse(output, kind=Kind.CONTENT).lines:
+            text = raw_keys.get((_norm(ln.path), ln.number))
+            clipped = ln.text.split("…[+")[0]
+            if text is None or not (text == ln.text or text.strip() == ln.text or ("…[+" in ln.text and text.lstrip().startswith(clipped.lstrip()))):
+                bad.append(f"{ln.path}:{ln.number}:{ln.text}")
+        return bad
+    if kind is Kind.PATHS:
+        raw_paths = {_norm(p) for p in parse(raw, kind=Kind.PATHS).paths}
+        return [p for p in parse(split_note(output)[0], kind=Kind.PATHS).paths if _norm(p) not in raw_paths]
     raw_lines = set(raw.splitlines())
     raw_lines |= {_norm(ln) for ln in raw_lines}  # `./x` printed as `x` is the same path
     bad = []
@@ -339,7 +361,8 @@ def cmd_run(args: argparse.Namespace) -> int:
             raw = fixture.read_text(encoding="utf-8")
             resolve_lines(step, raw)
             per_mode["raw"].append(score(step, "raw", raw, raw, 0.0, count(raw)))
-            reduced, ms = timed(lambda: slim(raw, config=config, default_path=default_path(step)), args.repeat)
+            pattern = pattern_and_paths(step["cmd"])[0] if step.get("cmd") else ""
+            reduced, ms = timed(lambda: slim(raw, config=config, default_path=default_path(step), pattern=pattern), args.repeat)
             row = score(step, "rules", raw, reduced.text, ms, count(reduced.text))
             row.invalid_lines = len(validate_subset(reduced.text, raw))
             per_mode["rules"].append(row)
@@ -431,7 +454,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--tokenizer", choices=["auto", "api", "chars"], default="auto")
     p.add_argument("--repeat", type=int, default=20, help="runs per task for the rules latency median")
     p.add_argument("--model-cmd", help="reranker command for the rules+model mode")
-    p.add_argument("--view", choices=["notes", "coverage"], default="notes", help="over-budget layout (the hook defaults to coverage)")
+    p.add_argument("--view", choices=["notes", "coverage", "lossless"], default="notes", help="over-budget layout (the hook defaults to lossless, with --max-tokens 7000 --trigger-tokens 1500)")
     p.add_argument("--jsonl", help="also write per-task rows to this file")
 
     p = sub.add_parser("stability", help="count output changes across unsorted rg runs")

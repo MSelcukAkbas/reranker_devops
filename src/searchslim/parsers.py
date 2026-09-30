@@ -7,9 +7,12 @@ Supported content shapes:
   path                heading line, followed by `12:text` / `12-text` (rg --heading)
   12:text             no filename (single-file search); kept without a path,
                       `default_path` only names the file in the note
+  [searchslim] 3 matches are this same line: text
+    path:12,40        one line text at several places (lossless.py)
   rg --json           one JSON event per line
 
-Paths shape: one path per line (Glob, fd, find, rg -l, grep -l).
+Paths shape: one path per line (Glob, fd, find, rg -l, grep -l), or a `dir/`
+line with indented file names under it (lossless.py).
 Count shape: path:N (rg -c, grep -c).
 Lines shape: anything else (tree, ls -R, a filtered pipeline); only chosen when
 the caller knows the command, never auto-detected.
@@ -33,6 +36,10 @@ _CONTEXT = re.compile(r"^(?P<path>.+?)-(?P<num>\d+)-(?P<text>.*)$")
 _BARE = re.compile(r"^(?P<num>\d+)(?P<sep>[:-])(?P<text>.*)$")
 _COUNT = re.compile(r"^(?P<path>.+):(?P<count>\d+)$")
 _SEPARATOR = "--"
+# Lossless view (lossless.py): one line text found at several places, written once.
+SAME_LINE = "matches are this same line: "
+_GROUP_HEAD = re.compile(r"^\[searchslim\] \d+ " + re.escape(SAME_LINE) + r"(?P<text>.*)$")
+_GROUP_PLACE = re.compile(r"^  (?:(?P<path>.+):)?(?P<nums>\d+(?:,\d+)*)$")
 _FRAMING = re.compile(
     r"^(?:Found \d+ .+|No (?:files|matches) found\.?"
     r"|\(Results are truncated[^)]*\)\.?|\[Showing results with pagination[^\]]*\])$"
@@ -93,11 +100,23 @@ def _parse_body(raw: str, kind: Kind | None, default_path: str) -> SearchResult:
 
 
 def parse_paths(raw: str) -> SearchResult:
+    """One path per line; a `dir/` line followed by indented names (lossless.py) is expanded."""
     result = SearchResult(kind=Kind.PATHS)
-    for ln in raw.splitlines():
+    lines = raw.splitlines()
+    directory = None
+    for i, ln in enumerate(lines):
+        if directory is not None and ln.startswith("  ") and ln.strip():
+            result.paths.append(directory + ln.strip())
+            continue
+        directory = None
         ln = ln.strip()
-        if ln:
-            result.paths.append(ln)
+        if not ln:
+            continue
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        if ln.endswith(("/", "\\")) and nxt.startswith("  ") and nxt.strip():
+            directory = ln
+            continue
+        result.paths.append(ln)
     return result
 
 
@@ -119,6 +138,7 @@ def parse_content(raw: str) -> SearchResult:
     known_paths: set[str] = set()
     heading: str | None = None
     pending_context: list[str] = []  # context lines seen before their path is known
+    group_text: str | None = None  # inside a "same line" group
 
     raw_lines = raw.splitlines()
     # First pass: collect paths from match lines so context lines whose path
@@ -129,6 +149,16 @@ def parse_content(raw: str) -> SearchResult:
             known_paths.add(m["path"])
 
     for ln in raw_lines:
+        head = _GROUP_HEAD.match(ln)
+        if head:
+            group_text, heading = head["text"], None
+            continue
+        place = _GROUP_PLACE.match(ln) if group_text is not None else None
+        if place:
+            for n in place["nums"].split(","):
+                result.lines.append(Line(place["path"] or "", int(n), group_text, True))
+            continue
+        group_text = None
         if ln == _SEPARATOR:
             continue
         if not ln.strip():
@@ -157,7 +187,7 @@ def parse_content(raw: str) -> SearchResult:
             result.lines.append(Line("", int(bare["num"]), bare["text"], bare["sep"] == ":"))
             continue
 
-        if not bare and _looks_like_path(ln):
+        if not bare and looks_like_path(ln):
             heading = ln
             known_paths.add(ln)
             continue
@@ -205,12 +235,20 @@ def _split_context(ln: str, known_paths: set[str]) -> Line | None:
             if sep and num.isdigit():
                 return Line(ln[:i], int(num), text, False)
     m = _CONTEXT.match(ln)
-    if m and _looks_like_path(m["path"]):
+    if m and looks_like_path(m["path"]):
         return Line(m["path"], int(m["num"]), m["text"], False)
     return None
 
 
-def _looks_like_path(s: str) -> bool:
+def reads_as_heading(path: str) -> bool:
+    """Whether `path` alone on a line parses back as an rg --heading path."""
+    if not looks_like_path(path) or _MATCH.match(path) or _BARE.match(path) or _GROUP_HEAD.match(path):
+        return False
+    m = _CONTEXT.match(path)
+    return not (m and looks_like_path(m["path"]))
+
+
+def looks_like_path(s: str) -> bool:
     return (
         not s.startswith(" ")
         and not s.startswith("\t")

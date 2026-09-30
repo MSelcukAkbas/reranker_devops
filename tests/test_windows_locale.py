@@ -8,7 +8,7 @@ import sys
 
 import pytest
 
-from searchslim import cli
+from searchslim import Kind, cli, parse
 
 TURKISH = "// PUBLIC_PATHS kontrolü: DEĞİL Şu an 🎯"
 
@@ -37,7 +37,7 @@ needs_rg = pytest.mark.skipif(shutil.which("rg") is None, reason="rg not install
 
 @needs_rg
 def test_run_keeps_turkish_output_under_cp1254(repo):
-    for extra in ({}, {"SEARCHSLIM_MAX_TOKENS": "60"}):  # passthrough and reduced
+    for extra in ({}, {"SEARCHSLIM_TRIGGER_TOKENS": "0"}, {"SEARCHSLIM_VIEW": "notes", "SEARCHSLIM_TRIGGER_TOKENS": "0", "SEARCHSLIM_MAX_TOKENS": "200"}):  # passthrough, regrouped, reduced
         proc = _searchslim(["run", "--", "rg", "-n", "PUBLIC_PATHS", "services/gateway/src"], repo, **extra)
         assert proc.returncode == 0, proc.stderr
         out = proc.stdout.decode("utf-8")
@@ -66,9 +66,13 @@ def test_hook_handles_turkish_pattern(repo):
 def test_backslash_path_list_names_real_directories(tmp_path):
     paths = "".join(f"services\\svc{k}\\src\\f{i}.js\n" for k in range(4) for i in range(300))
     script = f"import sys; sys.stdout.buffer.write({paths.encode()!r})"
-    proc = _searchslim(["run", "--kind", "paths", "--", sys.executable, "-c", script], tmp_path)
+    proc = _searchslim(["run", "--kind", "paths", "--", sys.executable, "-c", script], tmp_path, SEARCHSLIM_VIEW="notes")
     note = proc.stdout.decode("utf-8").splitlines()[-1]
     assert "services/svc" in note and "./ (" not in note
+    # Lossless (default): grouped under each backslash directory, every path kept.
+    out = _searchslim(["run", "--kind", "paths", "--", sys.executable, "-c", script], tmp_path).stdout.decode("utf-8")
+    assert "services\\svc3\\src\\" in out.splitlines()
+    assert parse(out, kind=Kind.PATHS).paths == paths.split()
 
 
 def test_reduction_failure_prints_raw_output(monkeypatch, capfdbinary):

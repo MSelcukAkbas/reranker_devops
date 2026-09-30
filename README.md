@@ -79,9 +79,37 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   Sebep: kalan testte (exit ≠ 0) Claude Code PostToolUse çalıştırmıyor, 30 KB
   üstü çıktıyı da hook'a kesik veriyor. Sarılmayan komutlarda PostToolUse,
   `persistedOutputPath` varsa tam çıktıyı o dosyadan okur.
+- **Kayıpsız görünüm (0.6, varsayılan):** arama çıktısı hiçbir eşleşme
+  atılmadan küçültülür; yalnızca tekrar çıkarılır. Yol her dosya için bir kez
+  yazılır (rg'nin kendi `--heading` biçimi), örtüşen `-C` pencereleri tek kez
+  basılır, tekrarlanan satırlar atılır, çok yerde geçen aynı satır (ör. aynı
+  import) bir kez yazılıp yerleri listelenir. Dosya listeleri (Glob, fd, find)
+  dizin başlığı altında gruplanır:
+
+  ```
+  src/auth/token.ts
+  41:export function refreshToken() {
+  44:const token = ...
+
+  src/auth/logout.ts:20:import { revokeToken } from "./token"
+
+  [searchslim] 5 matches are this same line: const timeout = process.env.TIMEOUT;
+    src/a.ts:20,44
+    src/b.ts:18
+  ```
+
+  1500 token üstündeki çıktılara ve yalnızca en az %20 kazanç varsa uygulanır,
+  yoksa çıktı aynen geçer. Sonuç 7000 tokenı (`SEARCHSLIM_MAX_TOKENS`, Claude
+  Code'un Bash çıktısını kestiği ~30k karakterin hemen altı) hâlâ aşarsa sırayla:
+  bağlam satırları bırakılır (her eşleşme kalır); arama bilinen bir liste türüyse
+  (`process.env`/`os.environ`/`getenv`, `require`, `import`/`from`/`using`) her
+  eşleşen satır adı ve yeriyle yazılır (projeksiyon); o da sığmazsa aşağıdaki
+  kapsam görünümü ve sıralama devreye girer. Offline benchmark'ta varsayılanlarla
+  76.6k → 42.9k token, 36/36 kritik satır (`benchmark/results/2026-09-30-lossless.md`).
+  `SEARCHSLIM_VIEW=coverage` 0.4'e döner.
 - **Kurallar:** tekrarlar atılır, örtüşen satır aralıkları birleşir. Bütçe
   aşılırsa önce bağlam satırları, sonra fazla eşleşmeler, sonra dosyalar atılır.
-- **Kapsam görünümü (0.4, varsayılan):** bütçeyi aşan bir içerik araması
+- **Kapsam görünümü (0.4; 0.6'da yalnızca çok büyük çıktılar için):** bütçeyi aşan bir içerik araması
   "şu kadarı gösterilmedi" diye bitmez. Önce eşleşen her dosyanın dizini gelir
   (eşleşme sayısı, satır aralığı, ilk tanım satırı, kaçının açıldığı), sonra
   seçilen kanıt blokları aracın kendi biçiminde:
@@ -116,9 +144,9 @@ Ayarlar (ortam değişkeni):
 | değişken | etkisi |
 |---|---|
 | `SEARCHSLIM=off` | hook'u kapatır (komutun başına da yazılabilir) |
-| `SEARCHSLIM_MAX_TOKENS` | küçültülen çıktının bütçesi, varsayılan 2000 |
-| `SEARCHSLIM_TRIGGER_TOKENS` | yalnızca bundan büyük çıktılar küçültülür, varsayılan 6000 (orta boy sonuçlar kesilince ajan eksik kısmı yeniden arıyordu) |
-| `SEARCHSLIM_VIEW` | `coverage` (varsayılan: dosya dizini + seçilmiş kanıt) veya `notes` (0.3'teki sondaki not) |
+| `SEARCHSLIM_MAX_TOKENS` | bunun üstünde bir şey atılır; varsayılan 7000 (`coverage`/`notes` görünümünde 2000) |
+| `SEARCHSLIM_TRIGGER_TOKENS` | yalnızca bundan büyük çıktılara dokunulur; varsayılan 1500 (`coverage`/`notes` görünümünde 6000) |
+| `SEARCHSLIM_VIEW` | `lossless` (varsayılan, 0.6), `coverage` (0.4: dosya dizini + seçilmiş kanıt) veya `notes` (0.3'teki sondaki not) |
 | `SEARCHSLIM_RERANK` | `lexical` (varsayılan), `claude` veya `off` |
 | `SEARCHSLIM_GREP_MODE` | `post` (varsayılan) veya `deny` (Grep/Glob için eski PreToolUse davranışı) |
 | `SEARCHSLIM_SESSION=off` | oturum hafızasını kapatır |
@@ -237,6 +265,11 @@ yalnızca tarafsız bir sayım içerir (ne gösterilmedi, kaç tane, nerede).
 benchmark'ta 2000 bütçede kanıt kaybı değişmedi (rules+model 36/36,
 `benchmark/results/2026-09-30-coverage.md`). Ajanın tekrar arayıp aramadığı ancak
 canlı testte ölçülebilir; tekrar arama durursa eşik düşürülebilir.
+
+Canlı ölçüm (2026-09-30, 0.4.0, 2000 eşik, 4 görev × 3): toplam maliyet hook
+kapalıyla aynı ($3.035 → $3.041); "hepsini listele" (`process.env`) görevinde ajan
+dizinde açılmamış dosyaları yeniden aradı, %23 daha pahalı. 0.6 bu yüzden varsayılanı
+kayıpsız görünüme çevirdi: eşleşme atılmadığı için yeniden aranacak eksik de yok.
 
 ## Geliştirme
 

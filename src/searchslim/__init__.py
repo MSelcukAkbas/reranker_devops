@@ -1,5 +1,7 @@
 """searchslim: shrink Grep/Glob/rg/fd output without losing code evidence."""
 
+from dataclasses import replace
+
 from .models import Block, Kind, Line, PathCount, SearchResult
 from .parsers import detect_kind, parse
 from .rules import Config, Reduced, estimate_tokens, for_output, reduce
@@ -28,6 +30,7 @@ def slim(
     query=None,
     session=None,
     cwd: str = "",
+    pattern: str = "",
 ) -> Reduced:
     """Parse raw tool output and reduce it.
 
@@ -38,11 +41,23 @@ def slim(
     With `config.view == "coverage"` an over-budget content result leads with
     an index of every matching file, then the selected evidence (see `coverage`).
 
+    With `config.view == "lossless"` every match is kept and only repetition is
+    removed (see `lossless`); `pattern` (the search pattern, default the
+    query's) picks a projection for listings still over budget. Only past
+    that does it fall back to the coverage view.
+
     With a `session` (see `session.SessionStore`), an over-budget result leaves
     out lines earlier searches already showed, referencing them in the note,
     and the lines shown now are recorded. `cwd` resolves relative paths.
     """
     config = config or Config()
+    pattern = pattern or getattr(query, "pattern", "") or ""
+    if config.view == "lossless":
+        reduced = _slim_lossless(raw, kind, config, default_path, pattern, session, cwd)
+        if reduced is not None:
+            return reduced
+        # Still over max_tokens: the ranked coverage view (L3).
+        config = replace(config, view="coverage", trigger_tokens=0)
     config = for_output(config, raw)  # below the trigger, rules pass it through unchanged
     result = parse(raw, kind=kind, default_path=default_path)
     shown = []
@@ -63,7 +78,7 @@ def slim(
     if config.view == "coverage" and result.kind is Kind.CONTENT and estimate_tokens(raw) > config.max_tokens:
         from .coverage import coverage_view
 
-        reduced = coverage_view(full, evidence, config, pattern=getattr(query, "pattern", "") or "")
+        reduced = coverage_view(full, evidence, config, pattern=pattern)
     if reduced is None:
         reduced = evidence(config)
     if session is not None:
@@ -74,4 +89,22 @@ def slim(
             reduced.stats["seen_lines_skipped"] = len(shown)
         if result.kind is Kind.CONTENT:
             session.record(shown_keys(parse(reduced.text, kind=Kind.CONTENT, default_path=default_path), cwd))
+    return reduced
+
+
+def _slim_lossless(raw, kind, config, default_path, pattern, session, cwd) -> Reduced | None:
+    from .lossless import lossless_view, passthrough
+
+    result = parse(raw, kind=kind, default_path=default_path)
+    raw_tokens = estimate_tokens(raw)
+    if raw_tokens <= config.trigger_tokens:
+        reduced = passthrough(raw, raw_tokens)
+    else:
+        reduced = lossless_view(raw, result, config, pattern)
+    if reduced is None:
+        return None
+    if session is not None and result.kind is Kind.CONTENT:
+        from .session import shown_keys
+
+        session.record(shown_keys(parse(reduced.text, kind=Kind.CONTENT, default_path=default_path), cwd))
     return reduced
