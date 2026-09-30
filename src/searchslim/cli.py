@@ -67,7 +67,7 @@ def _add_common(p: argparse.ArgumentParser) -> None:
         "--max-tokens",
         type=int,
         default=None,
-        help="budget: above it matches are dropped (default: $SEARCHSLIM_MAX_TOKENS, else 7000 for lossless, 2000 otherwise)",
+        help="budget: above it matches are dropped (default: $SEARCHSLIM_MAX_TOKENS, else 4800 for lossless, 2000 otherwise)",
     )
     p.add_argument(
         "--trigger-tokens",

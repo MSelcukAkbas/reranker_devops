@@ -22,10 +22,11 @@ DEFAULT_TRIGGER_TOKENS = 6000
 DEFAULT_VIEW = "lossless"
 VIEWS = ("lossless", "coverage", "notes")
 # Lossless view (lossless.py) in the hook and CLI: outputs above LOSSLESS_TRIGGER_TOKENS
-# are regrouped without dropping anything; only past LOSSLESS_MAX_TOKENS (just under
-# the ~30k chars where Claude Code itself cuts Bash output) does anything get dropped.
+# are regrouped without dropping anything; only past LOSSLESS_MAX_TOKENS does anything
+# get dropped. 4800 tokens (~19k chars) keeps results under Claude Code's inline limit
+# (~20k chars for Grep, 30k for Bash); above it the model sees a ~2 KB preview only.
 LOSSLESS_TRIGGER_TOKENS = 1500
-LOSSLESS_MAX_TOKENS = 7000
+LOSSLESS_MAX_TOKENS = 4800
 # The note is a neutral count of what is not shown, with no advice: in live
 # runs any wording about truncation or narrowing ("see them", "only if you
 # need") led agents to search again for the rest, costing more than it saved.

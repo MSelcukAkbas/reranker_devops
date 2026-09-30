@@ -101,12 +101,15 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   0.6.1: aynı dizindeki dosyalar bir `dizin/` satırının altında girintili yazılır;
   satır numarası olmayan çıktı (Grep `-n: false`) artık hiç değiştirilmeden geçer
   (0.6.0'da bu biçim yanlış ayrıştırılıp satır kaybediyordu).
-  0.6.2: hiçbir kayıpsız biçim 7000 tokena sığmasa da en küçüğü 21000 tokena
+  0.6.2: hiçbir kayıpsız biçim bütçeye sığmasa da en küçüğü bütçenin 3 katına
   kadar kullanılır (her eşleşmenin yeri korunur); sıralamalı görünüm yalnızca
-  bunun da üstünde devreye girer.
+  bunun da üstünde devreye girer. 0.6.3: bütçe 4800 token (~19k karakter), çünkü
+  Claude Code ~20k karakterden büyük Grep sonucunu dosyaya yazıp modele yalnızca
+  ~2 KB önizleme gösteriyor; projeksiyonda ad listesi sona alındı ki önizlemede
+  yerler görünsün.
   1500 token üstündeki çıktılara ve yalnızca en az %20 kazanç varsa uygulanır,
-  yoksa çıktı aynen geçer. Sonuç 7000 tokenı (`SEARCHSLIM_MAX_TOKENS`, Claude
-  Code'un Bash çıktısını kestiği ~30k karakterin hemen altı) hâlâ aşarsa sırayla:
+  yoksa çıktı aynen geçer. Sonuç 4800 tokenı (`SEARCHSLIM_MAX_TOKENS`, Claude
+  Code'un Grep sonucunu satır içinde gösterdiği ~20k karakterin altı) hâlâ aşarsa sırayla:
   bağlam satırları bırakılır (her eşleşme kalır); arama bilinen bir liste türüyse
   (`process.env`/`os.environ`/`getenv`, `require`, `import`/`from`/`using`) her
   eşleşen satır adı ve yeriyle yazılır (projeksiyon); o da sığmazsa aşağıdaki
@@ -150,7 +153,7 @@ Ayarlar (ortam değişkeni):
 | değişken | etkisi |
 |---|---|
 | `SEARCHSLIM=off` | hook'u kapatır (komutun başına da yazılabilir) |
-| `SEARCHSLIM_MAX_TOKENS` | bunun üstünde bir şey atılır; varsayılan 7000 (`coverage`/`notes` görünümünde 2000) |
+| `SEARCHSLIM_MAX_TOKENS` | bunun üstünde bir şey atılır; varsayılan 4800 (`coverage`/`notes` görünümünde 2000) |
 | `SEARCHSLIM_TRIGGER_TOKENS` | yalnızca bundan büyük çıktılara dokunulur; varsayılan 1500 (`coverage`/`notes` görünümünde 6000) |
 | `SEARCHSLIM_VIEW` | `lossless` (varsayılan, 0.6), `coverage` (0.4: dosya dizini + seçilmiş kanıt) veya `notes` (0.3'teki sondaki not) |
 | `SEARCHSLIM_RERANK` | `lexical` (varsayılan), `claude` veya `off` |
