@@ -51,8 +51,9 @@ an agent that must decide from it whether to search again.
   `[searchslim] all N matches in F files; context lines left out.`), then L2 projection (recognizers
   env/require/import, only when the search pattern names that kind and >= 50% of match lines are read;
   names with every location, by name or by file (dir-grouped), whichever is shorter; other match lines
-  kept as L1; if that is still too big, L2-summary: each name with match/file counts and directories),
-  then L3 = the coverage view below. Output the parser cannot account for (`parsers.reliable`: >5%
+  kept as L1). If none fits max_tokens, the smallest of these (every match location kept) is used up to
+  3x max_tokens (`EMERGENCY_FACTOR`, stats `over_budget`); only past that L3 = the coverage view below.
+  (0.6.1 had a per-name summary here; live it dropped whole services behind "+N other dirs", removed.) Output the parser cannot account for (`parsers.reliable`: >5%
   unparsed lines, context lines without any match, or `path:text` lines taken as paths, e.g. Grep
   `-n false`) passes through raw in every view: in 0.6.0 such output lost 884 of 887 lines. The parser reads headings, same-line groups and grouped path lists
   back, so session memory and the benchmark see every line. Glob keeps its own `truncated` flag on L1.

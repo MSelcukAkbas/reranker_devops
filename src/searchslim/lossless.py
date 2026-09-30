@@ -36,8 +36,8 @@ Three levels, tried in order (`slim` with `Config.view == "lossless"`):
       match still has a place. Lines the recognizer does not read are kept as
       L1 lines.
 
-  L3  the ranked coverage view (coverage.py): only when L2 does not apply or
-      does not fit.
+  L3  the ranked coverage view (coverage.py): only when nothing that keeps
+      every match fits within EMERGENCY_FACTOR x max_tokens.
 
 Paths (Glob, fd, find, rg -l) get the L1 treatment too: files of the same
 directory under one `dir/` line, names indented below it.
@@ -51,8 +51,10 @@ from dataclasses import dataclass, replace
 
 from .models import Block, Kind, Line, SearchResult
 from .parsers import SAME_LINE, reads_as_heading
-from .rules import NOTE_PREFIX, Config, Reduced, _clip, build_blocks, dedupe_lines, estimate_tokens, format_dirs, rollup_dirs
+from .rules import NOTE_PREFIX, Config, Reduced, _clip, build_blocks, dedupe_lines, estimate_tokens
 
+# Past max_tokens, a result keeping every match is still used up to this many times max_tokens.
+EMERGENCY_FACTOR = 3
 # L1 is used only if it is at least this much smaller than the raw output.
 MIN_SAVING = 0.2
 # A match line is factored out once its text appears on this many lines ...
@@ -368,17 +370,6 @@ def project(result: SearchResult, config: Config, pattern: str) -> Reduced | Non
             by_file += [f"{INDENT}{p or '(file)'}  {' '.join(per_file[p])}" for p in paths]
     rows = min(by_name, by_file, key=lambda r: len("\n".join(r)))
     rest_body = render_grouped(build_blocks(rest), max(config.max_line_chars, LINE_CHARS), False) if rest else ""
-    if estimate_tokens("\n".join([*rows, rest_body])) > config.max_tokens:
-        # Still too big: each name with its counts and where, by directory.
-        rows = [f"{lead}; each name with its match and file count and directories (not every line){tail}"]
-        for name in names:
-            per_path = places[name]
-            m = sum(len(v) for v in per_path.values())
-            where = format_dirs(rollup_dirs([(p, len(v)) for p, v in per_path.items()], 3))
-            rows.append(f"{INDENT}{name}  {m} in {len(per_path)} file{'s' if len(per_path) != 1 else ''}: {where}")
-        summary = True
-    else:
-        summary = False
     head, rows = rows[0], rows[1:]
     text = "\n".join(p for p in [*result.header, head, *rows, rest_body, *result.footer] if p)
     return Reduced(
@@ -386,10 +377,10 @@ def project(result: SearchResult, config: Config, pattern: str) -> Reduced | Non
         stats={
             "kind": "content",
             "view": "lossless",
-            "level": "L2-summary" if summary else "L2",
+            "level": "L2",
             "recognizer": rec.name,
             "matches_total": len(matches),
-            "matches_kept": len(rest) if summary else len(matches),
+            "matches_kept": len(matches),
             "projected_lines": hits,
             "names": len(places),
             "files_total": n_files,
@@ -401,7 +392,10 @@ def project(result: SearchResult, config: Config, pattern: str) -> Reduced | Non
 
 
 def lossless_view(raw: str, result: SearchResult, config: Config, pattern: str = "") -> Reduced | None:
-    """L1, else L2, for an output above the trigger; None means fall back to L3 (ranked coverage).
+    """L1, else L1 without context, else L2, for an output above the trigger.
+
+    If none fits max_tokens, the smallest of them within EMERGENCY_FACTOR x
+    max_tokens; None means fall back to L3 (ranked coverage).
 
     Returns the raw output itself when L1 would not save `MIN_SAVING` and the
     raw output is within `max_tokens`.
@@ -417,8 +411,9 @@ def lossless_view(raw: str, result: SearchResult, config: Config, pattern: str =
     saves = l1_tokens <= (1 - MIN_SAVING) * raw_tokens
     if raw_tokens <= config.max_tokens and not saves:
         return passthrough(raw, raw_tokens, l1_tokens)
+    candidates = [(l1_tokens, l1)]
+    l1.stats.update(raw_tokens=raw_tokens, tokens=l1_tokens)
     if l1_tokens <= config.max_tokens:
-        l1.stats.update(raw_tokens=raw_tokens, tokens=l1_tokens)
         return l1
     if any(not ln.is_match for ln in result.lines):
         # Every match, without the -A/-B/-C context lines.
@@ -430,13 +425,24 @@ def lossless_view(raw: str, result: SearchResult, config: Config, pattern: str =
             " context lines left out."
         )
         text = _with_lead(l1m.text, result.header, note)
+        l1m = Reduced(text=text, stats={**l1m.stats, "level": "L1-matches", "raw_tokens": raw_tokens,
+                                        "tokens": estimate_tokens(text), "l1_tokens": l1_tokens})
         if estimate_tokens(text) <= config.max_tokens:
-            l1m.stats.update(level="L1-matches", raw_tokens=raw_tokens, tokens=estimate_tokens(text), l1_tokens=l1_tokens)
-            return Reduced(text=text, stats=l1m.stats)
+            return l1m
+        candidates.append((estimate_tokens(text), l1m))
     l2 = project(result, config, pattern)
-    if l2 is not None and estimate_tokens(l2.text) <= config.max_tokens:
+    if l2 is not None:
         l2.stats.update(raw_tokens=raw_tokens, tokens=estimate_tokens(l2.text), l1_tokens=l1_tokens)
-        return l2
+        if estimate_tokens(l2.text) <= config.max_tokens:
+            return l2
+        candidates.append((estimate_tokens(l2.text), l2))
+    # Nothing fits max_tokens. Up to EMERGENCY_FACTOR x max_tokens the smallest
+    # output that still has every match location beats dropping matches (the
+    # 0.6.1 per-name summary lost whole services); only past that, rank (L3).
+    tokens, best = min(candidates, key=lambda c: c[0])
+    if tokens <= EMERGENCY_FACTOR * config.max_tokens and tokens < raw_tokens:
+        best.stats["over_budget"] = True
+        return best
     return None
 
 

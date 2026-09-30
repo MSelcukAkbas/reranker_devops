@@ -101,6 +101,9 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   0.6.1: aynı dizindeki dosyalar bir `dizin/` satırının altında girintili yazılır;
   satır numarası olmayan çıktı (Grep `-n: false`) artık hiç değiştirilmeden geçer
   (0.6.0'da bu biçim yanlış ayrıştırılıp satır kaybediyordu).
+  0.6.2: hiçbir kayıpsız biçim 7000 tokena sığmasa da en küçüğü 21000 tokena
+  kadar kullanılır (her eşleşmenin yeri korunur); sıralamalı görünüm yalnızca
+  bunun da üstünde devreye girer.
   1500 token üstündeki çıktılara ve yalnızca en az %20 kazanç varsa uygulanır,
   yoksa çıktı aynen geçer. Sonuç 7000 tokenı (`SEARCHSLIM_MAX_TOKENS`, Claude
   Code'un Bash çıktısını kestiği ~30k karakterin hemen altı) hâlâ aşarsa sırayla:
