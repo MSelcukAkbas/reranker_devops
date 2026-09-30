@@ -119,6 +119,15 @@ an agent that must decide from it whether to search again.
   error/fail/warn/exception/assert in a dropped section stay, with their test/suite header.
   go `=== RUN X` stays when log lines follow it. Kept lines are verbatim, in order; one trailing
   `[searchslim] not shown: ...` count.
+- PreToolUse also wraps plain test-runner commands (`rewrite.is_test_command`: pytest, python -m pytest,
+  uv/poetry run, npx/pnpm/yarn jest|vitest|mocha, npm/yarn/pnpm test, go test, cargo test/nextest,
+  dotnet test; not watch/--pdb) as `searchslim run --compact -- <cmd>` (Bash: optional `cd x &&`,
+  VAR=v prefixes, `2>&1`; PowerShell: optional trailing `2>&1`). `run --compact` captures both
+  streams, compacts, keeps the exit code. Needed because on exit != 0 Claude Code fires
+  PostToolUseFailure (only a middle-truncated `error` string, no tool_response), and over ~30 KB
+  hooks get a cut `stdout` (live Windows test, 0.5.0). PostToolUse still covers unwrapped commands:
+  when `tool_response.persistedOutputPath` is set it compacts that full file and drops the
+  `persistedOutput*` fields.
 - Runs only above 2000 tokens (`SEARCHSLIM_COMPACT_TRIGGER_TOKENS`) and when it saves >= 20%;
   `SEARCHSLIM_COMPACT=off` disables. Default pytest and non-TTY jest/vitest output is already
   short; the gain is on verbose runs. Real runner outputs are in `tests/fixtures/compact/`.

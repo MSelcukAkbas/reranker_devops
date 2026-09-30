@@ -50,7 +50,7 @@ from pathlib import Path
 
 from . import slim
 from .models import Kind
-from .rewrite import rewrite_command, rewrite_powershell
+from .rewrite import rewrite_command, rewrite_powershell, rewrite_test_command
 from .rules import DEFAULT_TRIGGER_TOKENS, DEFAULT_VIEW, NOTE_PREFIX, view_from_env, Config, estimate_tokens
 from .session import SessionStore, enabled as session_enabled
 
@@ -124,8 +124,11 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         if tool == "PowerShell":
             new_command = rewrite_powershell(tool_input.get("command", ""), run_args=run_args, check_path=True)
         else:
-            new_command = rewrite_command(tool_input.get("command", ""), run_args=run_args, check_path=True)
-        if not new_command:
+            command = tool_input.get("command", "")
+            new_command = rewrite_command(command, run_args=run_args, check_path=True)
+            if not new_command and compact_enabled():
+                new_command = rewrite_test_command(command, check_path=True)
+        if not new_command or (" run --compact " in new_command and not compact_enabled()):
             return None
         return {
             "hookSpecificOutput": {
@@ -196,10 +199,20 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     }
 
 
+def compact_enabled() -> bool:
+    return os.environ.get("SEARCHSLIM_COMPACT", "").lower() != "off"
+
+
 def compact_shell_output(response) -> dict | None:
-    """PostToolUse answer for a Bash/PowerShell result with test/build noise, else None."""
-    if os.environ.get("SEARCHSLIM_COMPACT", "").lower() == "off" or not isinstance(response, dict):
+    """PostToolUse answer for a Bash/PowerShell result with test/build noise, else None.
+
+    Over ~30 KB Claude Code hands hooks a cut `stdout` and writes the whole
+    output to `persistedOutputPath`; then the file is compacted instead, and the
+    persisted-output fields are dropped so the small result is shown as is.
+    """
+    if not compact_enabled() or not isinstance(response, dict):
         return None
+    response = _with_persisted_output(response)
     from .compact import DEFAULT_COMPACT_TRIGGER_TOKENS, compact
 
     value = os.environ.get("SEARCHSLIM_COMPACT_TRIGGER_TOKENS", "")
@@ -217,6 +230,19 @@ def compact_shell_output(response) -> dict | None:
     if not changed:
         return None
     return {"hookSpecificOutput": {"hookEventName": "PostToolUse", "updatedToolOutput": out}}
+
+
+def _with_persisted_output(response: dict) -> dict:
+    path = response.get("persistedOutputPath")
+    if not isinstance(path, str) or not path:
+        return response
+    try:
+        full = Path(path).read_bytes().decode("utf-8", errors="replace")
+    except OSError:
+        return response
+    out = {k: v for k, v in response.items() if not k.startswith("persistedOutput")}
+    out["stdout"] = full
+    return out
 
 
 def _response_text(tool: str, response: dict) -> str | None:

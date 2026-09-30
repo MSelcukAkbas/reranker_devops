@@ -191,3 +191,91 @@ def test_cli_compact():
     assert json.loads(proc.stderr.decode())["dropped"]
     small = subprocess.run([sys.executable, "-m", "searchslim", "compact"], input=b"1 passed\n", capture_output=True)
     assert small.stdout == b"1 passed\n"
+
+
+# --- wrapping test commands (PreToolUse) --------------------------------------
+
+from searchslim.rewrite import is_test_command, rewrite_powershell, rewrite_test_command  # noqa: E402
+
+
+@pytest.mark.parametrize(
+    "command",
+    ["pytest -v", "python -m pytest -q tests", "py.test", "uv run pytest -x", "npx jest", "npx vitest run",
+     "npm test", "npm run test", "yarn test", "pnpm test", "go test ./... -v", "cargo test", "cargo nextest run",
+     "dotnet test", "C:\\Python314\\python.exe -m pytest"],
+)
+def test_test_commands_are_recognized(command):
+    assert is_test_command(command.split())
+
+
+@pytest.mark.parametrize(
+    "command",
+    ["python script.py", "npx jest --watch", "vitest watch", "pytest --pdb", "npm install", "go build ./...",
+     "cargo build", "rg pytest", "echo pytest", "npm run lint"],
+)
+def test_other_commands_are_not(command):
+    assert not is_test_command(command.split())
+
+
+def test_rewrite_test_command_forms():
+    assert rewrite_test_command("pytest -v", runner="S") == "S run --compact -- pytest -v"
+    assert (
+        rewrite_test_command("cd app && CI=1 python -m pytest -q 2>&1", runner="S")
+        == "cd app && CI=1 S run --compact -- python -m pytest -q 2>&1"
+    )
+    for command in ("pytest -v | tail -20", "pytest > out.txt", "pytest; echo done", "pytest $(ls)", "SEARCHSLIM=off pytest"):
+        assert rewrite_test_command(command, runner="S") is None, command
+
+
+def test_rewrite_powershell_test_command():
+    out = rewrite_powershell("python -m pytest -v pyt 2>&1", python="C:\\Python314\\python.exe")
+    assert out.endswith("& 'C:/Python314/python.exe' -m searchslim run --compact python -m pytest -v pyt 2>&1")
+    assert rewrite_powershell("python -m pytest | Select-Object -Last 5", python="py") is None
+    assert rewrite_powershell("pytest $args", python="py") is None
+
+
+def test_hook_wraps_test_commands(monkeypatch):
+    event = {"hook_event_name": "PreToolUse", "tool_name": "Bash", "tool_input": {"command": f"{sys.executable} -m pytest -q"}}
+    command = handle(event)["hookSpecificOutput"]["updatedInput"]["command"]
+    assert " run --compact -- " in command
+    monkeypatch.setenv("SEARCHSLIM_COMPACT", "off")
+    assert handle(event) is None
+
+
+def run_compact(tmp_path, *args, env=None):
+    import os
+
+    root = Path(__file__).resolve().parent.parent / "src"
+    return subprocess.run(
+        [sys.executable, "-m", "searchslim", "run", "--compact", "--", *args],
+        cwd=tmp_path, capture_output=True, env={**os.environ, "PYTHONPATH": str(root), **(env or {})},
+    )
+
+
+def test_run_compact_keeps_a_failing_runs_exit_code_and_failure(tmp_path):
+    (tmp_path / "test_many.py").write_text(
+        "import pytest\n@pytest.mark.parametrize('i', range(300))\ndef test_ok(i):\n    assert i >= 0\n"
+        "def test_bad():\n    assert {'a': 1} == {'a': 2}\n"
+    )
+    proc = run_compact(tmp_path, sys.executable, "-m", "pytest", "-v", "-p", "no:cacheprovider")
+    out = proc.stdout.decode()
+    assert proc.returncode == 1
+    assert "test_many.py::test_bad FAILED" in out and "AssertionError" in out and "1 failed, 300 passed" in out
+    assert "PASSED" not in "\n".join(body(out)) and "300 passing/skipped test lines" in out
+
+
+def test_run_compact_passes_small_output_and_missing_commands(tmp_path):
+    proc = run_compact(tmp_path, sys.executable, "-c", "import sys; print('1 passed'); sys.exit(3)")
+    assert proc.returncode == 3 and proc.stdout.decode().strip() == "1 passed"
+    assert run_compact(tmp_path, "no-such-runner-xyz").returncode == 127
+
+
+def test_hook_compacts_the_persisted_full_output(tmp_path):
+    raw = fixture("pytest-v.txt")
+    saved = tmp_path / "out.txt"
+    saved.write_text(raw, encoding="utf-8")
+    event = shell_event(raw[:8000])  # Claude Code hands hooks a cut stdout over ~30 KB
+    event["tool_response"].update(persistedOutputPath=str(saved), persistedOutputSize=len(raw))
+    updated = handle(event)["hookSpecificOutput"]["updatedToolOutput"]
+    assert "1 failed, 301 passed" in updated["stdout"] and "test_bad FAILED" in updated["stdout"]
+    assert not any(k.startswith("persistedOutput") for k in updated)
