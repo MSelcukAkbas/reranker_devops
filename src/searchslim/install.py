@@ -1,7 +1,7 @@
 """`searchslim install`: add the hooks to a Claude Code settings file.
 
-PreToolUse (Bash, PowerShell) rewrites search commands, PostToolUse (Grep|Glob) replaces
-over-budget results, PreCompact clears the session's memory of lines already
+PreToolUse (Bash, PowerShell) rewrites search commands, PostToolUse replaces
+over-budget Grep/Glob results and compacts Bash/PowerShell test and build output, PreCompact clears the session's memory of lines already
 shown (see session.py). PreToolUse keeps Grep|Glob in its matcher so
 `SEARCHSLIM_GREP_MODE=deny` works without reinstalling.
 
@@ -74,7 +74,7 @@ def settings_path(project: str | None, user: bool) -> Path:
 
 
 # (event, matcher) pairs the hook is registered for.
-EVENTS = (("PreToolUse", MATCHER), ("PostToolUse", "Grep|Glob"), ("PreCompact", ""))
+EVENTS = (("PreToolUse", MATCHER), ("PostToolUse", MATCHER), ("PreCompact", ""))
 
 
 def _has_hook(entries: list) -> bool:
@@ -113,7 +113,7 @@ def install(path: Path) -> bool:
 
 def _is_ours_matcher(m: str) -> bool:
     # Only widen matchers an earlier install wrote, never a hand-edited one.
-    return m in ("Bash|Grep|Glob",)
+    return m in ("Bash|Grep|Glob", "Grep|Glob")
 
 
 def _is_installed_form(h: dict) -> bool:

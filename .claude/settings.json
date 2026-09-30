@@ -14,7 +14,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Grep|Glob",
+        "matcher": "Bash|PowerShell|Grep|Glob",
         "hooks": [
           {
             "type": "command",

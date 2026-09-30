@@ -48,8 +48,9 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/rules.py`    SearchResult -> reduced text + stats
 - `src/searchslim/rewrite.py`  wraps shell search commands (and filter pipelines) in `searchslim run --`;
                                `prepare` adds anchor flags at run time
-- `src/searchslim/hooks.py`    hook: PreToolUse Bash/PowerShell, PostToolUse Grep/Glob, PreCompact
+- `src/searchslim/hooks.py`    hook: PreToolUse Bash/PowerShell, PostToolUse Grep/Glob/Bash/PowerShell, PreCompact
 - `src/searchslim/coverage.py` coverage view: file index (lossless) + selected evidence (lossy)
+- `src/searchslim/compact.py`  test/build output compaction (Bash/PowerShell PostToolUse, `searchslim compact`)
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
 - `src/searchslim/session.py`  session memory: lines already shown in this agent session (lock-free store)
 - `src/searchslim/install.py`  `searchslim install [--user|DIR]` merges the hook into Claude Code settings
@@ -102,6 +103,25 @@ an agent that must decide from it whether to search again.
   only shows on very large outputs (README "Canlı Windows testi"); don't retune the note.
 - Hook stdin is the event JSON: any subprocess the hook starts must get
   `stdin=DEVNULL` and an explicit path, or `rg` will search the JSON.
+
+## Test/build output (compact.py)
+
+- PostToolUse Bash/PowerShell: `tool_response` `stdout`/`stderr` strings are compacted and
+  returned via `updatedToolOutput` as the same object (other fields kept). Output-aware, not
+  command-aware: a runner's rules apply only when its own summary/marker line is in the output
+  (pytest `=== ... in 0.2s ===`, jest `Tests:`, vitest `Test Files`, mocha `N passing (`, go
+  `--- FAIL:`/`ok pkg 0.1s`, cargo `test result:`, dotnet `Passed!/Failed! -`), build progress
+  families only with >= 10 lines. Agent-written summaries and other stdout are never touched.
+- Dropped: passing/skipped status lines, all-pass pytest progress lines (before the first report
+  section only), lines under jest `PASS` suites and pytest `PASSES`, build progress, and the
+  middle of 5+ consecutive lines equal after masking timestamps only (an inline
+  `[searchslim] N similar lines not shown` marks the spot). Lines mentioning
+  error/fail/warn/exception/assert in a dropped section stay, with their test/suite header.
+  go `=== RUN X` stays when log lines follow it. Kept lines are verbatim, in order; one trailing
+  `[searchslim] not shown: ...` count.
+- Runs only above 2000 tokens (`SEARCHSLIM_COMPACT_TRIGGER_TOKENS`) and when it saves >= 20%;
+  `SEARCHSLIM_COMPACT=off` disables. Default pytest and non-TTY jest/vitest output is already
+  short; the gain is on verbose runs. Real runner outputs are in `tests/fixtures/compact/`.
 
 ## Session memory (session.py)
 

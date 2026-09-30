@@ -8,6 +8,14 @@
              `python -m searchslim run -- <cmd>` via `updatedInput`, so the
              command still runs as the Bash tool call, only its stdout is reduced.
 
+  Bash/PowerShell on PostToolUse: test and build output (pytest, jest, vitest,
+             go, cargo, dotnet, pip ...) in `tool_response` stdout/stderr is
+             compacted (compact.py): passing-test and progress lines dropped,
+             failures kept verbatim. Detected from the output, not the command,
+             so any other stdout (an agent's own summary script) is untouched.
+             `SEARCHSLIM_COMPACT=off` disables; `SEARCHSLIM_COMPACT_TRIGGER_TOKENS`
+             (default 2000) is the size above which it runs.
+
   Grep/Glob  On PostToolUse the hook reduces the tool's own result
              (`tool_response`) when it is over budget and returns it as
              `updatedToolOutput` in the same object shape (see shape_output).
@@ -100,6 +108,9 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
     event_name = event.get("hook_event_name") or "PreToolUse"
     grep_mode = os.environ.get("SEARCHSLIM_GREP_MODE", "post").lower()
 
+    if tool in ("Bash", "PowerShell") and event_name == "PostToolUse":
+        return compact_shell_output(event.get("tool_response"))
+
     if tool in ("Bash", "PowerShell") and event_name == "PreToolUse":
         run_args = [f"--max-tokens={config.max_tokens}", f"--trigger-tokens={config.trigger_tokens}"]
         if config.view != DEFAULT_VIEW:
@@ -183,6 +194,29 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
             "permissionDecisionReason": f"{header}{DENY_NOTE}\n\n{reduced.text}",
         }
     }
+
+
+def compact_shell_output(response) -> dict | None:
+    """PostToolUse answer for a Bash/PowerShell result with test/build noise, else None."""
+    if os.environ.get("SEARCHSLIM_COMPACT", "").lower() == "off" or not isinstance(response, dict):
+        return None
+    from .compact import DEFAULT_COMPACT_TRIGGER_TOKENS, compact
+
+    value = os.environ.get("SEARCHSLIM_COMPACT_TRIGGER_TOKENS", "")
+    trigger = int(value) if value.isdigit() else DEFAULT_COMPACT_TRIGGER_TOKENS
+    fields = [k for k in ("stdout", "stderr") if isinstance(response.get(k), str)]
+    if sum(estimate_tokens(response[k]) for k in fields) <= trigger:
+        return None
+    out = dict(response)  # same object shape: other fields (interrupted, ...) kept
+    changed = False
+    for key in fields:
+        result = compact(response[key], trigger_tokens=0)
+        if result is not None:
+            out[key] = result.text
+            changed = True
+    if not changed:
+        return None
+    return {"hookSpecificOutput": {"hookEventName": "PostToolUse", "updatedToolOutput": out}}
 
 
 def _response_text(tool: str, response: dict) -> str | None:
