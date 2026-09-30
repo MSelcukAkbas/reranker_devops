@@ -43,7 +43,7 @@ from pathlib import Path
 from . import slim
 from .models import Kind
 from .rewrite import rewrite_command, rewrite_powershell
-from .rules import DEFAULT_TRIGGER_TOKENS, NOTE_PREFIX, Config, estimate_tokens
+from .rules import DEFAULT_TRIGGER_TOKENS, DEFAULT_VIEW, NOTE_PREFIX, view_from_env, Config, estimate_tokens
 from .session import SessionStore, enabled as session_enabled
 
 RG_TIMEOUT_S = 20
@@ -53,7 +53,7 @@ RG_TIMEOUT_S = 20
 DEFAULT_RERANK = "lexical"
 GREP_REASON_HEADER = (
     "searchslim reduced this search output. Lines keep path:line anchors; the "
-    "trailing [searchslim] note lists what was left out."
+    "[searchslim] lines index every matching file or count what was left out."
 )
 GLOB_REASON_HEADER = (
     "searchslim reduced this file list. The trailing [searchslim] note counts "
@@ -64,7 +64,7 @@ DENY_NOTE = " This is the search result, not an error; do not retry the same cal
 
 
 def config_from_env() -> Config:
-    config = Config(trigger_tokens=DEFAULT_TRIGGER_TOKENS)
+    config = Config(trigger_tokens=DEFAULT_TRIGGER_TOKENS, view=view_from_env())
     value = os.environ.get("SEARCHSLIM_MAX_TOKENS", "")
     if value.isdigit():
         config.max_tokens = int(value)
@@ -102,6 +102,8 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
 
     if tool in ("Bash", "PowerShell") and event_name == "PreToolUse":
         run_args = [f"--max-tokens={config.max_tokens}", f"--trigger-tokens={config.trigger_tokens}"]
+        if config.view != DEFAULT_VIEW:
+            run_args.append(f"--view={config.view}")
         if rerank:
             run_args.append(f"--rerank={rerank}")
             if transcript:

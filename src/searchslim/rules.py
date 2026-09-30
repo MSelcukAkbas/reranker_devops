@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from dataclasses import dataclass, field, replace
+import os
 import posixpath
 import re
 
@@ -18,6 +19,7 @@ from .models import Block, Kind, Line, PathCount, SearchResult
 
 NOTE_PREFIX = "[searchslim]"
 DEFAULT_TRIGGER_TOKENS = 6000
+DEFAULT_VIEW = "coverage"
 # The note is a neutral count of what is not shown, with no advice: in live
 # runs any wording about truncation or narrowing ("see them", "only if you
 # need") led agents to search again for the rest, costing more than it saved.
@@ -41,12 +43,22 @@ class Config:
     max_line_chars: int = 300
     # How many omitted files to name individually in the note.
     note_max_files: int = 10
+    # "notes": over-budget output ends with a note counting what is not shown.
+    # "coverage": it leads with an index of every matching file, then the
+    # selected evidence (coverage.py). The hook and CLI default to coverage.
+    view: str = "notes"
 
 
 @dataclass
 class Reduced:
     text: str
     stats: dict = field(default_factory=dict)
+
+
+def view_from_env() -> str:
+    """Default view for the hook and CLI; SEARCHSLIM_VIEW=notes restores the 0.3 note."""
+    value = os.environ.get("SEARCHSLIM_VIEW", "").lower()
+    return value if value in ("coverage", "notes") else DEFAULT_VIEW
 
 
 def for_output(config: Config, raw: str) -> Config:

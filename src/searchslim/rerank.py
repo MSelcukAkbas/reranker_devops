@@ -539,12 +539,12 @@ def run_for_benchmark(payload: dict, scorer: Scorer) -> tuple[str, dict]:
     config = Config(
         max_tokens=int(payload.get("max_tokens") or Config.max_tokens),
         trigger_tokens=int(payload.get("trigger_tokens") or 0),
+        view=payload.get("view") or "notes",
     )
-    from .parsers import parse
+    from . import slim
 
-    result = parse(payload.get("raw", ""), default_path=single)
-    config = for_output(config, payload.get("raw", ""))
-    reduced = reduce_ranked(result, Query(payload.get("intent", ""), payload.get("subtask", ""), pattern), scorer, config)
+    query = Query(payload.get("intent", ""), payload.get("subtask", ""), pattern)
+    reduced = slim(payload.get("raw", ""), config=config, default_path=single, scorer=scorer, query=query)
     text = reduced.text
     raw_lines = set(payload.get("raw", "").splitlines())
     if single and not any(ln.startswith(single + ":") for ln in raw_lines):

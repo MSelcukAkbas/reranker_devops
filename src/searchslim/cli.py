@@ -24,7 +24,7 @@ import sys
 
 from . import slim
 from .models import Kind
-from .rules import DEFAULT_TRIGGER_TOKENS, Config
+from .rules import DEFAULT_TRIGGER_TOKENS, Config, view_from_env
 
 
 def _version() -> str:
@@ -69,6 +69,12 @@ def _add_common(p: argparse.ArgumentParser) -> None:
         default=_default_trigger(),
         help="reduce only outputs above this many tokens (default: $SEARCHSLIM_TRIGGER_TOKENS or 6000; 0 = --max-tokens)",
     )
+    p.add_argument(
+        "--view",
+        choices=["coverage", "notes"],
+        default=None,
+        help="over-budget content: coverage = index of every matching file + selected evidence; notes = trailing not-shown note (default: $SEARCHSLIM_VIEW or coverage)",
+    )
     p.add_argument("--merge-gap", type=int, default=Config.merge_gap)
     p.add_argument("--max-matches-per-file", type=int, default=Config.max_matches_per_file)
     p.add_argument("--max-line-chars", type=int, default=Config.max_line_chars)
@@ -94,6 +100,7 @@ def _config(args: argparse.Namespace) -> Config:
         merge_gap=args.merge_gap,
         max_matches_per_file=args.max_matches_per_file,
         max_line_chars=args.max_line_chars,
+        view=args.view or view_from_env(),
     )
 
 

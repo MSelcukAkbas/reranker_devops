@@ -59,6 +59,22 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   (çağrı reddedilir, küçültülmüş sonuç gerekçede gelir).
 - **Kurallar:** tekrarlar atılır, örtüşen satır aralıkları birleşir. Bütçe
   aşılırsa önce bağlam satırları, sonra fazla eşleşmeler, sonra dosyalar atılır.
+- **Kapsam görünümü (0.4, varsayılan):** bütçeyi aşan bir içerik araması
+  "şu kadarı gösterilmedi" diye bitmez. Önce eşleşen her dosyanın dizini gelir
+  (eşleşme sayısı, satır aralığı, ilk tanım satırı, kaçının açıldığı), sonra
+  seçilen kanıt blokları aracın kendi biçiminde:
+
+  ```
+  [searchslim] 84 matches in 17 files. Coverage: 17/17 matching files indexed (matches, line span). Evidence: 12 blocks from 7 files expanded below.
+    src/auth/token.ts  18 matches  L41-210  def L41  (5 expanded)
+    src/auth/logout.ts  7 matches  L73-89
+  src/auth/token.ts:41:export function refreshToken(...) {
+  ```
+
+  Dosya çoksa kanıtı olan dosyalar tek tek, diğerleri dizin dizin sayılır; her
+  dosya bir satırda sayılmış olur. Amaç, ajanın aramanın tamamını bildiğini
+  görüp gerekirse tek dosyaya inmesi, aynı aramayı tekrarlamaması.
+  `SEARCHSLIM_VIEW=notes` 0.3'teki sondaki nota döner.
 - **Sıralama (varsayılan açık):** kurallar bir şey atmak zorunda kaldığında
   bloklar kullanıcının amacına göre sıralanır, bütçeye en alakalıları girer.
   Amaç oturum kaydındaki son kullanıcı mesajından okunur. Model yalnızca skor
@@ -80,6 +96,7 @@ Ayarlar (ortam değişkeni):
 | `SEARCHSLIM=off` | hook'u kapatır (komutun başına da yazılabilir) |
 | `SEARCHSLIM_MAX_TOKENS` | küçültülen çıktının bütçesi, varsayılan 2000 |
 | `SEARCHSLIM_TRIGGER_TOKENS` | yalnızca bundan büyük çıktılar küçültülür, varsayılan 6000 (orta boy sonuçlar kesilince ajan eksik kısmı yeniden arıyordu) |
+| `SEARCHSLIM_VIEW` | `coverage` (varsayılan: dosya dizini + seçilmiş kanıt) veya `notes` (0.3'teki sondaki not) |
 | `SEARCHSLIM_RERANK` | `lexical` (varsayılan), `claude` veya `off` |
 | `SEARCHSLIM_GREP_MODE` | `post` (varsayılan) veya `deny` (Grep/Glob için eski PreToolUse davranışı) |
 | `SEARCHSLIM_SESSION=off` | oturum hafızasını kapatır |
@@ -192,6 +209,12 @@ arttı (ör. 4 → 5 tur, $0.283 → $0.288). Not metnini "gerekirse daralt" yer
 yönlendirici olmayacak şekilde değiştirmek bunu tam önlemedi. Bu yüzden varsayılan eşik
 6000 token (`SEARCHSLIM_TRIGGER_TOKENS`): orta boy sonuçlar olduğu gibi geçer, not da
 yalnızca tarafsız bir sayım içerir (ne gösterilmedi, kaç tane, nerede).
+
+0.4 bu sorunu notu değil çıktının biçimini değiştirerek deniyor: kapsam görünümü
+(yukarıda) eksik olanı değil, aramanın tamamının dizinini gösterir. Offline
+benchmark'ta 2000 bütçede kanıt kaybı değişmedi (rules+model 36/36,
+`benchmark/results/2026-09-30-coverage.md`). Ajanın tekrar arayıp aramadığı ancak
+canlı testte ölçülebilir; tekrar arama durursa eşik düşürülebilir.
 
 ## Geliştirme
 
