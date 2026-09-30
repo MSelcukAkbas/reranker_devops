@@ -69,7 +69,7 @@ def test_output_without_line_numbers_passes_through():
     assert handle(event, Config(view="lossless", max_tokens=7000, trigger_tokens=1500)) is None
 
 
-def test_huge_require_listing_is_projected_by_file_then_summarized():
+def test_huge_require_listing_keeps_every_location():
     lines = [
         f"services\\{d}\\handler_module_{f:03d}.js:{k * 3 + 1}:const m = require('pkg-{(f + k) % 30}')"
         for f in range(400)
@@ -80,9 +80,13 @@ def test_huge_require_listing_is_projected_by_file_then_summarized():
     out = slim(raw, config=Config(view="lossless", max_tokens=5000, trigger_tokens=0), pattern="require\\(")
     assert out.stats["level"] == "L2" and out.stats["matches_kept"] == len(lines)
     assert "  services\\gateway\\src\\routes\\" in out.text.splitlines()
+    # Over budget but within 3x: the smallest result that keeps every location, not a summary.
+    out = slim(raw, config=Config(view="lossless", max_tokens=2000, trigger_tokens=0), pattern="require\\(")
+    assert out.stats["level"] == "L2" and out.stats["over_budget"] and out.stats["matches_kept"] == len(lines)
+    assert "    handler_module_398.js  pkg-8:1" in out.text.splitlines()
+    # Past 3x max_tokens: the ranked coverage view.
     out = slim(raw, config=Config(view="lossless", max_tokens=600, trigger_tokens=0), pattern="require\\(")
-    assert out.stats["level"] == "L2-summary"
-    assert any(ln.startswith("  pkg-0  ") and " in " in ln for ln in out.text.splitlines())
+    assert out.stats.get("view") == "coverage"
 
 
 def test_overlapping_context_is_printed_once():
@@ -181,8 +185,12 @@ def test_env_listing_is_projected_when_still_too_big():
     assert out.stats["matches_kept"] == out.stats["matches_total"] == 440
     assert "KEY_1, KEY_10, KEY_11, KEY_2" in out.text.splitlines()[0]  # every name, once
     assert "  apps/backend/src/modules/m39/config/settings.ts  KEY_1:1 KEY_2:2" in out.text
-    # Without an env-like pattern there is no projection: the ranked coverage view.
+    # Without an env-like pattern there is no projection: L1 over budget (within 3x), every line kept.
     out = slim(raw, config=config, pattern="settings")
+    assert out.stats["level"] == "L1" and out.stats["over_budget"]
+    assert {k[:2] for k in keys(out.text)} == {k[:2] for k in keys(raw)}
+    # Far over budget: the ranked coverage view.
+    out = slim(raw, config=Config(view="lossless", max_tokens=1000, trigger_tokens=0), pattern="settings")
     assert out.stats.get("view") == "coverage"
 
 
