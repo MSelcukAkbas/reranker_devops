@@ -211,3 +211,134 @@ def test_split_seen_keeps_anchor_for_new_context():
     rest, shown = split_seen(parse(raw), seen, "/t")
     assert [(ln.number, ln.is_match) for ln in rest.lines] == [(8, False), (9, False), (10, True), (70, True)]
     assert [ln.number for ln in shown] == [50]
+
+
+# --- content cache vs model-visible evidence -----------------------------------
+
+
+def _write_file(path, lines):
+    path.write_text("\n".join(lines) + "\n")
+    return str(path)
+
+
+def test_compaction_clears_visible_evidence_but_keeps_the_content_cache(tmp_path):
+    a = _write_file(tmp_path / "a.py", ["x = 1"])
+    store = SessionStore("c1")
+    store.record_lines([(a, 1, "x = 1")])
+    assert store.seen() == {line_key(a, 1, "x = 1")}
+    handle({"hook_event_name": "PreCompact", "session_id": "c1"})
+    assert store.seen() == set()
+    assert list(store.content.glob("*.fp"))  # disk facts outlive the agent's context
+    store.record_lines([(a, 1, "x = 1")])
+    assert store.seen() == {line_key(a, 1, "x = 1")}
+
+
+def test_edit_hook_invalidates_only_that_files_lines(tmp_path):
+    a = _write_file(tmp_path / "a.py", ["x = 1"])
+    b = _write_file(tmp_path / "b.py", ["y = 2"])
+    store = SessionStore("e1")
+    store.record_lines([(a, 1, "x = 1"), (b, 1, "y = 2")])
+    for tool, key in (("Edit", "file_path"), ("Write", "file_path"), ("MultiEdit", "file_path"), ("NotebookEdit", "notebook_path")):
+        assert handle({"hook_event_name": "PostToolUse", "tool_name": tool, "session_id": "e1",
+                       "cwd": str(tmp_path), "tool_input": {key: "a.py"}}) is None
+    assert store.seen() == {line_key(b, 1, "y = 2")}
+    # Shown again after the edit: counts again.
+    store.record_lines([(a, 1, "x = 1")])
+    assert line_key(a, 1, "x = 1") in store.seen()
+
+
+def test_edit_in_a_subagent_or_pre_tool_use_leaves_the_main_store(tmp_path):
+    a = _write_file(tmp_path / "a.py", ["x = 1"])
+    store = SessionStore("e2")
+    store.record_lines([(a, 1, "x = 1")])
+    handle({"hook_event_name": "PreToolUse", "tool_name": "Edit", "session_id": "e2", "tool_input": {"file_path": a}})
+    handle({"hook_event_name": "PostToolUse", "tool_name": "Edit", "session_id": "e2", "agent_id": "sub",
+            "tool_input": {"file_path": a}})
+    assert store.seen() == {line_key(a, 1, "x = 1")}
+
+
+def test_file_changed_on_disk_lapses_its_evidence(tmp_path):
+    a = _write_file(tmp_path / "a.py", ["x = 1", "z = 3"])
+    b = _write_file(tmp_path / "b.py", ["y = 2"])
+    store = SessionStore("d1")
+    store.record_lines([(a, 1, "x = 1"), (b, 1, "y = 2")])
+    # e.g. `sed -i` from Bash: no Edit event, but the content hash differs.
+    _write_file(tmp_path / "a.py", ["x = 1", "z = 4"])
+    # Rewritten with the same bytes (a checkout, a formatter with nothing to do): still true.
+    _write_file(tmp_path / "b.py", ["y = 2"])
+    assert store.seen() == {line_key(b, 1, "y = 2")}
+
+
+def test_known_hash_is_reused_when_size_and_mtime_match(tmp_path, monkeypatch):
+    a = _write_file(tmp_path / "a.py", ["x = 1"])
+    old = time.time() - 60
+    os.utime(a, (old, old))
+    store = SessionStore("d2")
+    store.record_lines([(a, 1, "x = 1")])
+    opened = []
+    real_open = open
+
+    def spy(path, *args, **kwargs):
+        opened.append(str(path))
+        return real_open(path, *args, **kwargs)
+
+    monkeypatch.setattr("builtins.open", spy)
+    assert store.seen() == {line_key(a, 1, "x = 1")}
+    assert a not in opened
+
+
+def test_invalidation_survives_merging_the_parts(tmp_path):
+    a = _write_file(tmp_path / "a.py", ["x = 1"])
+    store = SessionStore("m1")
+    store.record_lines([(a, 1, "x = 1")])
+    store.invalidate(a)
+    for i in range(COMPACT_AT + 2):
+        store.record([f"k{i}"])
+    assert len(list(store.visible.glob("*.keys"))) < COMPACT_AT
+    assert line_key(a, 1, "x = 1") not in store.seen()
+    assert {f"k{i}" for i in range(COMPACT_AT + 2)} <= store.seen()
+
+
+def test_persisted_output_records_only_its_preview(tmp_path):
+    raw = "\n".join(f"a.py:{n}:{'v' * 60} {n}" for n in range(1, 400))
+    store = SessionStore("p1", visible_chars=5000)
+    store.record_output(raw, "", str(tmp_path))
+    seen = store.seen()
+    assert line_key(str(tmp_path / "a.py"), 1, f"{'v' * 60} 1") in seen
+    assert line_key(str(tmp_path / "a.py"), 300, f"{'v' * 60} 300") not in seen
+    assert 0 < len(seen) < 40
+
+
+def test_lossless_view_never_leaves_out_seen_lines(tmp_path):
+    raw = "\n".join(
+        f"src/pkg/mod{f:02d}.py:{n}:    result = handle(target, value_{f}_{n})"
+        for f in range(10) for n in range(1, 15)
+    )
+    config = Config(view="lossless", max_tokens=4800, trigger_tokens=100)
+    store = SessionStore("l1")
+    first = slim(raw, config=config, session=store, cwd=str(tmp_path))
+    second = slim(raw, config=config, session=store, cwd=str(tmp_path))
+    assert store.seen()  # recorded
+    assert second.text == first.text and "already shown" not in second.text
+
+
+@needs_rg
+def test_hook_edit_between_greps_shows_that_file_again(repo):
+    first = _grep(repo, "ed")
+    handle({"hook_event_name": "PostToolUse", "tool_name": "Edit", "session_id": "ed", "cwd": str(repo),
+            "tool_input": {"file_path": str(repo / "mod00.py")}})
+    second = _grep(repo, "ed")
+    assert any(ln.startswith("mod00.py") for ln in body_lines(first))
+    assert any(ln.startswith("mod00.py") for ln in body_lines(second))
+    assert "mod00.py:" not in second.splitlines()[-1].split("not repeated:", 1)[-1]
+
+
+@needs_rg
+def test_hook_records_a_grep_result_it_lets_through(repo):
+    event = {
+        "hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(repo), "session_id": "pt",
+        "tool_input": {"pattern": "target", "output_mode": "content", "path": "mod03.py"},
+        "tool_response": {"mode": "content", "content": "3:    value_3 = compute(target, 3)", "numLines": 1},
+    }
+    assert handle(event, Config(max_tokens=800, trigger_tokens=800, view="lossless")) is None
+    assert SessionStore("pt").seen() == {line_key(str(repo / "mod03.py"), 3, "    value_3 = compute(target, 3)")}

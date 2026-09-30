@@ -157,10 +157,11 @@ def _reduce(raw: str, args: argparse.Namespace):
             query = Query(args.intent, args.subtask, args.query)
     session = None
     if args.session:
-        from .session import SessionStore, enabled
+        from .session import BASH_VISIBLE_CHARS, SessionStore, enabled
 
         if enabled():
-            session = SessionStore(args.session)
+            # `run` output reaches the agent as a Bash/PowerShell result.
+            session = SessionStore(args.session, visible_chars=BASH_VISIBLE_CHARS)
     reduced = slim(
         raw,
         kind=Kind(args.kind) if args.kind else None,

@@ -170,8 +170,17 @@ an agent that must decide from it whether to search again.
 - Store: one directory per session (`session_id`, plus `.agent_id` inside subagents), one
   atomically written file per call, readers take the union; merged past 64 files. No locks.
   Every race can only make a line look unseen (shown again), never hide one.
-- `PreCompact` clears the session. Bash rewrites pass `--session=<id>` to `searchslim run`.
-  Grep/Glob calls the hook lets through are not recorded (their output is the real tool's).
+- Two caches per session dir: `content/` (physical: per-file blake2 content hash with size and
+  mtime; reused when both match and the mtime is > 2 s old) and `visible/` (model-visible
+  evidence: each line key tied to its file's hash). A key counts as shown only while no
+  Edit/Write invalidation (`*.inv`, PostToolUse Edit|Write|MultiEdit|NotebookEdit) is newer and
+  the file's current hash equals the recorded one (catches Bash `sed -i`, checkouts). `PreCompact`
+  clears `visible/` only. Never say "already shown" for evidence no longer in context.
+- Only what the agent sees is recorded: output over 20,000 chars (Grep; 30,000 for `run`, i.e.
+  Bash/PowerShell) is persisted by Claude Code, so only its first ~1800 chars count. A Grep
+  content result the hook lets through (from `tool_response`, parser-reliable) is recorded as is.
+- The lossless view only records; it never leaves a line out as seen (only its L3 coverage fallback does).
+- Bash rewrites pass `--session=<id>` to `searchslim run`.
 - `SEARCHSLIM_SESSION=off` disables; `SEARCHSLIM_CACHE_DIR` moves the store.
   Benchmark: `benchmark/sessions.py` (`run`, `latency`).
 
