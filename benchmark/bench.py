@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / "src"))
 
 from searchslim import Config, Kind, detect_kind, estimate_tokens, parse, slim  # noqa: E402
-from searchslim.rules import NOTE_PREFIX  # noqa: E402
+from searchslim.coverage import split_note as _split_note  # noqa: E402
 
 TASKS = ROOT / "tasks.json"
 FIXTURES = ROOT / "fixtures"
@@ -149,10 +149,8 @@ def _norm(path: str) -> str:
 
 
 def split_note(text: str) -> tuple[str, str]:
-    body, note = [], []
-    for ln in text.splitlines():
-        (note if ln.startswith(NOTE_PREFIX) else body).append(ln)
-    return "\n".join(body), "\n".join(note)
+    # [searchslim] lines, plus the indented coverage index rows that follow one.
+    return _split_note(text)
 
 
 def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
@@ -277,7 +275,7 @@ def timed(fn, repeat: int) -> tuple[object, float]:
 
 def run_model(cmd: str, task: dict, raw: str, rules_text: str, config: Config) -> tuple[str, float, float]:
     payload = json.dumps(
-        {"intent": task["intent"], "subtask": task["subtask"], "cmd": task["cmd"], "raw": raw, "rules": rules_text, "max_tokens": config.max_tokens, "trigger_tokens": config.trigger_tokens}
+        {"intent": task["intent"], "subtask": task["subtask"], "cmd": task["cmd"], "raw": raw, "rules": rules_text, "max_tokens": config.max_tokens, "trigger_tokens": config.trigger_tokens, "view": config.view}
     )
     t0 = time.perf_counter()
     proc = subprocess.run(cmd, shell=True, input=payload, capture_output=True, text=True)
@@ -326,7 +324,7 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 
 def cmd_run(args: argparse.Namespace) -> int:
     spec = load_spec()
-    config = Config(max_tokens=args.max_tokens, trigger_tokens=args.trigger_tokens)
+    config = Config(max_tokens=args.max_tokens, trigger_tokens=args.trigger_tokens, view=args.view)
     count = TokenCounter(args.tokenizer)
     modes = ["raw", "rules"] + (["rules+model"] if args.model_cmd else [])
     rows: list[Row] = []
@@ -433,6 +431,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--tokenizer", choices=["auto", "api", "chars"], default="auto")
     p.add_argument("--repeat", type=int, default=20, help="runs per task for the rules latency median")
     p.add_argument("--model-cmd", help="reranker command for the rules+model mode")
+    p.add_argument("--view", choices=["notes", "coverage"], default="notes", help="over-budget layout (the hook defaults to coverage)")
     p.add_argument("--jsonl", help="also write per-task rows to this file")
 
     p = sub.add_parser("stability", help="count output changes across unsorted rg runs")

@@ -4,6 +4,8 @@ import shutil
 
 import pytest
 
+from searchslim.coverage import split_note
+
 from searchslim.rewrite import Prepared, prepare, rewrite_command
 
 R = "SLIM"
@@ -179,9 +181,9 @@ def test_pipeline_output_is_reduced_and_keeps_exit_code(tmp_path):
     assert "--shell" in cmd
     proc = subprocess.run(cmd, shell=True, cwd=tmp_path, capture_output=True, text=True)
     assert proc.returncode == 0
-    lines = proc.stdout.strip().splitlines()
-    assert lines[-1].startswith("[searchslim]")
-    assert all(":target_" in ln for ln in lines[:-1])
+    body, index = split_note(proc.stdout.strip())
+    assert index.startswith("[searchslim]") and "30/30 matching files indexed" in index
+    assert body and all(":target_" in ln for ln in body.splitlines())
     miss = subprocess.run(rewrite_command("rg -n nothing_here | sort"), shell=True, cwd=tmp_path, capture_output=True, text=True)
     assert miss.stdout == ""
 

@@ -35,6 +35,9 @@ def slim(
     rules+model: when the rules would drop something, units are ranked by
     relevance to `query` before the budget is applied.
 
+    With `config.view == "coverage"` an over-budget content result leads with
+    an index of every matching file, then the selected evidence (see `coverage`).
+
     With a `session` (see `session.SessionStore`), an over-budget result leaves
     out lines earlier searches already showed, referencing them in the note,
     and the lines shown now are recorded. `cwd` resolves relative paths.
@@ -43,16 +46,26 @@ def slim(
     config = for_output(config, raw)  # below the trigger, rules pass it through unchanged
     result = parse(raw, kind=kind, default_path=default_path)
     shown = []
+    full = result
     if session is not None and estimate_tokens(raw) > config.max_tokens:
         from .session import split_seen
 
         result, shown = split_seen(result, session.seen(), cwd)
-    if scorer is None:
-        reduced = reduce(result, config)
-    else:
+
+    def evidence(cfg: Config) -> Reduced:
+        if scorer is None:
+            return reduce(result, cfg)
         from .rerank import Query, reduce_ranked
 
-        reduced = reduce_ranked(result, query or Query(), scorer, config)
+        return reduce_ranked(result, query or Query(), scorer, cfg)
+
+    reduced = None
+    if config.view == "coverage" and result.kind is Kind.CONTENT and estimate_tokens(raw) > config.max_tokens:
+        from .coverage import coverage_view
+
+        reduced = coverage_view(full, evidence, config, pattern=getattr(query, "pattern", "") or "")
+    if reduced is None:
+        reduced = evidence(config)
     if session is not None:
         from .session import attach_note, seen_note, shown_keys
 

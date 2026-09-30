@@ -95,7 +95,9 @@ def test_hook_cli_searches_cwd_not_its_own_stdin(repo):
     event = json.dumps({"hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": "content"}})
     proc = subprocess.run([sys.executable, "-m", "searchslim", "hook"], input=event, capture_output=True, text=True)
     reason = post_text(json.loads(proc.stdout))
-    assert reason.startswith("mod00.py:1:")
+    lines = reason.splitlines()
+    assert lines[0].startswith(NOTE_PREFIX) and "40/40 matching files indexed" in lines[0]
+    assert any(ln.startswith("mod00.py:1:") for ln in lines)
 
 
 def test_hook_cli_emits_json():
@@ -251,3 +253,19 @@ def test_post_tool_use_files_mode_and_glob_keep_their_shapes(tmp_path):
 def test_shape_output_count_mode():
     out = shape_output("Grep", "count", {"mode": "count", "numFiles": 3, "filenames": [], "numMatches": 9}, "a:1\nb:2")
     assert out == {"mode": "count", "numFiles": 3, "filenames": [], "numMatches": 9, "content": "a:1\nb:2", "numLines": 2}
+
+
+def test_post_tool_use_defaults_to_coverage_view(tmp_path, monkeypatch):
+    monkeypatch.setenv("SEARCHSLIM_MAX_TOKENS", "500")
+    monkeypatch.setenv("SEARCHSLIM_TRIGGER_TOKENS", "0")
+    monkeypatch.delenv("SEARCHSLIM_VIEW", raising=False)
+    content = "\n".join(f"src/m{i:02d}.js:{n}:const target_{n} = require('x')" for i in range(40) for n in range(1, 30))
+    response = {**GREP_RESPONSE, "content": content, "numLines": len(content.splitlines())}
+    event = {"hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(tmp_path),
+             "tool_input": {"pattern": "target", "output_mode": "content"}, "tool_response": response}
+    out = handle(event)["hookSpecificOutput"]["updatedToolOutput"]
+    lines = out["content"].splitlines()
+    assert lines[0].startswith(NOTE_PREFIX) and "40/40 matching files indexed" in lines[0]
+    monkeypatch.setenv("SEARCHSLIM_VIEW", "notes")
+    out = handle(event)["hookSpecificOutput"]["updatedToolOutput"]
+    assert out["content"].splitlines()[-1].startswith(NOTE_PREFIX)

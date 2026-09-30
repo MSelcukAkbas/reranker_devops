@@ -35,6 +35,11 @@ an agent that must decide from it whether to search again.
   directories, so input order (rg is unordered without `--sort path`) never
   hides where evidence went.
 - Small outputs pass through unchanged.
+- Coverage view (`coverage.py`, `Config.view="coverage"`; hook and CLI default, `SEARCHSLIM_VIEW=notes`
+  restores the note): when matches would be dropped, output leads with one `[searchslim]` summary line
+  and indented index rows (`  path  N matches  La-b  def Lx  (k expanded)`, directory rows when many
+  files) covering every matching file, then the evidence body in the tool's format. `coverage.split_note`
+  separates index from body. Library `Config()` keeps `view="notes"`, so rules tests are unchanged.
 
 ## Layout
 
@@ -44,6 +49,7 @@ an agent that must decide from it whether to search again.
 - `src/searchslim/rewrite.py`  wraps shell search commands (and filter pipelines) in `searchslim run --`;
                                `prepare` adds anchor flags at run time
 - `src/searchslim/hooks.py`    hook: PreToolUse Bash/PowerShell, PostToolUse Grep/Glob, PreCompact
+- `src/searchslim/coverage.py` coverage view: file index (lossless) + selected evidence (lossy)
 - `src/searchslim/rerank.py`   rules+model: units, scorers (lexical default, Claude optional), budgeted selection
 - `src/searchslim/session.py`  session memory: lines already shown in this agent session (lock-free store)
 - `src/searchslim/install.py`  `searchslim install [--user|DIR]` merges the hook into Claude Code settings

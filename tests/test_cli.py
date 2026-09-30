@@ -52,8 +52,17 @@ def test_filter_reads_utf8_stdin():
 
 def test_run_ranks_by_default_and_env_turns_it_off():
     script = f"import sys; sys.stdout.write({WIN_RAW!r})"
-    ranked = _cli(["run", "--max-tokens", "400", "--", sys.executable, "-c", script])
+    ranked = _cli(["run", "--max-tokens", "400", "--view", "notes", "--", sys.executable, "-c", script])
     assert "ranked by relevance (lexical)" in ranked.stdout.decode("utf-8").splitlines()[-1]
-    plain = _cli(["run", "--max-tokens", "400", "--", sys.executable, "-c", script], env_extra={"SEARCHSLIM_RERANK": "off"})
+    plain = _cli(["run", "--max-tokens", "400", "--view", "notes", "--", sys.executable, "-c", script], env_extra={"SEARCHSLIM_RERANK": "off"})
     assert "ranked by relevance" not in plain.stdout.decode("utf-8")
     assert "files dropped from the end" in plain.stdout.decode("utf-8")
+
+
+def test_run_defaults_to_coverage_view_and_env_restores_notes():
+    script = f"import sys; sys.stdout.write({WIN_RAW!r})"
+    out = _cli(["run", "--max-tokens", "400", "--", sys.executable, "-c", script]).stdout.decode("utf-8")
+    assert out.splitlines()[0].startswith("[searchslim]") and "matching files indexed" in out.splitlines()[0]
+    notes = _cli(["run", "--max-tokens", "400", "--", sys.executable, "-c", script], env_extra={"SEARCHSLIM_VIEW": "notes"})
+    lines = notes.stdout.decode("utf-8").splitlines()
+    assert lines[-1].startswith("[searchslim]") and not lines[0].startswith("[searchslim]")
