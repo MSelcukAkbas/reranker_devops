@@ -51,7 +51,7 @@ from dataclasses import dataclass, replace
 
 from .models import Block, Kind, Line, SearchResult
 from .parsers import SAME_LINE, reads_as_heading
-from .rules import NOTE_PREFIX, Config, Reduced, _clip, build_blocks, dedupe_lines, estimate_tokens
+from .rules import NOTE_PREFIX, Config, Reduced, _clip, build_blocks, dedupe_lines, estimate_tokens, format_dirs, rollup_dirs
 
 # L1 is used only if it is at least this much smaller than the raw output.
 MIN_SAVING = 0.2
@@ -83,14 +83,19 @@ def lossless_content(result: SearchResult, config: Config) -> Reduced:
     lines = dedupe_lines(result.lines)
     blocks = build_blocks(lines, config.merge_gap)
     has_context = any(len(b.lines) > len(b.matches) for bs in blocks.values() for b in bs)
+    line_chars = max(config.max_line_chars, LINE_CHARS)
+    body = render_grouped(blocks, line_chars, has_context)
     groups: list[Group] = [] if has_context else _factor(lines)
     if groups:
         factored = {(p, n) for g in groups for p, ns in g.places.items() for n in ns}
-        blocks = build_blocks([ln for ln in lines if (ln.path, ln.number) not in factored], config.merge_gap)
-    line_chars = max(config.max_line_chars, LINE_CHARS)
-    body = render_grouped(blocks, line_chars, has_context)
-    group_text = render_groups(groups, line_chars)
-    body = "\n".join(p for p in [body, group_text, *result.unparsed] if p)
+        rest = build_blocks([ln for ln in lines if (ln.path, ln.number) not in factored], config.merge_gap)
+        alt = "\n".join(p for p in [render_grouped(rest, line_chars, False), render_groups(groups, line_chars)] if p)
+        # Factoring pays for repeated text with full paths; keep it only if that is shorter.
+        if len(alt) < len(body):
+            body, blocks = alt, rest
+        else:
+            groups = []
+    body = "\n".join(p for p in [body, *result.unparsed] if p)
     matches = sum(len(b.matches) for bs in blocks.values() for b in bs) + sum(g.count for g in groups)
     return Reduced(
         text="\n".join(p for p in [*result.header, body, *result.footer] if p),
@@ -132,34 +137,84 @@ def _factor(lines: list[Line]) -> list[Group]:
 
 
 def render_grouped(blocks: "OrderedDict[str, list[Block]]", line_chars: int, has_context: bool) -> str:
-    """rg --heading layout: the path once, then `N:text` (match) / `N-text` (context).
+    """rg --heading layout, with files of one directory under that directory.
 
-    Files are separated by a blank line and blocks inside a file by `--` (when
-    there is context). A file with a single line is printed as one flat
-    `path:N:text` line, since a heading would cost more than it saves; so is a
-    file whose path would not read back as a heading.
+    A file prints its path once, then `N:text` (match) / `N-text` (context)
+    lines, `--` between blocks when there is context; a single-line file is one
+    flat `path:N:text` line. Files sharing a directory are written under a
+    `dir/` line with the directory left off their names, indented:
+
+        services/gateway/scripts/
+          seed.js:3:require('mysql2/promise')
+          reconcile.js
+            7:require('mysql2/promise')
+            12:require('./db')
+
+    Groups are separated by a blank line; directories keep first-seen order.
+    A path that would not parse back this way keeps the plain layout.
     """
+    files = [(p, [b for b in bs if b.lines]) for p, bs in blocks.items()]
+    files = [(p, bs) for p, bs in files if bs]
+    by_dir: OrderedDict[str, list] = OrderedDict()
+    for path, bs in files:
+        d = _dirname(path) if path and reads_as_heading(path) else ""
+        if d and not reads_as_heading(d + "x"):
+            d = ""
+        n = sum(len(b.lines) for b in bs)
+        name_len = len(path) - len(d)
+        # In a group a file costs its name plus 4 spaces a line (or its name on
+        # each line); on its own, its full path once. Take the cheaper.
+        if d and n > 1 and min(name_len + 3 + 4 * n, (name_len + 2) * n) >= len(path) + 1:
+            d = ""
+        by_dir.setdefault(d, []).append((path, bs))
     out: list[str] = []
-    prev_flat = False
-    for path, file_blocks in blocks.items():
-        file_blocks = [b for b in file_blocks if b.lines]
-        if not file_blocks:
-            continue
-        n_lines = sum(len(b.lines) for b in file_blocks)
-        flat = bool(path) and (n_lines == 1 or not reads_as_heading(path))
-        if out and not (flat and prev_flat):
-            out.append("")
-        if path and not flat:
-            out.append(path)
-        for i, block in enumerate(file_blocks):
+    loose: list = []  # files not grouped under a directory, in order
+
+    def lines_of(bs, prefix: str, indent: str) -> list[str]:
+        rows = []
+        for i, block in enumerate(bs):
             if i and has_context:
-                out.append("--")
+                rows.append(f"{indent}--")
             for num in sorted(block.lines):
                 sep = ":" if num in block.matches else "-"
-                prefix = f"{path}{sep}" if flat else ""
-                out.append(f"{prefix}{num}{sep}{_clip(block.lines[num], line_chars)}")
-        prev_flat = flat
+                rows.append(f"{indent}{prefix}{sep if prefix else ''}{num}{sep}{_clip(block.lines[num], line_chars)}")
+        return rows
+
+    def write_loose() -> None:
+        prev_flat = False
+        for path, bs in loose:
+            flat = bool(path) and (sum(len(b.lines) for b in bs) == 1 or not reads_as_heading(path))
+            if out and not (flat and prev_flat):
+                out.append("")
+            if path and not flat:
+                out.append(path)
+            out.extend(lines_of(bs, path if flat else "", ""))
+            prev_flat = flat
+        loose.clear()
+
+    for d, group in by_dir.items():
+        if not d or len(group) < 2:
+            loose.extend(group)
+            continue
+        write_loose()
+        if out:
+            out.append("")
+        out.append(d)
+        for path, bs in group:
+            name = path[len(d):]
+            n = sum(len(b.lines) for b in bs)
+            if n == 1 or (len(name) + 2) * n < len(name) + 3 + 4 * n:
+                out.extend(lines_of(bs, name, INDENT))
+            else:
+                out.append(f"{INDENT}{name}")
+                out.extend(lines_of(bs, "", INDENT * 2))
+    write_loose()
     return "\n".join(out)
+
+
+def _dirname(path: str) -> str:
+    """`path` up to and including its last separator ("" when it has none)."""
+    return path[: max(path.rfind("/"), path.rfind("\\")) + 1]
 
 
 def render_groups(groups: list[Group], line_chars: int) -> str:
@@ -302,21 +357,39 @@ def project(result: SearchResult, config: Config, pattern: str) -> Reduced | Non
     for ln in matches:
         for name in named[(ln.path, ln.number)]:
             per_file.setdefault(ln.path, []).append(f"{name}:{ln.number}")
-    for path, items in per_file.items():
-        by_file.append(f"{INDENT}{path or '(file)'}  {' '.join(items)}")
+    dirs: OrderedDict[str, list[str]] = OrderedDict()
+    for path in per_file:
+        dirs.setdefault(_dirname(path), []).append(path)
+    for d, paths in dirs.items():
+        if d and len(paths) >= 2:
+            by_file.append(f"{INDENT}{d}")
+            by_file += [f"{INDENT * 2}{p[len(d):]}  {' '.join(per_file[p])}" for p in paths]
+        else:
+            by_file += [f"{INDENT}{p or '(file)'}  {' '.join(per_file[p])}" for p in paths]
     rows = min(by_name, by_file, key=lambda r: len("\n".join(r)))
-    head, rows = rows[0], rows[1:]
     rest_body = render_grouped(build_blocks(rest), max(config.max_line_chars, LINE_CHARS), False) if rest else ""
+    if estimate_tokens("\n".join([*rows, rest_body])) > config.max_tokens:
+        # Still too big: each name with its counts and where, by directory.
+        rows = [f"{lead}; each name with its match and file count and directories (not every line){tail}"]
+        for name in names:
+            per_path = places[name]
+            m = sum(len(v) for v in per_path.values())
+            where = format_dirs(rollup_dirs([(p, len(v)) for p, v in per_path.items()], 3))
+            rows.append(f"{INDENT}{name}  {m} in {len(per_path)} file{'s' if len(per_path) != 1 else ''}: {where}")
+        summary = True
+    else:
+        summary = False
+    head, rows = rows[0], rows[1:]
     text = "\n".join(p for p in [*result.header, head, *rows, rest_body, *result.footer] if p)
     return Reduced(
         text=text,
         stats={
             "kind": "content",
             "view": "lossless",
-            "level": "L2",
+            "level": "L2-summary" if summary else "L2",
             "recognizer": rec.name,
             "matches_total": len(matches),
-            "matches_kept": len(matches),
+            "matches_kept": len(rest) if summary else len(matches),
             "projected_lines": hits,
             "names": len(places),
             "files_total": n_files,

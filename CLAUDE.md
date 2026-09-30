@@ -42,14 +42,19 @@ an agent that must decide from it whether to search again.
   max_tokens 7000, trigger 1500; `SEARCHSLIM_VIEW=coverage|notes` restores 0.4/0.3 with 2000/6000):
   every match kept, only repetition removed. L1: dedupe, overlapping context merged, path once per file
   (rg `--heading`: `path` line, `N:text`/`N-text`, blank line between files; a one-line file or a path
-  that would not parse back as a heading stays flat `path:N:text`), a match text (stripped, >= 16 chars)
+  that would not parse back as a heading stays flat `path:N:text`); files sharing a directory go under a
+  `dir/` line (first-seen dir order) as `  name:N:text` or `  name` + `    N:text`, whichever is shorter
+  (a long file stays on its own heading when that is cheaper), a match text (stripped, >= 16 chars)
   on >= 3 lines written once as `[searchslim] N matches are this same line: <text>` + indented
-  `  path:n,m` rows (no-context outputs only); path lists grouped as `dir/` + indented names. Used only
+  `  path:n,m` rows (no-context outputs only, and only when the result is shorter); path lists grouped as `dir/` + indented names. Used only
   when it saves >= 20% (else raw passes). Still over max_tokens: the same without context lines (lead
   `[searchslim] all N matches in F files; context lines left out.`), then L2 projection (recognizers
   env/require/import, only when the search pattern names that kind and >= 50% of match lines are read;
-  names with every location, by name or by file, whichever is shorter; other match lines kept as L1),
-  then L3 = the coverage view below. The parser reads headings, same-line groups and grouped path lists
+  names with every location, by name or by file (dir-grouped), whichever is shorter; other match lines
+  kept as L1; if that is still too big, L2-summary: each name with match/file counts and directories),
+  then L3 = the coverage view below. Output the parser cannot account for (`parsers.reliable`: >5%
+  unparsed lines, context lines without any match, or `path:text` lines taken as paths, e.g. Grep
+  `-n false`) passes through raw in every view: in 0.6.0 such output lost 884 of 887 lines. The parser reads headings, same-line groups and grouped path lists
   back, so session memory and the benchmark see every line. Glob keeps its own `truncated` flag on L1.
 - Coverage view (`coverage.py`, `Config.view="coverage"`; 0.4 default, now the lossless view's L3): when matches would be dropped, output leads with one `[searchslim]` summary line
   and indented index rows (`  path  N matches  La-b  def Lx  (k expanded)`, directory rows when many
