@@ -38,7 +38,6 @@ from .rules import (
     build_blocks,
     dedupe_lines,
     estimate_tokens,
-    for_output,
     format_dirs,
     reduce,
     render_blocks,

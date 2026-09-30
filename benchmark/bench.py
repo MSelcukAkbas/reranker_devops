@@ -31,7 +31,6 @@ sys.path.insert(0, str(ROOT.parent / "src"))
 
 from searchslim import Config, Kind, detect_kind, estimate_tokens, parse, slim  # noqa: E402
 from searchslim.coverage import split_note as _split_note  # noqa: E402
-from searchslim.rules import NOTE_PREFIX  # noqa: E402
 
 TASKS = ROOT / "tasks.json"
 FIXTURES = ROOT / "fixtures"
