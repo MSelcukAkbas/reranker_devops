@@ -39,7 +39,7 @@ an agent that must decide from it whether to search again.
   hides where evidence went.
 - Small outputs pass through unchanged.
 - Lossless view (`lossless.py`, `Config.view="lossless"`; hook and CLI default since 0.6,
-  max_tokens 4800 (~19k chars: Claude Code shows Grep results over ~20k chars only as a ~2 KB preview of a persisted file), trigger 1500; `SEARCHSLIM_VIEW=coverage|notes` restores 0.4/0.3 with 2000/6000):
+  max_tokens 4800 (~19k chars: Claude Code shows Grep results over 20,000 chars (measured) only as a ~2 KB preview of a persisted file; the hook keeps an inline tool result rather than return one within 500 chars of that limit, `hooks.GREP_INLINE_CHARS`), trigger 1500; `SEARCHSLIM_VIEW=coverage|notes` restores 0.4/0.3 with 2000/6000):
   every match kept, only repetition removed. L1: dedupe, overlapping context merged, path once per file
   (rg `--heading`: `path` line, `N:text`/`N-text`, blank line between files; a one-line file or a path
   that would not parse back as a heading stays flat `path:N:text`); files sharing a directory go under a
