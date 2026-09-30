@@ -39,17 +39,18 @@ an agent that must decide from it whether to search again.
   hides where evidence went.
 - Small outputs pass through unchanged.
 - Lossless view (`lossless.py`, `Config.view="lossless"`; hook and CLI default since 0.6,
-  max_tokens 4800 (~19k chars: Claude Code shows Grep results over 20,000 chars (measured) only as a ~2 KB preview of a persisted file; the hook keeps an inline tool result rather than return one within 500 chars of that limit, `hooks.GREP_INLINE_CHARS`), trigger 1500; `SEARCHSLIM_VIEW=coverage|notes` restores 0.4/0.3 with 2000/6000):
+  max_tokens 4800 (~19k chars: Claude Code shows Grep results over 20,000 chars (measured) only as a ~2 KB preview of a persisted file; the hook keeps an inline tool result rather than return one within 500 chars of that limit, `hooks.GREP_INLINE_CHARS`), trigger 1000; `SEARCHSLIM_VIEW=coverage|notes` restores 0.4/0.3 with 2000/6000):
   every match kept, only repetition removed. L1: dedupe, overlapping context merged, path once per file
   (rg `--heading`: `path` line, `N:text`/`N-text`, blank line between files; a one-line file or a path
   that would not parse back as a heading stays flat `path:N:text`); files sharing a directory go under a
   `dir/` line (first-seen dir order) as `  name:N:text` or `  name` + `    N:text`, whichever is shorter
   (a long file stays on its own heading when that is cheaper), a match text (stripped, >= 16 chars)
   on >= 3 lines written once as `[searchslim] N matches are this same line: <text>` + indented
-  `  path:n,m` rows (no-context outputs only, and only when the result is shorter); path lists grouped as `dir/` + indented names. Used only
-  when it saves >= 20% (else raw passes). Still over max_tokens: the same without context lines (lead
+  `  path:n,m` rows (no-context outputs only, and only when the result is shorter); path lists grouped as `dir/` + indented names,
+  count lists (rg -c) as `dir/` + indented `name:N`. Used only
+  when it saves >= 15% (`lossless.MIN_SAVING`, else raw passes). Still over max_tokens: the same without context lines (lead
   `[searchslim] all N matches in F files; context lines left out.`), then L2 projection (recognizers
-  env/require/import, only when the search pattern names that kind and >= 50% of match lines are read;
+  env/require/import/definition/route/config key/dependency (with version), only when the search pattern names that kind and >= 50% of match lines are read;
   names with every location, by name or by file (dir-grouped, all names in one trailing line so a persisted-output preview shows locations), whichever is shorter; other match lines
   kept as L1). If none fits max_tokens, the smallest of these (every match location kept) is used up to
   3x max_tokens (`EMERGENCY_FACTOR`, stats `over_budget`); only past that L3 = the coverage view below.
@@ -65,7 +66,7 @@ an agent that must decide from it whether to search again.
 ## Layout
 
 - `src/searchslim/models.py`   Line, Block, SearchResult, Kind
-- `src/searchslim/parsers.py`  raw text -> SearchResult (auto-detects shape; rg --json supported)
+- `src/searchslim/parsers.py`  raw text -> SearchResult (auto-detects shape; rg --json and Select-String -Context supported)
 - `src/searchslim/rules.py`    SearchResult -> reduced text + stats
 - `src/searchslim/rewrite.py`  wraps shell search commands (and filter pipelines) in `searchslim run --`;
                                `prepare` adds anchor flags at run time
@@ -116,10 +117,13 @@ an agent that must decide from it whether to search again.
   Re-running install rewrites older install-written commands.
 - Any failure returns nothing, so the original call runs. `SEARCHSLIM=off` (env, or
   as a command prefix) disables it; `SEARCHSLIM_MAX_TOKENS` sets the budget.
-- Hook and CLI only touch outputs above `Config.trigger_tokens` (lossless default 1500, coverage/notes
+- Hook and CLI only touch outputs above `Config.trigger_tokens` (lossless default 1000, coverage/notes
   6000; `SEARCHSLIM_TRIGGER_TOKENS`, `--trigger-tokens`); below it output passes unchanged. Trimming
   mid-sized results made agents search again for what was cut (benchmark/results/2026-09-29-trigger.md);
-  the lossless view cuts nothing below max_tokens, so its trigger is lower. A hook result equal to the
+  the lossless view cuts nothing below max_tokens, so its trigger is lower.
+  `tests/test_invariants.py`: at every lossless level short of L3, every benchmark fixture (also rewritten
+  with Windows absolute paths) keeps exactly the raw match locations (`lossless.match_locations` reads
+  L1 and L2 back), paths and path:count pairs. A hook result equal to the
   raw text returns nothing.
   Library `Config()` keeps trigger 0 (= max_tokens), so tests and the benchmark are unchanged.
 - The note is a neutral count (what is not shown, how many, where) with no advice: any

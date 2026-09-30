@@ -12,10 +12,13 @@ Supported content shapes:
   [searchslim] 3 matches are this same line: text
     path:12,40        one line text at several places (lossless.py)
   rg --json           one JSON event per line
+  > path:12:text      PowerShell Select-String -Context: `> ` marks a match,
+    path:11:text      two spaces a context line
 
 Paths shape: one path per line (Glob, fd, find, rg -l, grep -l), or a `dir/`
 line with indented file names under it (lossless.py).
-Count shape: path:N (rg -c, grep -c).
+Count shape: path:N (rg -c, grep -c), or a `dir/` line with indented
+`name:N` rows under it (lossless.py).
 Lines shape: anything else (tree, ls -R, a filtered pipeline); only chosen when
 the caller knows the command, never auto-detected.
 
@@ -56,6 +59,8 @@ def detect_kind(raw: str) -> Kind:
     if lines[0].startswith("{") and _is_rg_json(lines[0]):
         return Kind.CONTENT
     if all(_COUNT.match(ln) for ln in lines):
+        return Kind.COUNT
+    if _grouped_counts(lines):
         return Kind.COUNT
     if any(_MATCH.match(ln) or _BARE.match(ln) for ln in lines):
         return Kind.CONTENT
@@ -124,9 +129,23 @@ def parse_paths(raw: str) -> SearchResult:
 
 
 def parse_counts(raw: str) -> SearchResult:
+    """path:N lines; a `dir/` line followed by indented `name:N` rows (lossless.py) is expanded."""
     result = SearchResult(kind=Kind.COUNT)
-    for ln in raw.splitlines():
+    directory = None
+    lines = raw.splitlines()
+    for i, ln in enumerate(lines):
         if not ln.strip():
+            directory = None
+            continue
+        if directory is not None and ln.startswith("  "):
+            m = _COUNT.match(ln[2:])
+            if m and not m["path"].startswith(" "):
+                result.counts.append(PathCount(directory + m["path"], int(m["count"])))
+                continue
+        directory = None
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        if ln.endswith(("/", "\\")) and not ln.startswith(" ") and nxt.startswith("  ") and _COUNT.match(nxt[2:]):
+            directory = ln
             continue
         m = _COUNT.match(ln)
         if m:
@@ -136,7 +155,37 @@ def parse_counts(raw: str) -> SearchResult:
     return result
 
 
+def _grouped_counts(lines: list[str]) -> bool:
+    """Non-blank lines that are `path:N`, `dir/` or indented `name:N` (lossless count layout)."""
+    grouped = False
+    for i, ln in enumerate(lines):
+        if ln.startswith("  "):
+            if not (_COUNT.match(ln[2:]) and i and (lines[i - 1].endswith(("/", "\\")) or lines[i - 1].startswith("  "))):
+                return False
+            grouped = True
+        elif not (_COUNT.match(ln) or (ln.endswith(("/", "\\")) and i + 1 < len(lines) and lines[i + 1].startswith("  "))):
+            return False
+    return grouped
+
+
+_SELECT_STRING = re.compile(r"^(?P<mark>> |  )(?P<path>\S.*?):(?P<num>\d+):(?P<text>.*)$")
+
+
+def parse_select_string(raw: str) -> SearchResult | None:
+    """Select-String -Context output, or None when `raw` is not that shape."""
+    rows = [ln for ln in raw.splitlines() if ln.strip()]
+    parsed = [_SELECT_STRING.match(ln) for ln in rows]
+    if not rows or not all(parsed) or not any(m["mark"] == "> " for m in parsed):
+        return None
+    result = SearchResult(kind=Kind.CONTENT)
+    result.lines = [Line(m["path"], int(m["num"]), m["text"], m["mark"] == "> ") for m in parsed]
+    return result
+
+
 def parse_content(raw: str) -> SearchResult:
+    select_string = parse_select_string(raw)
+    if select_string is not None:
+        return select_string
     result = SearchResult(kind=Kind.CONTENT)
     known_paths: set[str] = set()
     heading: str | None = None

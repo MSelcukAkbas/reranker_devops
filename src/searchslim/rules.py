@@ -25,7 +25,7 @@ VIEWS = ("lossless", "coverage", "notes")
 # are regrouped without dropping anything; only past LOSSLESS_MAX_TOKENS does anything
 # get dropped. 4800 tokens (~19k chars) keeps results under Claude Code's inline limit
 # (~20k chars for Grep, 30k for Bash); above it the model sees a ~2 KB preview only.
-LOSSLESS_TRIGGER_TOKENS = 1500
+LOSSLESS_TRIGGER_TOKENS = 1000
 LOSSLESS_MAX_TOKENS = 4800
 # The note is a neutral count of what is not shown, with no advice: in live
 # runs any wording about truncation or narrowing ("see them", "only if you
