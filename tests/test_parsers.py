@@ -99,3 +99,20 @@ def test_no_files_found_is_framing_only():
     result = parse("No files found\n")
     assert result.header == ["No files found"]
     assert not result.paths and not result.unparsed
+
+
+def test_select_string_context_marks_matches():
+    raw = "\n".join([
+        "",
+        "  C:\\r\\src\\a.js:11:before",
+        "> C:\\r\\src\\a.js:12:const x = process.env.A",
+        "  C:\\r\\src\\a.js:13:after",
+        "> C:\\r\\lib\\b.js:4:process.env.B",
+        "",
+    ])
+    res = parse(raw)
+    assert [(ln.path, ln.number, ln.is_match) for ln in res.lines] == [
+        ("C:\\r\\src\\a.js", 11, False), ("C:\\r\\src\\a.js", 12, True),
+        ("C:\\r\\src\\a.js", 13, False), ("C:\\r\\lib\\b.js", 4, True),
+    ]
+    assert not res.unparsed

@@ -73,7 +73,7 @@ def _add_common(p: argparse.ArgumentParser) -> None:
         "--trigger-tokens",
         type=int,
         default=_default_trigger(),
-        help="change only outputs above this many tokens (default: $SEARCHSLIM_TRIGGER_TOKENS, else 1500 for lossless, 6000 otherwise)",
+        help="change only outputs above this many tokens (default: $SEARCHSLIM_TRIGGER_TOKENS, else 1000 for lossless, 6000 otherwise)",
     )
     p.add_argument(
         "--view",

@@ -26,7 +26,7 @@ def test_bash_search_is_rewritten_keeping_other_fields():
     out = handle({"tool_name": "Bash", "tool_input": {"command": "rg foo", "description": "search"}})
     upd = out["hookSpecificOutput"]["updatedInput"]
     assert upd["description"] == "search"
-    assert upd["command"].endswith("-m searchslim run --max-tokens=4800 --trigger-tokens=1500 --rerank=lexical -- rg foo")
+    assert upd["command"].endswith("-m searchslim run --max-tokens=4800 --trigger-tokens=1000 --rerank=lexical -- rg foo")
     assert "permissionDecision" not in out["hookSpecificOutput"]
 
 
@@ -106,7 +106,7 @@ def test_hook_cli_searches_cwd_not_its_own_stdin(repo):
 def test_hook_cli_emits_json():
     event = json.dumps({"tool_name": "Bash", "tool_input": {"command": "find . -name '*.py'"}})
     proc = subprocess.run([sys.executable, "-m", "searchslim", "hook"], input=event, capture_output=True, text=True)
-    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=4800 --trigger-tokens=1500 --rerank=lexical -- find . -name '*.py'")
+    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=4800 --trigger-tokens=1000 --rerank=lexical -- find . -name '*.py'")
 
 
 @needs_rg

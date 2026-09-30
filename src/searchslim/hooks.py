@@ -30,7 +30,7 @@
 Every failure path (bad input, missing rg, timeout) returns no output so the
 original tool call runs unchanged. `SEARCHSLIM=off` in the environment
 disables the hook. Search output is regrouped losslessly by default
-(lossless.py): above `SEARCHSLIM_TRIGGER_TOKENS` (default 1500) and only when
+(lossless.py): above `SEARCHSLIM_TRIGGER_TOKENS` (default 1000) and only when
 that saves 20%; matches are dropped only above `SEARCHSLIM_MAX_TOKENS`
 (default 4800). `SEARCHSLIM_VIEW=coverage|notes` restores the 0.4 / 0.3
 behaviour (trigger 6000, budget 2000).

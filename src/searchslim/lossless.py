@@ -56,7 +56,7 @@ from .rules import NOTE_PREFIX, Config, Reduced, _clip, build_blocks, dedupe_lin
 # Past max_tokens, a result keeping every match is still used up to this many times max_tokens.
 EMERGENCY_FACTOR = 3
 # L1 is used only if it is at least this much smaller than the raw output.
-MIN_SAVING = 0.2
+MIN_SAVING = 0.15
 # A match line is factored out once its text appears on this many lines ...
 FACTOR_MIN = 3
 # ... and is at least this long (short lines cost less than their locations).
@@ -262,6 +262,33 @@ def group_paths(paths: list[str]) -> list[str]:
     return out
 
 
+# --- L1: counts -----------------------------------------------------------------
+
+
+def lossless_counts(result: SearchResult) -> Reduced:
+    """rg -c / grep -c: files of one directory under a `dir/` line as `  name:N`."""
+    seen: OrderedDict[str, int] = OrderedDict()
+    for pc in result.counts:
+        path = pc.path[2:] if pc.path.startswith("./") else pc.path
+        seen.setdefault(path, pc.count)
+    by_dir: OrderedDict[str, list[str]] = OrderedDict()
+    for path in seen:
+        d = _dirname(path)
+        by_dir.setdefault(d if d and not path.endswith(("/", "\\")) else "", []).append(path)
+    out: list[str] = []
+    for d, paths in by_dir.items():
+        if d and len(paths) >= 2:
+            out.append(d)
+            out += [f"{INDENT}{p[len(d):]}:{seen[p]}" for p in paths]
+        else:
+            out += [f"{p}:{seen[p]}" for p in paths]
+    body = "\n".join([*out, *result.unparsed])
+    return Reduced(
+        text="\n".join(p for p in [*result.header, body, *result.footer] if p),
+        stats={"kind": "count", "view": "lossless", "level": "L1", "input": len(result.counts), "unique": len(seen), "kept": len(seen)},
+    )
+
+
 # --- L2: projection -------------------------------------------------------------
 
 
@@ -270,13 +297,20 @@ class Recognizer:
     name: str
     # Applies only when the search pattern is about this kind of name.
     trigger: re.Pattern
-    # Each match's first non-empty group is the name.
+    # Each match's non-empty groups, joined with `join`, are the name (one
+    # group per alternative, or several, e.g. a Go method's receiver and name).
     key: re.Pattern
+    join: str = "."
+    # Upper-case the first part (an HTTP method: `get` -> `GET /users`).
+    upper_first: bool = False
 
     def names(self, text: str) -> list[str]:
         found = []
         for m in self.key.finditer(text):
-            name = next((g for g in m.groups() if g), None)
+            parts = [g for g in m.groups() if g]
+            if self.upper_first and len(parts) > 1:
+                parts[0] = parts[0].upper()
+            name = self.join.join(parts)
             if name and name not in found:
                 found.append(name)
         return found
@@ -312,6 +346,60 @@ RECOGNIZERS = [
             r"|^\s*import\s+([\w.]+(?:\s*,\s*[\w.]+)*)\s*$"
             r"|^\s*using\s+(?:static\s+)?([\w.]+)\s*;"
         ),
+    ),
+    # Definitions: the defined name (Go methods as Receiver.Name).
+    Recognizer(
+        "definition",
+        re.compile(r"\b(def|func|fn|function|class|struct|interface|trait|enum|type)\b"),
+        re.compile(
+            r"^\s*(?:async\s+)?def\s+(\w+)"
+            r"|^\s*func\s+\(\s*\w*\s*\*?(\w+)[^)]*\)\s*(\w+)"
+            r"|^\s*func\s+(\w+)"
+            r"|^\s*(?:pub(?:\([\w:]+\))?\s+)?(?:const\s+)?(?:async\s+)?(?:unsafe\s+)?(?:extern\s+\S+\s+)?fn\s+(\w+)"
+            r"|^\s*(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s*\*?\s*(\w+)"
+            r"|^\s*(?:export\s+)?(?:default\s+)?(?:abstract\s+)?(?:(?:public|private|protected|internal|static|sealed|partial|final)\s+)*"
+            r"(?:class|struct|interface|trait|enum)\s+(\w+)"
+            r"|^\s*(?:export\s+)?type\s+(\w+)"
+        ),
+    ),
+    # HTTP routes: method and path.
+    Recognizer(
+        "route",
+        re.compile(r"route|\b(get|post|put|patch|delete)\b|mapping|handle|http|app\.|router", re.I),
+        re.compile(
+            r"\b(?:app|router|api|server|route|routes|r|e|mux|fastify|bp|blueprint)\.(get|post|put|patch|delete|all|head|options)\s*\(\s*['\"`]([^'\"`]+)"
+            r"|@\w+\.(route|get|post|put|patch|delete)\(\s*['\"]([^'\"]+)"
+            r"|@(Get|Post|Put|Patch|Delete|Request)Mapping\(\s*(?:(?:value|path)\s*=\s*)?\{?\s*[\"']([^\"']+)"
+            r"|\[Http(Get|Post|Put|Patch|Delete)\(\s*\"([^\"]+)\""
+            r"|\[(Route)\(\s*\"([^\"]+)\""
+            r"|\b(HandleFunc|Handle)\(\s*\"([^\"]+)\""
+        ),
+        join=" ",
+        upper_first=True,
+    ),
+    # Configuration keys read in code.
+    Recognizer(
+        "config key",
+        re.compile(r"config|setting|cfg|conf\b|property|@Value", re.I),
+        re.compile(
+            r"\b(?:config|settings|cfg|conf|configuration|_config|_configuration|Configuration)\s*\.\s*get(?:\w*)?\(\s*['\"`]([^'\"`]+)['\"`]"
+            r"|\b(?:config|settings|cfg|conf|configuration|_config|_configuration|Configuration)\s*\[\s*['\"`]([^'\"`]+)['\"`]\s*\]"
+            r"|\bsettings\.([A-Z][A-Z0-9_]+)\b"
+            r"|\bgetProperty\(\s*\"([^\"]+)\""
+            r"|@Value\(\s*\"\$\{([^}:]+)"
+        ),
+    ),
+    # Declared dependencies with their version (package.json, requirements, go.mod, Cargo.toml).
+    Recognizer(
+        "dependency",
+        re.compile(r"depend|version|require|package|==|>=|go\.mod|Cargo", re.I),
+        re.compile(
+            r"^\s*\"(@?[\w.-]+(?:/[\w.-]+)?)\"\s*:\s*\"((?:[~^<>=*]|\d|workspace:|npm:|file:|link:|git)[^\"]*)\""
+            r"|^\s*([A-Za-z0-9][\w.-]*(?:\[[\w,.-]+\])?)\s*((?:==|>=|<=|~=|!=|===)[^;#\s]*)"
+            r"|^\s*(?:require\s+)?([\w.-]+\.[a-z]+/[\w./-]+)\s+(v\S+)"
+            r"|^\s*([\w-]+)\s*=\s*(?:\"([\d^~=<>*][^\"]*)\"|\{[^}]*?\bversion\s*=\s*\"([^\"]+)\"|(\{\s*(?:path|git|workspace)\b[^}]*\}))"
+        ),
+        join=" ",
     ),
 ]
 # Projection is used only if the recognizer reads at least this share of the match lines.
@@ -391,6 +479,55 @@ def project(result: SearchResult, config: Config, pattern: str) -> Reduced | Non
     )
 
 
+# --- reading locations back -----------------------------------------------------
+
+_PROJ_LEAD = re.compile(r"^\[searchslim\] \d+ matches in \d+ files?\. \d+ matching lines read as \d+ .+ names(?P<rest>.*)$")
+_BY_NAME_LOC = re.compile(r"(?:(?P<path>\S.*?):)?(?P<nums>\d+(?:,\d+)*)(?=\s|$)")
+_BY_FILE_LOC = re.compile(r"(?P<name>\S.*?):(?P<num>\d+)(?=\s|$)")
+
+
+def match_locations(text: str, default_path: str = "") -> set[tuple[str, int]]:
+    """Every (path, line) of a match in raw or lossless output, L2 projections included.
+
+    Paths are normalized (`./` dropped) and pathless lines take `default_path`.
+    Used by the invariant tests and the benchmark: a lossless result must
+    have exactly the raw output's match locations.
+    """
+    from .parsers import parse
+
+    norm = lambda p: (p[2:] if p.startswith("./") else p) or default_path  # noqa: E731
+    lines = text.splitlines()
+    lead = next((i for i, ln in enumerate(lines) if _PROJ_LEAD.match(ln)), None)
+    if lead is None:
+        return {(norm(ln.path), ln.number) for ln in parse(text, kind=Kind.CONTENT).lines if ln.is_match}
+    by_file = "each file with name:line" in lines[lead]
+    found: set[tuple[str, int]] = set()
+    i = lead + 1
+    directory = ""
+    while i < len(lines) and lines[i].startswith(INDENT) and not lines[i].startswith(NOTE_PREFIX):
+        row = lines[i][len(INDENT):]
+        i += 1
+        if by_file:
+            if row.startswith(INDENT):
+                path, _, rest = row[len(INDENT):].partition("  ")
+                path = directory + path
+            elif "  " not in row:
+                directory = row
+                continue
+            else:
+                path, _, rest = row.partition("  ")
+                directory = ""
+            path = "" if path == "(file)" else path
+            found |= {(norm(path), int(m["num"])) for m in _BY_FILE_LOC.finditer(rest)}
+        else:
+            _, _, rest = row.partition("  ")
+            for m in _BY_NAME_LOC.finditer(rest):
+                found |= {(norm(m["path"] or ""), int(n)) for n in m["nums"].split(",")}
+    rest_text = "\n".join(ln for ln in lines[i:] if not ln.startswith(f"{NOTE_PREFIX} all "))
+    found |= {(norm(ln.path), ln.number) for ln in parse(rest_text, kind=Kind.CONTENT).lines if ln.is_match}
+    return found
+
+
 # --- driver ---------------------------------------------------------------------
 
 
@@ -408,6 +545,8 @@ def lossless_view(raw: str, result: SearchResult, config: Config, pattern: str =
         l1 = lossless_content(result, config)
     elif result.kind is Kind.PATHS:
         l1 = lossless_paths(result)
+    elif result.kind is Kind.COUNT:
+        l1 = lossless_counts(result)
     else:
         return None
     l1_tokens = estimate_tokens(l1.text)

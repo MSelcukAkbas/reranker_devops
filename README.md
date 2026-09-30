@@ -107,11 +107,18 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   Claude Code ~20k karakterden büyük Grep sonucunu dosyaya yazıp modele yalnızca
   ~2 KB önizleme gösteriyor; projeksiyonda ad listesi sona alındı ki önizlemede
   yerler görünsün.
-  1500 token üstündeki çıktılara ve yalnızca en az %20 kazanç varsa uygulanır,
+  0.6.5: `rg -c` sayım listeleri de dizin altında gruplanır; PowerShell
+  `Select-String -Context` çıktısı (`> ` eşleşme, iki boşluk bağlam) doğru
+  ayrıştırılır; projeksiyon tanıyıcılarına tanımlar (`def`/`func`/`fn`/`class`...),
+  HTTP route'ları, config anahtarları ve sürümüyle bağımlılıklar eklendi; eşik
+  1000 token ve %15 kazanç. `tests/test_invariants.py` her fixture'da (Windows
+  mutlak yollu kopyasıyla da) eşleşme konumlarının ham çıktıyla aynı kaldığını denetler.
+  1000 token üstündeki çıktılara ve yalnızca en az %15 kazanç varsa uygulanır,
   yoksa çıktı aynen geçer. Sonuç 4800 tokenı (`SEARCHSLIM_MAX_TOKENS`, Claude
   Code'un Grep sonucunu satır içinde gösterdiği ~20k karakterin altı) hâlâ aşarsa sırayla:
   bağlam satırları bırakılır (her eşleşme kalır); arama bilinen bir liste türüyse
-  (`process.env`/`os.environ`/`getenv`, `require`, `import`/`from`/`using`) her
+  (`process.env`/`os.environ`/`getenv`, `require`, `import`/`from`/`using`, tanımlar,
+  route'lar, config anahtarları, bağımlılıklar) her
   eşleşen satır adı ve yeriyle yazılır (projeksiyon); o da sığmazsa aşağıdaki
   kapsam görünümü ve sıralama devreye girer. Offline benchmark'ta varsayılanlarla
   76.6k → 42.9k token, 36/36 kritik satır (`benchmark/results/2026-09-30-lossless.md`).
@@ -154,7 +161,7 @@ Ayarlar (ortam değişkeni):
 |---|---|
 | `SEARCHSLIM=off` | hook'u kapatır (komutun başına da yazılabilir) |
 | `SEARCHSLIM_MAX_TOKENS` | bunun üstünde bir şey atılır; varsayılan 4800 (`coverage`/`notes` görünümünde 2000) |
-| `SEARCHSLIM_TRIGGER_TOKENS` | yalnızca bundan büyük çıktılara dokunulur; varsayılan 1500 (`coverage`/`notes` görünümünde 6000) |
+| `SEARCHSLIM_TRIGGER_TOKENS` | yalnızca bundan büyük çıktılara dokunulur; varsayılan 1000 (`coverage`/`notes` görünümünde 6000) |
 | `SEARCHSLIM_VIEW` | `lossless` (varsayılan, 0.6), `coverage` (0.4: dosya dizini + seçilmiş kanıt) veya `notes` (0.3'teki sondaki not) |
 | `SEARCHSLIM_RERANK` | `lexical` (varsayılan), `claude` veya `off` |
 | `SEARCHSLIM_GREP_MODE` | `post` (varsayılan) veya `deny` (Grep/Glob için eski PreToolUse davranışı) |
