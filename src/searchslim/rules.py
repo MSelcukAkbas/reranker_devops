@@ -19,7 +19,13 @@ from .models import Block, Kind, Line, PathCount, SearchResult
 
 NOTE_PREFIX = "[searchslim]"
 DEFAULT_TRIGGER_TOKENS = 6000
-DEFAULT_VIEW = "coverage"
+DEFAULT_VIEW = "lossless"
+VIEWS = ("lossless", "coverage", "notes")
+# Lossless view (lossless.py) in the hook and CLI: outputs above LOSSLESS_TRIGGER_TOKENS
+# are regrouped without dropping anything; only past LOSSLESS_MAX_TOKENS (just under
+# the ~30k chars where Claude Code itself cuts Bash output) does anything get dropped.
+LOSSLESS_TRIGGER_TOKENS = 1500
+LOSSLESS_MAX_TOKENS = 7000
 # The note is a neutral count of what is not shown, with no advice: in live
 # runs any wording about truncation or narrowing ("see them", "only if you
 # need") led agents to search again for the rest, costing more than it saved.
@@ -45,7 +51,12 @@ class Config:
     note_max_files: int = 10
     # "notes": over-budget output ends with a note counting what is not shown.
     # "coverage": it leads with an index of every matching file, then the
-    # selected evidence (coverage.py). The hook and CLI default to coverage.
+    # selected evidence (coverage.py).
+    # "lossless": every match kept, repetition removed (lossless.py); above the
+    # trigger it regroups the output when that saves enough, and only drops
+    # anything (projection, then coverage) when the result is still over
+    # max_tokens. trigger_tokens 0 means no minimum size. The hook and CLI
+    # default to lossless.
     view: str = "notes"
 
 
@@ -56,9 +67,16 @@ class Reduced:
 
 
 def view_from_env() -> str:
-    """Default view for the hook and CLI; SEARCHSLIM_VIEW=notes restores the 0.3 note."""
+    """Default view for the hook and CLI; SEARCHSLIM_VIEW=coverage|notes restores 0.4 / 0.3."""
     value = os.environ.get("SEARCHSLIM_VIEW", "").lower()
-    return value if value in ("coverage", "notes") else DEFAULT_VIEW
+    return value if value in VIEWS else DEFAULT_VIEW
+
+
+def view_defaults(view: str) -> tuple[int, int]:
+    """(max_tokens, trigger_tokens) the hook and CLI use for `view` when not set explicitly."""
+    if view == "lossless":
+        return LOSSLESS_MAX_TOKENS, LOSSLESS_TRIGGER_TOKENS
+    return Config.max_tokens, DEFAULT_TRIGGER_TOKENS
 
 
 def for_output(config: Config, raw: str) -> Config:

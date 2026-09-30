@@ -29,8 +29,11 @@
 
 Every failure path (bad input, missing rg, timeout) returns no output so the
 original tool call runs unchanged. `SEARCHSLIM=off` in the environment
-disables the hook; `SEARCHSLIM_MAX_TOKENS` sets the budget and
-`SEARCHSLIM_TRIGGER_TOKENS` (default 6000) the size above which output is reduced.
+disables the hook. Search output is regrouped losslessly by default
+(lossless.py): above `SEARCHSLIM_TRIGGER_TOKENS` (default 1500) and only when
+that saves 20%; matches are dropped only above `SEARCHSLIM_MAX_TOKENS`
+(default 7000). `SEARCHSLIM_VIEW=coverage|notes` restores the 0.4 / 0.3
+behaviour (trigger 6000, budget 2000).
 `SEARCHSLIM_RERANK=lexical|claude|off` picks the ranking (default lexical), with
 the intent taken from the session transcript.
 
@@ -51,7 +54,7 @@ from pathlib import Path
 from . import slim
 from .models import Kind
 from .rewrite import rewrite_command, rewrite_powershell, rewrite_test_command
-from .rules import DEFAULT_TRIGGER_TOKENS, DEFAULT_VIEW, NOTE_PREFIX, view_from_env, Config, estimate_tokens
+from .rules import DEFAULT_VIEW, NOTE_PREFIX, view_defaults, view_from_env, Config, estimate_tokens
 from .session import SessionStore, enabled as session_enabled
 
 RG_TIMEOUT_S = 20
@@ -60,8 +63,8 @@ RG_TIMEOUT_S = 20
 # by default. SEARCHSLIM_RERANK=off gives the plain rules mode.
 DEFAULT_RERANK = "lexical"
 GREP_REASON_HEADER = (
-    "searchslim reduced this search output. Lines keep path:line anchors; the "
-    "[searchslim] lines index every matching file or count what was left out."
+    "searchslim reduced this search output. Lines keep path:line anchors (the path "
+    "is printed once above a file's lines); [searchslim] lines index or count the rest."
 )
 GLOB_REASON_HEADER = (
     "searchslim reduced this file list. The trailing [searchslim] note counts "
@@ -72,7 +75,9 @@ DENY_NOTE = " This is the search result, not an error; do not retry the same cal
 
 
 def config_from_env() -> Config:
-    config = Config(trigger_tokens=DEFAULT_TRIGGER_TOKENS, view=view_from_env())
+    view = view_from_env()
+    max_tokens, trigger = view_defaults(view)
+    config = Config(max_tokens=max_tokens, trigger_tokens=trigger, view=view)
     value = os.environ.get("SEARCHSLIM_MAX_TOKENS", "")
     if value.isdigit():
         config.max_tokens = int(value)
@@ -161,20 +166,22 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         raw = postprocess(raw)
     else:
         run_cwd = cwd
-    if estimate_tokens(raw) <= max(config.max_tokens, config.trigger_tokens):
+    small = config.trigger_tokens if config.view == "lossless" else max(config.max_tokens, config.trigger_tokens)
+    if estimate_tokens(raw) <= small:
         return None  # small enough: let the real tool answer
     scorer = query = None
     if rerank:
         from .rerank import Query, make_scorer, query_from_transcript
 
         scorer = make_scorer(rerank)
-        pattern = tool_input.get("pattern", "")
-        query = query_from_transcript(transcript, pattern) if transcript else Query(pattern=pattern)
+        query = query_from_transcript(transcript, tool_input.get("pattern", "")) if transcript else Query(pattern=tool_input.get("pattern", ""))
     session = SessionStore(session_id) if use_session else None
     reduced = slim(
         raw, kind=kind, config=config, scorer=scorer, query=query, default_path=default_path,
-        session=session, cwd=run_cwd,
+        session=session, cwd=run_cwd, pattern=tool_input.get("pattern", ""),
     )
+    if reduced.text == raw:
+        return None  # nothing worth changing: the real tool's own result stands
     header = GLOB_REASON_HEADER if tool == "Glob" else GREP_REASON_HEADER
     if default_path:
         header += f" All lines are from {default_path}."
@@ -187,7 +194,7 @@ def handle(event: dict, config: Config | None = None) -> dict | None:
         return {
             "hookSpecificOutput": {
                 "hookEventName": "PostToolUse",
-                "updatedToolOutput": shape_output(tool, mode, base, reduced.text),
+                "updatedToolOutput": shape_output(tool, mode, base, reduced.text, complete=_complete(reduced)),
             }
         }
     return {
@@ -255,14 +262,20 @@ def _response_text(tool: str, response: dict) -> str | None:
     return None
 
 
-def shape_output(tool: str, mode: str, response: dict, text: str) -> dict:
+def _complete(reduced) -> bool:
+    """Whether the reduced text still has every result (lossless view, L1)."""
+    return reduced.stats.get("view") == "lossless" and reduced.stats.get("level") in ("L0", "L1")
+
+
+def shape_output(tool: str, mode: str, response: dict, text: str, complete: bool = False) -> dict:
     """The reduced result in the tool's output shape.
 
     Grep: {mode, numFiles, filenames, content, numLines, ...}; Glob:
     {filenames, numFiles, truncated, durationMs}. Fields not set here keep the
     tool's own values. In list modes the [searchslim] note becomes the last
     entry, so the model still sees what was left out; numFiles stays the
-    tool's total, which the note explains.
+    tool's total, which the note explains. A lossless regrouping (`complete`)
+    keeps Glob's own `truncated` flag.
     """
     out = dict(response)
     lines = text.splitlines()
@@ -278,7 +291,8 @@ def shape_output(tool: str, mode: str, response: dict, text: str) -> dict:
     out["filenames"] = body + notes
     out.setdefault("numFiles", len(body))
     if tool == "Glob":
-        out["truncated"] = True
+        # Regrouped without loss: keep the tool's own flag, so no truncation notice is shown.
+        out["truncated"] = bool(response.get("truncated")) if complete else True
         out.setdefault("durationMs", 0)
     else:
         out["mode"] = "files_with_matches"

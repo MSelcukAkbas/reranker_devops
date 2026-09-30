@@ -5,6 +5,7 @@ import sys
 
 import pytest
 
+from searchslim import Kind, parse
 from searchslim.hooks import GREP_REASON_HEADER, grep_to_rg, handle, shape_output
 from searchslim.rules import Config, NOTE_PREFIX, estimate_tokens
 
@@ -25,7 +26,7 @@ def test_bash_search_is_rewritten_keeping_other_fields():
     out = handle({"tool_name": "Bash", "tool_input": {"command": "rg foo", "description": "search"}})
     upd = out["hookSpecificOutput"]["updatedInput"]
     assert upd["description"] == "search"
-    assert upd["command"].endswith("-m searchslim run --max-tokens=2000 --trigger-tokens=6000 --rerank=lexical -- rg foo")
+    assert upd["command"].endswith("-m searchslim run --max-tokens=7000 --trigger-tokens=1500 --rerank=lexical -- rg foo")
     assert "permissionDecision" not in out["hookSpecificOutput"]
 
 
@@ -95,15 +96,17 @@ def test_hook_cli_searches_cwd_not_its_own_stdin(repo):
     event = json.dumps({"hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(repo), "tool_input": {"pattern": "target", "output_mode": "content"}})
     proc = subprocess.run([sys.executable, "-m", "searchslim", "hook"], input=event, capture_output=True, text=True)
     reason = post_text(json.loads(proc.stdout))
-    lines = reason.splitlines()
-    assert lines[0].startswith(NOTE_PREFIX) and "40/40 matching files indexed" in lines[0]
-    assert any(ln.startswith("mod00.py:1:") for ln in lines)
+    # Every match is kept (lossless view); the 30 lines repeated in all 40 files are written once each.
+    parsed = parse(reason, kind=Kind.CONTENT)
+    assert len({(ln.path, ln.number) for ln in parsed.lines}) == 40 * 30
+    assert any(ln.path == "mod00.py" and ln.number == 1 for ln in parsed.lines)
+    assert len(reason) < len("".join(f"mod{i:02d}.py:{n + 1}:    value_{n} = compute(target, {n})\n" for i in range(40) for n in range(0, 90, 3))) / 2
 
 
 def test_hook_cli_emits_json():
     event = json.dumps({"tool_name": "Bash", "tool_input": {"command": "find . -name '*.py'"}})
     proc = subprocess.run([sys.executable, "-m", "searchslim", "hook"], input=event, capture_output=True, text=True)
-    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=2000 --trigger-tokens=6000 --rerank=lexical -- find . -name '*.py'")
+    assert json.loads(proc.stdout)["hookSpecificOutput"]["updatedInput"]["command"].endswith("run --max-tokens=7000 --trigger-tokens=1500 --rerank=lexical -- find . -name '*.py'")
 
 
 @needs_rg

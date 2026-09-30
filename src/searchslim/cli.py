@@ -25,7 +25,7 @@ import sys
 
 from . import slim
 from .models import Kind
-from .rules import DEFAULT_TRIGGER_TOKENS, Config, view_from_env
+from .rules import VIEWS, Config, view_defaults, view_from_env
 
 
 def _version() -> str:
@@ -37,9 +37,9 @@ def _version() -> str:
         return "unknown"
 
 
-def _default_trigger() -> int:
+def _default_trigger() -> int | None:
     value = os.environ.get("SEARCHSLIM_TRIGGER_TOKENS", "")
-    return int(value) if value.isdigit() else DEFAULT_TRIGGER_TOKENS
+    return int(value) if value.isdigit() else None
 
 
 def _default_rerank() -> str:
@@ -63,18 +63,23 @@ def _utf8_stdio() -> None:
 
 def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--kind", choices=[k.value for k in Kind], help="force the output shape instead of auto-detecting")
-    p.add_argument("--max-tokens", type=int, default=Config.max_tokens)
+    p.add_argument(
+        "--max-tokens",
+        type=int,
+        default=None,
+        help="budget: above it matches are dropped (default: $SEARCHSLIM_MAX_TOKENS, else 7000 for lossless, 2000 otherwise)",
+    )
     p.add_argument(
         "--trigger-tokens",
         type=int,
         default=_default_trigger(),
-        help="reduce only outputs above this many tokens (default: $SEARCHSLIM_TRIGGER_TOKENS or 6000; 0 = --max-tokens)",
+        help="change only outputs above this many tokens (default: $SEARCHSLIM_TRIGGER_TOKENS, else 1500 for lossless, 6000 otherwise)",
     )
     p.add_argument(
         "--view",
-        choices=["coverage", "notes"],
+        choices=list(VIEWS),
         default=None,
-        help="over-budget content: coverage = index of every matching file + selected evidence; notes = trailing not-shown note (default: $SEARCHSLIM_VIEW or coverage)",
+        help="lossless = every match kept, repetition removed, dropping only when still over --max-tokens; coverage = index of every matching file + selected evidence; notes = trailing not-shown note (default: $SEARCHSLIM_VIEW or lossless)",
     )
     p.add_argument("--merge-gap", type=int, default=Config.merge_gap)
     p.add_argument("--max-matches-per-file", type=int, default=Config.max_matches_per_file)
@@ -95,13 +100,20 @@ def _add_common(p: argparse.ArgumentParser) -> None:
 
 
 def _config(args: argparse.Namespace) -> Config:
+    view = args.view or view_from_env()
+    max_tokens, trigger = view_defaults(view)
+    env_max = os.environ.get("SEARCHSLIM_MAX_TOKENS", "")
+    if args.max_tokens is not None:
+        max_tokens = args.max_tokens
+    elif env_max.isdigit():
+        max_tokens = int(env_max)
     return Config(
-        max_tokens=args.max_tokens,
-        trigger_tokens=args.trigger_tokens,
+        max_tokens=max_tokens,
+        trigger_tokens=trigger if args.trigger_tokens is None else args.trigger_tokens,
         merge_gap=args.merge_gap,
         max_matches_per_file=args.max_matches_per_file,
         max_line_chars=args.max_line_chars,
-        view=args.view or view_from_env(),
+        view=view,
     )
 
 
@@ -158,6 +170,7 @@ def _reduce(raw: str, args: argparse.Namespace):
         query=query,
         session=session,
         cwd=os.getcwd(),
+        pattern=args.query,
     )
     return reduced.text, reduced.stats
 
@@ -300,7 +313,7 @@ def main(argv: list[str] | None = None) -> int:
             command = prepared.argv
             args.default_path = args.default_path or prepared.default_path
             args.kind = args.kind or prepared.kind
-        if not args.query and args.rerank not in ("off", "none"):
+        if not args.query:
             from .rerank import pattern_and_paths
 
             args.query = pattern_and_paths(command)[0]
