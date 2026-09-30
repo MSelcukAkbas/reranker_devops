@@ -162,6 +162,56 @@ def _reduce(raw: str, args: argparse.Namespace):
     return reduced.text, reduced.stats
 
 
+def _decode_output(data: bytes) -> str:
+    """UTF-8, else the locale's codec (a Windows console program may print cp1254)."""
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        import locale
+
+        return data.decode(locale.getpreferredencoding(False) or "utf-8", errors="replace")
+
+
+def _run_compact(command: list[str]) -> int:
+    """Run a test/build command, compact stdout and stderr, keep its exit code.
+
+    Compacting here, before Claude Code sees the output, covers what a
+    PostToolUse hook cannot: failing runs (no PostToolUse on exit != 0) and
+    output Claude Code truncates at ~30 KB before hooks see it.
+    """
+    import shutil
+
+    from .compact import DEFAULT_COMPACT_TRIGGER_TOKENS, compact
+    from .rules import estimate_tokens
+
+    # A bare `npx`/`npm` is `npx.cmd` on Windows, which CreateProcess only runs by full path.
+    exe = shutil.which(command[0])
+    argv = [exe or command[0]] + command[1:]
+    env = dict(os.environ)
+    env.setdefault("PYTHONIOENCODING", "utf-8")  # pytest & co. would print in the console code page
+    try:
+        proc = subprocess.run(argv, capture_output=True, env=env)
+    except FileNotFoundError:
+        sys.stderr.write(f"searchslim: command not found: {command[0]}\n")
+        return 127
+    out, err = _decode_output(proc.stdout), _decode_output(proc.stderr)
+    value = os.environ.get("SEARCHSLIM_COMPACT_TRIGGER_TOKENS", "")
+    trigger = int(value) if value.isdigit() else DEFAULT_COMPACT_TRIGGER_TOKENS
+    if os.environ.get("SEARCHSLIM_COMPACT", "").lower() != "off" and estimate_tokens(out) + estimate_tokens(err) > trigger:
+        out, err = (_compact_or_raw(compact, text) for text in (out, err))
+    _write(err, sys.stderr)
+    _write(out)
+    return proc.returncode
+
+
+def _compact_or_raw(compact, text: str) -> str:
+    try:
+        result = compact(text, trigger_tokens=0)
+    except Exception:  # fail open: the raw output
+        result = None
+    return result.text if result is not None else text
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="searchslim", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--version", action="version", version=f"searchslim {_version()}")
@@ -174,6 +224,7 @@ def main(argv: list[str] | None = None) -> int:
     _add_common(p_run)
     p_run.add_argument("--shell", action="store_true", help="run the command (one string) through the shell, e.g. a filter pipeline")
     p_run.add_argument("--no-anchor", action="store_true", help="do not add the flags that keep path:line on every line (rg/grep/git grep)")
+    p_run.add_argument("--compact", action="store_true", help="the command is a test/build run: compact its stdout and stderr (compact.py) instead of reducing search output")
     p_run.add_argument("command", nargs=argparse.REMAINDER, help="command to run, after --")
 
     p_compact = sub.add_parser("compact", help="compact test/build output read from stdin (see compact.py)")
@@ -237,6 +288,8 @@ def main(argv: list[str] | None = None) -> int:
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
         parser.error("run needs a command, e.g. searchslim run -- rg -n foo")
+    if args.compact:
+        return _run_compact(command)
     if args.shell:
         proc = subprocess.run(" ".join(command), shell=True, capture_output=True)
     else:

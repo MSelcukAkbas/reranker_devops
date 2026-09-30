@@ -123,6 +123,76 @@ def rewrite_command(command: str, runner: str | None = None, run_args: list[str]
     return f"{prefix}{runner} run{opts} --kind={kind} --shell -- {shlex.quote(body)}"
 
 
+# Test runners whose output compact.py knows. Wrapping them in `searchslim run
+# --compact` compacts the output before Claude Code sees it: a failing run (exit
+# != 0) gets no PostToolUse, and output over ~30 KB reaches hooks truncated.
+_TEST_RUNNERS = {"pytest", "py.test", "jest", "vitest", "mocha"}
+_PYTHONS = {"python", "python3", "py"}
+_JS_EXEC = {"npx", "pnpx", "bunx", "pnpm", "yarn", "bun"}
+_ENV_ASSIGN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=\S*$")
+# Interactive or never-ending modes: captured output would never be shown.
+_TEST_NO_WRAP = {"--watch", "--watchAll", "-w", "--pdb", "--trace", "--ui", "watch", "dev", "--help", "-h"}
+
+
+def is_test_command(argv: list[str]) -> bool:
+    """True for a plain test-runner invocation (pytest, python -m pytest, npx jest,
+    npm test, go test, cargo test, dotnet test, uv/poetry run pytest ...)."""
+    if not argv or any(a in _TEST_NO_WRAP for a in argv[1:]):
+        return False
+    name = re.sub(r"\.(exe|cmd|bat)$", "", Path(argv[0].replace("\\", "/")).name.lower())
+    rest = argv[1:]
+    if name in _TEST_RUNNERS:
+        return True
+    if name in _PYTHONS or re.fullmatch(r"python3(\.\d+)?", name):
+        return rest[:2] == ["-m", "pytest"]
+    if name in ("uv", "poetry", "pipenv") and rest[:1] == ["run"]:
+        return is_test_command(rest[1:])
+    if name in _JS_EXEC or name == "npm":
+        words = [a for a in rest if not a.startswith("-")]
+        if name != "npm" and words[:1] and words[0] in ("jest", "vitest", "mocha"):
+            return True
+        return words[:1] in (["test"], ["t"]) or words[:2] == ["run", "test"]
+    if name in ("go", "dotnet"):
+        return rest[:1] == ["test"]
+    if name == "cargo":
+        return rest[:1] == ["test"] or rest[:2] == ["nextest", "run"]
+    return False
+
+
+def rewrite_test_command(command: str, runner: str | None = None, check_path: bool = False) -> str | None:
+    """Wrap a plain test-runner command in `searchslim run --compact`, or return None.
+
+    Allowed around it: a leading `cd x &&`, leading VAR=value assignments and
+    `2>&1`/`2>/dev/null`; no pipes, other redirects, chaining or substitutions.
+    `run` keeps the command's exit code.
+    """
+    stripped = command.strip()
+    if not stripped or stripped.startswith(OFF_PREFIX.strip()):
+        return None
+    prefix, body = "", stripped
+    if body.startswith("cd ") and "&&" in body:
+        cd_part, _, rest = body.partition("&&")
+        if _has_unsafe(cd_part) or "&&" in rest:
+            return None
+        prefix, body = cd_part.strip() + " && ", rest.strip()
+    if _has_unsafe(_STDERR_REDIRECT.sub(" ", body)):
+        return None
+    try:
+        argv = shlex.split(_STDERR_REDIRECT.sub(" ", body))
+    except ValueError:
+        return None
+    envs = []
+    while argv and _ENV_ASSIGN.match(argv[0]):
+        envs.append(argv.pop(0))
+    if not is_test_command(argv):
+        return None
+    if check_path and shutil.which(argv[0]) is None:
+        return None
+    # Simple VAR=value assignments stay in front, so they reach the runner through `run`.
+    env_text = re.match(r"^(\s*[A-Za-z_][A-Za-z0-9_]*=\S*\s+){%d}" % len(envs), body).group(0) if envs else ""
+    return f"{prefix}{env_text}{runner or default_runner()} run --compact -- {body[len(env_text):]}"
+
+
 def search_kind(argv: list[str]) -> str | None:
     """Output shape of a wrappable search command ("content", "paths", "count",
     "lines"), or None when the command must not be wrapped."""
@@ -395,6 +465,9 @@ def rewrite_powershell(command: str, python: str | None = None, run_args: list[s
     stripped = command.strip()
     if not stripped or "SEARCHSLIM" in stripped:
         return None
+    wrapped = _ps_test_command(stripped, python, check_path)
+    if wrapped:
+        return wrapped
     if not _ps_unquoted(stripped)[1]:
         return None
     stages = _ps_split(stripped)
@@ -429,6 +502,22 @@ def rewrite_powershell(command: str, python: str | None = None, run_args: list[s
     else:
         kind = " --kind=lines"  # Get-ChildItem's table format
     return f"{PS_UTF8}{stripped} | Out-String -Stream -Width 4096 | {runner} filter{opts}{kind}"
+
+
+_PS_MERGE_STDERR = re.compile(r"\s+2>&1$")
+
+
+def _ps_test_command(stripped: str, python: str | None, check_path: bool) -> str | None:
+    """`pytest ...` (optionally ending in `2>&1`) -> `& '<python>' -m searchslim run --compact pytest ...`."""
+    merge = _PS_MERGE_STDERR.search(stripped)
+    body = stripped[: merge.start()] if merge else stripped
+    if not _ps_unquoted(body)[1] or "|" in _ps_unquoted(body)[0]:
+        return None
+    argv = _ps_argv(body)
+    if not is_test_command(argv) or (check_path and shutil.which(argv[0]) is None):
+        return None
+    runner = f"& {ps_quote((python or sys.executable).replace(chr(92), '/'))} -m searchslim"
+    return f"{PS_UTF8}{runner} run --compact {body}{' 2>&1' if merge else ''}"
 
 
 def _ps_unquoted(s: str) -> tuple[str, bool]:

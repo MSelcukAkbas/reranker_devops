@@ -72,6 +72,12 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   çıktısı zaten kısa; kazanç `-v`/`--verbose`, `-rA`, `go test -v` ve
   `cargo test` gibi test başına satır basan çalıştırmalarda. Elle:
   `pytest -v | searchslim compact --stats`.
+  0.5.1: sade test komutları (`pytest`, `python -m pytest`, `npx jest/vitest`,
+  `npm test`, `go test`, `cargo test`, `dotnet test`) PreToolUse'ta
+  `searchslim run --compact -- <komut>` ile sarılır; çıkış kodu aynı kalır.
+  Sebep: kalan testte (exit ≠ 0) Claude Code PostToolUse çalıştırmıyor, 30 KB
+  üstü çıktıyı da hook'a kesik veriyor. Sarılmayan komutlarda PostToolUse,
+  `persistedOutputPath` varsa tam çıktıyı o dosyadan okur.
 - **Kurallar:** tekrarlar atılır, örtüşen satır aralıkları birleşir. Bütçe
   aşılırsa önce bağlam satırları, sonra fazla eşleşmeler, sonra dosyalar atılır.
 - **Kapsam görünümü (0.4, varsayılan):** bütçeyi aşan bir içerik araması
