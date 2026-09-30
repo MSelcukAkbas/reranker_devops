@@ -73,7 +73,8 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   `cargo test` gibi test başına satır basan çalıştırmalarda. Elle:
   `pytest -v | searchslim compact --stats`.
   0.5.1: sade test komutları (`pytest`, `python -m pytest`, `npx jest/vitest`,
-  `npm test`, `go test`, `cargo test`, `dotnet test`) PreToolUse'ta
+  `npm test`, `go test`, `cargo test`, `dotnet test`; önünde `cd x &&`,
+  `cd x;` ya da PowerShell'de `Set-Location x;` olabilir) PreToolUse'ta
   `searchslim run --compact -- <komut>` ile sarılır; çıkış kodu aynı kalır.
   Sebep: kalan testte (exit ≠ 0) Claude Code PostToolUse çalıştırmıyor, 30 KB
   üstü çıktıyı da hook'a kesik veriyor. Sarılmayan komutlarda PostToolUse,
