@@ -134,6 +134,10 @@ _ENV_ASSIGN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=\S*$")
 _TEST_NO_WRAP = {"--watch", "--watchAll", "-w", "--pdb", "--trace", "--ui", "watch", "dev", "--help", "-h"}
 
 
+# `cd x && ` or `cd x; ` before a test command (a quoted path may hold spaces).
+_CD_PREFIX = re.compile(r"""^cd\s+(?:'[^']*'|"[^"$`\\]*"|[^\s;&|'"$`(){}<>\\]+)\s*(?:&&|;)\s*""")
+
+
 def is_test_command(argv: list[str]) -> bool:
     """True for a plain test-runner invocation (pytest, python -m pytest, npx jest,
     npm test, go test, cargo test, dotnet test, uv/poetry run pytest ...)."""
@@ -170,11 +174,9 @@ def rewrite_test_command(command: str, runner: str | None = None, check_path: bo
     if not stripped or stripped.startswith(OFF_PREFIX.strip()):
         return None
     prefix, body = "", stripped
-    if body.startswith("cd ") and "&&" in body:
-        cd_part, _, rest = body.partition("&&")
-        if _has_unsafe(cd_part) or "&&" in rest:
-            return None
-        prefix, body = cd_part.strip() + " && ", rest.strip()
+    cd = _CD_PREFIX.match(body)
+    if cd:
+        prefix, body = cd.group(0), body[cd.end():]
     if _has_unsafe(_STDERR_REDIRECT.sub(" ", body)):
         return None
     try:
@@ -505,19 +507,30 @@ def rewrite_powershell(command: str, python: str | None = None, run_args: list[s
 
 
 _PS_MERGE_STDERR = re.compile(r"\s+2>&1$")
+# `Set-Location x; ...`, `cd 'x y' && ...`: a directory change before the test command.
+_PS_CD_PREFIX = re.compile(
+    r"^(?:set-location|cd|sl|push-location|pushd)\s+(?:-(?:literal)?path\s+)?"
+    r"(?:'[^']*'|\"[^\"$`]*\"|[^\s;&|'\"$`(){}<>@]+)\s*(?:;|&&)\s*",
+    re.IGNORECASE,
+)
 
 
 def _ps_test_command(stripped: str, python: str | None, check_path: bool) -> str | None:
-    """`pytest ...` (optionally ending in `2>&1`) -> `& '<python>' -m searchslim run --compact pytest ...`."""
-    merge = _PS_MERGE_STDERR.search(stripped)
-    body = stripped[: merge.start()] if merge else stripped
-    if not _ps_unquoted(body)[1] or "|" in _ps_unquoted(body)[0]:
+    """`[cd x; ]pytest ...[ 2>&1]` -> `...; [cd x; ]& '<python>' -m searchslim run --compact pytest ...`."""
+    cd = _PS_CD_PREFIX.match(stripped)
+    prefix = cd.group(0) if cd else ""
+    body = stripped[len(prefix):]
+    merge = _PS_MERGE_STDERR.search(body)
+    if merge:
+        body = body[: merge.start()]
+    if not body or not _ps_unquoted(body)[1] or "|" in _ps_unquoted(body)[0]:
         return None
     argv = _ps_argv(body)
     if not is_test_command(argv) or (check_path and shutil.which(argv[0]) is None):
         return None
     runner = f"& {ps_quote((python or sys.executable).replace(chr(92), '/'))} -m searchslim"
-    return f"{PS_UTF8}{runner} run --compact {body}{' 2>&1' if merge else ''}"
+    # The encoding assignment goes first: an assignment can't follow `&&`.
+    return f"{PS_UTF8}{prefix}{runner} run --compact {body}{' 2>&1' if merge else ''}"
 
 
 def _ps_unquoted(s: str) -> tuple[str, bool]:

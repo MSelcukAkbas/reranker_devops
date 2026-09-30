@@ -121,8 +121,9 @@ an agent that must decide from it whether to search again.
   `[searchslim] not shown: ...` count.
 - PreToolUse also wraps plain test-runner commands (`rewrite.is_test_command`: pytest, python -m pytest,
   uv/poetry run, npx/pnpm/yarn jest|vitest|mocha, npm/yarn/pnpm test, go test, cargo test/nextest,
-  dotnet test; not watch/--pdb) as `searchslim run --compact -- <cmd>` (Bash: optional `cd x &&`,
-  VAR=v prefixes, `2>&1`; PowerShell: optional trailing `2>&1`). `run --compact` captures both
+  dotnet test; not watch/--pdb) as `searchslim run --compact -- <cmd>` (Bash: optional `cd x &&`/`cd x;`,
+  VAR=v prefixes, `2>&1`; PowerShell: optional `Set-Location|cd|sl|Push-Location x;`/`&&` prefix and
+  trailing `2>&1`). `run --compact` captures both
   streams, compacts, keeps the exit code. Needed because on exit != 0 Claude Code fires
   PostToolUseFailure (only a middle-truncated `error` string, no tool_response), and over ~30 KB
   hooks get a cut `stdout` (live Windows test, 0.5.0). PostToolUse still covers unwrapped commands:

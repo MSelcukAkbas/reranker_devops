@@ -223,7 +223,8 @@ def test_rewrite_test_command_forms():
         rewrite_test_command("cd app && CI=1 python -m pytest -q 2>&1", runner="S")
         == "cd app && CI=1 S run --compact -- python -m pytest -q 2>&1"
     )
-    for command in ("pytest -v | tail -20", "pytest > out.txt", "pytest; echo done", "pytest $(ls)", "SEARCHSLIM=off pytest"):
+    assert rewrite_test_command("cd 'my app'; pytest", runner="S") == "cd 'my app'; S run --compact -- pytest"
+    for command in ("pytest -v | tail -20", "cd $(x) && pytest", "cd a && cd b && pytest", "pytest > out.txt", "pytest; echo done", "pytest $(ls)", "SEARCHSLIM=off pytest"):
         assert rewrite_test_command(command, runner="S") is None, command
 
 
@@ -231,6 +232,15 @@ def test_rewrite_powershell_test_command():
     out = rewrite_powershell("python -m pytest -v pyt 2>&1", python="C:\\Python314\\python.exe")
     assert out.endswith("& 'C:/Python314/python.exe' -m searchslim run --compact python -m pytest -v pyt 2>&1")
     assert rewrite_powershell("python -m pytest | Select-Object -Last 5", python="py") is None
+    for command, prefix in (
+        ("Set-Location pyt; python -m pytest -v 2>&1", "Set-Location pyt; "),
+        ('cd "C:\\a b\\pyt" && pytest -v', 'cd "C:\\a b\\pyt" && '),
+        ("Set-Location -Path pyt; npm test", "Set-Location -Path pyt; "),
+    ):
+        out = rewrite_powershell(command, python="py")
+        assert out.startswith("$OutputEncoding") and f"; {prefix}& 'py' -m searchslim run --compact " in out, command
+    for command in ("cd $d; pytest", "cd pyt; pytest; Remove-Item x", "cd pyt; Get-Date"):
+        assert rewrite_powershell(command, python="py") is None, command
     assert rewrite_powershell("pytest $args", python="py") is None
 
 
