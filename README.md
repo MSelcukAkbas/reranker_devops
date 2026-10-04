@@ -66,7 +66,7 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   log satırı ilk ve son satırıyla kalır. Sonda tek bir `[searchslim] not shown:
   ...` satırı neyin atıldığını sayar. Komuta değil çıktıya bakılır, yani
   modelin kendi yazdığı özet betikleri ve diğer çıktılar değişmez. Yalnızca
-  2000 token üstünde ve en az %20 kazanç varsa devreye girer
+  500 token üstünde ve en az %10 kazanç (0.6.8 öncesi 2000 ve %20) varsa devreye girer
   (`SEARCHSLIM_COMPACT_TRIGGER_TOKENS`, kapatmak için `SEARCHSLIM_COMPACT=off`).
   Not: pytest'in varsayılan çıktısı ve jest/vitest'in terminal dışı varsayılan
   çıktısı zaten kısa; kazanç `-v`/`--verbose`, `-rA`, `go test -v` ve
@@ -93,6 +93,12 @@ her platformda UTF-8'dir; `.\dizin\dosya` yolları notta dizine göre doğru gru
   tests" altında aynen tekrarladığı hata gövdesi de atılır. Ham çıktıdaki her
   tanı konumu ya satır olarak kalır ya da bir `more places` notunda yazar
   (testlerle zorunlu). Kategori bazlı ölçüm: `python3 benchmark/compact_bench.py`.
+  0.6.8: eşik 2000 yerine 500 token, en az kazanç %20 yerine %10 (1k token'lık
+  başarısız bir cargo build artık sıkıştırılıyor). pytest'in uyarı özetinde 3+
+  yerde geçen aynı uyarı bir kez tam gösterilir, diğer yerler
+  `yol:satır test-id | kaynak satırı` satırları olarak listelenir (kayıpsız).
+  Kısa özet her başarısız testi adıyla veriyorsa F/E içeren ilerleme satırları da
+  atılır.
 - **Kayıpsız görünüm (0.6, varsayılan):** arama çıktısı hiçbir eşleşme
   atılmadan küçültülür; yalnızca tekrar çıkarılır. Yol her dosya için bir kez
   yazılır (rg'nin kendi `--heading` biçimi), örtüşen `-C` pencereleri tek kez

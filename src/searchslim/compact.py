@@ -42,10 +42,12 @@ from dataclasses import dataclass, field
 
 from .rules import NOTE_PREFIX, estimate_tokens
 
-DEFAULT_COMPACT_TRIGGER_TOKENS = 2000
+# Every rule only drops passing/progress noise or lists the places of a repeat,
+# so mid-sized outputs (a 1k-token failed build) are worth compacting too.
+DEFAULT_COMPACT_TRIGGER_TOKENS = 500
 # Below this saving the raw output is kept: a compacted result that is barely
 # smaller only adds a note to read.
-MIN_SAVED_RATIO = 0.2
+MIN_SAVED_RATIO = 0.1
 MIN_PROGRESS_LINES = 10  # a build-progress family must be this common to count
 MIN_REPEAT_RUN = 5
 
@@ -63,6 +65,10 @@ PYTEST_PASS = re.compile(
     r"|PASSED \S+::\S.*)$"
 )
 PYTEST_PROGRESS = re.compile(r"^(\S+\.py )?[.sx]+(\s+\[\s*\d+%\])?$")
+PYTEST_PROGRESS_ANY = re.compile(r"^(\S+\.py )?[.sxXFE]+(\s+\[\s*\d+%\])?$")
+PYTEST_SUMMARY_FAIL = re.compile(r"^(FAILED|ERROR) \S+::")
+# warnings summary: `  /src/a.py:5: DeprecationWarning: msg` under its test ids
+PYTEST_WARNING = re.compile(r"^  (?P<path>\S.*?):(?P<line>\d+): (?P<msg>\w*Warning\b.*)$")
 PYTEST_SECTION = re.compile(r"^=+ (.+?) =+$")
 PYTEST_TEST_HEADER = re.compile(r"^_+ .+ _+$")
 
@@ -157,6 +163,13 @@ def compact(raw: str, trigger_tokens: int = DEFAULT_COMPACT_TRIGGER_TOKENS) -> C
         tools.append("diagnostics")
         for i, label in diag_drops.items():
             drops.setdefault(i, label)
+    warn_drops, warn_notes = _pytest_warnings(lines)
+    if warn_drops:
+        tools.append("pytest-warnings")
+        for i, label in warn_drops.items():
+            drops.setdefault(i, label)
+        for i, extra in warn_notes.items():
+            notes.setdefault(i, []).extend(extra)
 
     kept: list[tuple[float, str]] = []
     for i, ln in enumerate(lines):
@@ -210,7 +223,105 @@ def _pytest(lines: list[str]) -> dict[int, str]:
             else:
                 passes[-1].append(i)
     _drop_groups(lines, passes, drops, "passing test output lines")
+    _drop_failing_progress(lines, drops)
     return drops
+
+
+def _drop_failing_progress(lines: list[str], drops: dict[int, str]) -> None:
+    """Progress lines with F/E go too when `short test summary info` names every
+    one of those failures and errors (same counts), so they tell nothing more."""
+    section = ""
+    progress: list[int] = []
+    letters = {"F": 0, "E": 0}
+    listed = {"FAILED": 0, "ERROR": 0}
+    for i, ln in enumerate(lines):
+        header = PYTEST_SECTION.match(ln)
+        if header:
+            section = header.group(1).strip()
+            continue
+        if section == "test session starts" and ln.strip() and PYTEST_PROGRESS_ANY.match(ln):
+            progress.append(i)
+            dots = ln.split(" [")[0].rstrip().split(" ")[-1]
+            letters["F"] += dots.count("F")
+            letters["E"] += dots.count("E")
+        elif section == "short test summary info":
+            m = PYTEST_SUMMARY_FAIL.match(ln)
+            if m:
+                listed[m.group(1)] += 1
+    if letters["F"] + letters["E"] and letters["F"] == listed["FAILED"] and letters["E"] == listed["ERROR"]:
+        for i in progress:
+            drops.setdefault(i, "progress lines (failures listed in the summary)")
+
+
+def _pytest_warnings(lines: list[str]) -> tuple[dict[int, str], dict[int, list[str]]]:
+    """pytest's warnings summary: a warning whose message repeats at 3+ places is
+    shown once (test ids, location, source line); the others follow it as rows
+    `  path:line test-id | source line` (`::name` = a test in that same file,
+    source without its indentation), so nothing but layout changes. Any block
+    that does not read as `ids, location line, one indented source line` leaves
+    the section untouched."""
+    drops: dict[int, str] = {}
+    notes: dict[int, list[str]] = {}
+    try:
+        start = next(i for i, ln in enumerate(lines) if PYTEST_SECTION.match(ln) and "warnings summary" in ln)
+    except StopIteration:
+        return drops, notes
+    end = next((i for i in range(start + 1, len(lines)) if PYTEST_SECTION.match(lines[i]) or lines[i].startswith("-- Docs: ")), len(lines))
+    blocks = []  # (first, last, ids, path, line, message, source)
+    i = start + 1
+    while i < end:
+        if not lines[i].strip():
+            i += 1
+            continue
+        first, ids = i, []
+        while i < end and lines[i].strip() and not lines[i][0].isspace():
+            ids.append(lines[i])
+            i += 1
+        m = PYTEST_WARNING.match(lines[i]) if i < end else None
+        if not ids or not m:
+            return {}, {}
+        i += 1
+        source = []
+        while i < end and lines[i].strip() and lines[i][0].isspace():
+            source.append(lines[i])
+            i += 1
+        blocks.append((first, i - 1, ids, m["path"], m["line"], m["msg"], source))
+    groups: dict[str, list] = {}
+    for b in blocks:
+        groups.setdefault(b[5], []).append(b)
+    for message, group in groups.items():
+        rest = group[1:]
+        if len(group) < MIN_GROUP or any(len(b[6]) != 1 or not b[6][0].startswith("    ") for b in rest):
+            continue
+        paths = sorted({b[3] for b in rest})
+        prefix = ""
+        if len(paths) > 1:
+            common = os.path.commonprefix(paths)
+            prefix = common[: max(common.rfind("/"), common.rfind("\\")) + 1]
+        under = f", under {prefix}" if prefix else ""
+        rows = [
+            f"  {b[3][len(prefix):]}:{b[4]} {' '.join(_short_test_id(t, b[3]) for t in b[2])} | {b[6][0].strip()}"
+            for b in rest
+        ]
+        head = f"{NOTE_PREFIX} {len(rest)} more places with this same warning ({message}){under}, as path:line test-id | source line:"
+        if len(head) + sum(len(r) + 1 for r in rows) >= sum(len(lines[k]) + 1 for b in rest for k in range(b[0], b[1] + 2)):
+            continue
+        for b in rest:
+            for k in range(b[0], b[1] + 1):
+                drops[k] = "repeated warning lines"
+            if b[1] + 1 < end and not lines[b[1] + 1].strip():
+                drops[b[1] + 1] = "repeated warning lines"
+        notes.setdefault(group[0][1], []).extend([head, *rows])
+    return drops, notes
+
+
+def _short_test_id(test_id: str, path: str) -> str:
+    """`a/test_x.py::test_y` -> `::test_y` when the warning's own file is a/test_x.py."""
+    file, sep, name = test_id.partition("::")
+    norm = path.replace("\\", "/")
+    if sep and file and (norm == file or norm.endswith("/" + file)):
+        return "::" + name
+    return test_id
 
 
 def _js(lines: list[str]) -> dict[int, str]:
