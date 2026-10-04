@@ -177,7 +177,14 @@ an agent that must decide from it whether to search again.
   hooks get a cut `stdout` (live Windows test, 0.5.0). PostToolUse still covers unwrapped commands:
   when `tool_response.persistedOutputPath` is set it compacts that full file and drops the
   `persistedOutput*` fields.
-- Runs only above 2000 tokens (`SEARCHSLIM_COMPACT_TRIGGER_TOKENS`) and when it saves >= 20%;
+- pytest (0.6.8): progress lines with F/E go too when `short test summary info` lists exactly as many
+  FAILED/ERROR lines as there are F/E letters. Warnings summary: a warning message at >= 3 places
+  stays whole the first time, the others become rows under
+  `[searchslim] N more places with this same warning (<msg>)[, under dir/], as path:line test-id | source line:`
+  (`  a.py:8 ::test_x | <source stripped>`; `::name` = test in that file): lossless, layout only.
+  A block that is not `ids, location, one 4-space source line` leaves the group alone.
+- Runs only above 500 tokens (0.6.8; was 2000: a 1k-token failed cargo build passed raw)
+  (`SEARCHSLIM_COMPACT_TRIGGER_TOKENS`) and when it saves >= 10% (was 20%);
   `SEARCHSLIM_COMPACT=off` disables. Default pytest and non-TTY jest/vitest output is already
   short; the gain is on verbose runs. Real runner outputs are in `tests/fixtures/compact/`.
   Offline per-category numbers: `python3 benchmark/compact_bench.py` (benchmark/results/2026-09-30-compact.md).

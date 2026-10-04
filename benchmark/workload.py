@@ -160,13 +160,30 @@ PLACES_NOTE = re.compile(
     r"^\[searchslim\] \d+ more places with this same diagnostic \((?P<msg>.*)\)(?:, under (?P<under>\S+))?: (?P<where>.*)$"
 )
 _POS = re.compile(r"^(\(\d+(,\d+)*\)|\d+(:\d+)*)$")
+# ... and of a repeated pytest warning, one row per place:
+# `[searchslim] N more places with this same warning (msg)[, under dir/], as path:line test-id | source line:`
+# then `  a.py:8 ::test_x | source` (`::name` = a test in that file).
+WARNING_NOTE = re.compile(
+    r"^\[searchslim\] \d+ more places with this same warning \((?P<msg>.*)\)(?:, under (?P<under>\S+))?, as path:line test-id \| source line:$"
+)
+WARNING_ROW = re.compile(r"^  (?P<path>\S.*?):(?P<line>\d+) (?P<tests>.+?) \| (?P<source>.*)$")
 
 
 def listed_lines(output: str) -> set[str]:
     """Output lines, stripped, plus each place a diagnostic note lists, written back as the
     tool prints it (`a.ts(3,5): msg`, `a.c:3:5: msg`) and as a rustc `--> a.rs:3:5` line."""
     have = {ln.strip() for ln in output.splitlines()}
+    warning = None
     for ln in output.splitlines():
+        row = WARNING_ROW.match(ln) if warning else None
+        if row:
+            path = (warning["under"] or "") + row["path"]
+            have.add(f"{path}:{row['line']}: {warning['msg']}")
+            have.add(row["source"].strip())
+            for test in row["tests"].split(" "):
+                have.add(path.rsplit("/", 1)[-1] + test if test.startswith("::") else test)
+            continue
+        warning = WARNING_NOTE.match(ln)
         m = PLACES_NOTE.match(ln)
         if not m:
             continue

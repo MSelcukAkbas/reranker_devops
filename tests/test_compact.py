@@ -19,7 +19,16 @@ def fixture(name: str) -> str:
 
 
 def body(text: str) -> list[str]:
-    return [ln for ln in text.splitlines() if not ln.startswith(NOTE_PREFIX)]
+    """Output lines that must be raw lines: notes and the place rows under a
+    repeated-warning note left out."""
+    out, rows = [], False
+    for ln in text.splitlines():
+        if ln.startswith(NOTE_PREFIX):
+            rows = ln.endswith("as path:line test-id | source line:")
+        elif not (rows and ln.startswith("  ") and " | " in ln):
+            rows = False
+            out.append(ln)
+    return out
 
 
 def assert_subsequence(out: str, raw: str) -> None:
@@ -144,7 +153,8 @@ def test_other_output_passes_unchanged():
     assert compact(summary, trigger_tokens=0) is None
     assert compact(grep, trigger_tokens=0) is None
     assert compact(fixture("pytest-v.txt")) is not None
-    assert compact(fixture("cargo-test.txt")) is None  # under the default trigger
+    small = "\n".join(fixture("cargo-test.txt").splitlines()[:40])
+    assert compact(small) is None  # under the default trigger
 
 
 def shell_event(stdout: str, stderr: str = "", tool: str = "Bash") -> dict:
@@ -551,3 +561,82 @@ def test_run_compact_groups_a_failing_builds_diagnostics(tmp_path):
     assert "299 more places with this same diagnostic (error TS2304: Cannot find name 'expect'.)" in out
     raw = subprocess.run([sys.executable, str(script)], capture_output=True).stdout.decode()
     assert locations(out) == locations(raw) and len(locations(raw)) == 301
+
+
+# --- pytest warnings summary, failing progress lines, default trigger ---------
+
+WORKLOAD = Path(__file__).resolve().parent.parent / "benchmark" / "fixtures" / "workload" / "shell"
+
+
+def warning_places(text: str) -> set[tuple[str, str, str, str, str]]:
+    """(test id, path, line, message, source) of every warning a pytest warnings
+    summary shows or lists in a `more places with this same warning` note."""
+    found = set()
+    lines = text.splitlines()
+    note = None
+    ids: list[str] = []
+    for i, ln in enumerate(lines):
+        m = re.match(rf"^{re.escape(NOTE_PREFIX)} \d+ more places with this same warning \((.*)\)(?:, under (\S+))?, as path:line test-id \| source line:$", ln)
+        if m:
+            note = m
+            continue
+        row = re.match(r"^  (\S.*?):(\d+) (.+?) \| (.*)$", ln) if note else None
+        if row:
+            path = (note[2] or "") + row[1]
+            for test in row[3].split(" "):
+                full = (path.rsplit("/", 1)[-1] + test) if test.startswith("::") else test
+                found.add((full, path, row[2], note[1], row[4]))
+            continue
+        note = None
+        w = re.match(r"^  (\S.*?):(\d+): (\w*Warning\b.*)$", ln)
+        if w and i + 1 < len(lines):
+            for test in ids:
+                found.add((test, w[1], w[2], w[3], lines[i + 1].strip()))
+        ids = ids + [ln] if ln and not ln[0].isspace() and "::" in ln else ([] if not w else ids)
+    return found
+
+
+def test_pytest_warnings_summary_keeps_every_warning():
+    raw = (WORKLOAD / "pytest-warnings.txt").read_text(encoding="utf-8")
+    out = compact(raw)
+    assert out is not None and "pytest-warnings" in out.stats["tools"]
+    assert out.stats["tokens"] < out.stats["raw_tokens"] * 0.6
+    expected = warning_places(raw)
+    assert len(expected) == 241
+    assert warning_places(out.text) == expected
+    for text in ("FAILED test_month07.py::test_month07_leap", "test_month07.py:65: AssertionError", "1 failed, 240 passed, 241 warnings"):
+        assert text in out.text
+    assert_subsequence(out.text, raw)
+
+
+def test_pytest_warnings_with_odd_blocks_are_left_alone():
+    blocks = []
+    for n in range(200):
+        blocks += [f"t.py::test_{n}", f"  /src/t.py:{n + 1}: DeprecationWarning: old api", f"    old({n})", f"    more({n})", ""]
+    raw = "\n".join(["=" * 20 + " test session starts " + "=" * 20, "=" * 20 + " warnings summary " + "=" * 20] + blocks + ["=" * 10 + " 200 passed, 200 warnings in 0.1s " + "=" * 10])
+    out = compact(raw, trigger_tokens=0)
+    assert out is None or "pytest-warnings" not in out.stats["tools"]
+
+
+def test_failing_progress_lines_go_only_when_the_summary_names_each_failure():
+    head = ["=" * 20 + " test session starts " + "=" * 20, "collected 400 items", ""]
+    progress = [f"tests/test_m{n}.py {'.' * 30}{'F' if n % 5 == 0 else ''}{' ' * 10}[{n * 5:3d}%]" for n in range(20)]
+    failures = ["", "=" * 20 + " FAILURES " + "=" * 20]
+    for n in range(0, 20, 5):
+        failures += [f"_____ test_bad{n} _____", "", f"    def test_bad{n}():", ">       assert f() == 1", "E       assert 2 == 1", "", f"tests/test_m{n}.py:9: AssertionError"] * 4
+    summary = ["=" * 10 + " short test summary info " + "=" * 10] + [f"FAILED tests/test_m{n}.py::test_bad{n} - assert 2 == 1" for n in range(0, 20, 5)]
+    end = ["=" * 10 + " 4 failed, 596 passed in 1.0s " + "=" * 10]
+    out = compact("\n".join(head + progress + failures + summary + end), trigger_tokens=0)
+    assert "tests/test_m5.py" not in "\n".join(ln for ln in body(out.text) if "[" in ln and "%]" in ln)
+    assert out.stats["dropped"]["progress lines (failures listed in the summary)"] == 4
+    # One FAILED line missing from the summary: the F lines stay.
+    out = compact("\n".join(head + progress + failures + summary[:-1] + end), trigger_tokens=0)
+    assert progress[5] in out.text.splitlines()
+
+
+def test_mid_sized_failed_build_is_compacted_at_the_default_trigger():
+    raw = (WORKLOAD / "cargo-build-fail.txt").read_text(encoding="utf-8")
+    out = compact(raw)
+    assert out is not None and out.stats["dropped"] == {"cargo progress lines": 33}
+    assert locations(out.text) == locations(raw)
+    assert "error: could not compile `ripgrep` (bin \"rg\") due to 7 previous errors" in out.text
