@@ -1,0 +1,142 @@
+packages/vite/src/node/__tests__/config.spec.ts:189:  test('handles server.hmr.server', () => {
+packages/vite/src/node/__tests__/config.spec.ts:192:    const baseConfig = { server: { hmr: { server: httpServer } } }
+packages/vite/src/node/__tests__/config.spec.ts:193:    const newConfig = { server: { hmr: { server: httpServer } } }
+packages/vite/src/node/__tests__/config.spec.ts:198:    expect(mergedConfig.server.hmr.server).toBe(httpServer)
+packages/vite/src/node/config.ts:321:  hmrPartialAccept?: boolean
+packages/vite/src/node/config.ts:828:      hmrPartialAccept: false,
+packages/vite/src/node/index.ts:124:export type { HmrOptions, HmrContext } from './server/hmr'
+packages/vite/src/node/index.ts:131:} from './server/hmr'
+packages/vite/src/node/index.ts:149:} from 'types/hmrPayload'
+packages/vite/src/node/plugin.ts:16:import type { HmrContext } from './server/hmr'
+packages/vite/src/node/plugin.ts:133:   *   by sending a custom hmr payload via server.ws.send().
+packages/vite/src/node/plugin.ts:135:   * - If the hook doesn't return a value, the hmr update will be performed as
+packages/vite/src/node/plugins/clientInjections.ts:29:      let hmrConfig = config.server.hmr
+packages/vite/src/node/plugins/clientInjections.ts:30:      hmrConfig = isObject(hmrConfig) ? hmrConfig : undefined
+packages/vite/src/node/plugins/clientInjections.ts:31:      const host = hmrConfig?.host || null
+packages/vite/src/node/plugins/clientInjections.ts:32:      const protocol = hmrConfig?.protocol || null
+packages/vite/src/node/plugins/clientInjections.ts:33:      const timeout = hmrConfig?.timeout || 30000
+packages/vite/src/node/plugins/clientInjections.ts:34:      const overlay = hmrConfig?.overlay !== false
+packages/vite/src/node/plugins/clientInjections.ts:35:      const isHmrServerSpecified = !!hmrConfig?.server
+packages/vite/src/node/plugins/clientInjections.ts:36:      const hmrConfigName = path.basename(config.configFile || 'vite.config.js')
+packages/vite/src/node/plugins/clientInjections.ts:38:      // hmr.clientPort -> hmr.port
+packages/vite/src/node/plugins/clientInjections.ts:40:      let port = hmrConfig?.clientPort || hmrConfig?.port || null
+packages/vite/src/node/plugins/clientInjections.ts:45:      let directTarget = hmrConfig?.host || resolvedServerHostname
+packages/vite/src/node/plugins/clientInjections.ts:46:      directTarget += `:${hmrConfig?.port || resolvedServerPort}`
+packages/vite/src/node/plugins/clientInjections.ts:49:      let hmrBase = devBase
+packages/vite/src/node/plugins/clientInjections.ts:50:      if (hmrConfig?.path) {
+packages/vite/src/node/plugins/clientInjections.ts:51:        hmrBase = path.posix.join(hmrBase, hmrConfig.path)
+packages/vite/src/node/plugins/clientInjections.ts:67:      const hmrProtocolReplacement = escapeReplacement(protocol)
+packages/vite/src/node/plugins/clientInjections.ts:68:      const hmrHostnameReplacement = escapeReplacement(host)
+packages/vite/src/node/plugins/clientInjections.ts:69:      const hmrPortReplacement = escapeReplacement(port)
+packages/vite/src/node/plugins/clientInjections.ts:70:      const hmrDirectTargetReplacement = escapeReplacement(directTarget)
+packages/vite/src/node/plugins/clientInjections.ts:71:      const hmrBaseReplacement = escapeReplacement(hmrBase)
+packages/vite/src/node/plugins/clientInjections.ts:72:      const hmrTimeoutReplacement = escapeReplacement(timeout)
+packages/vite/src/node/plugins/clientInjections.ts:73:      const hmrEnableOverlayReplacement = escapeReplacement(overlay)
+packages/vite/src/node/plugins/clientInjections.ts:74:      const hmrConfigNameReplacement = escapeReplacement(hmrConfigName)
+packages/vite/src/node/plugins/clientInjections.ts:82:          .replace(`__HMR_PROTOCOL__`, hmrProtocolReplacement)
+packages/vite/src/node/plugins/clientInjections.ts:83:          .replace(`__HMR_HOSTNAME__`, hmrHostnameReplacement)
+packages/vite/src/node/plugins/clientInjections.ts:84:          .replace(`__HMR_PORT__`, hmrPortReplacement)
+packages/vite/src/node/plugins/clientInjections.ts:85:          .replace(`__HMR_DIRECT_TARGET__`, hmrDirectTargetReplacement)
+packages/vite/src/node/plugins/clientInjections.ts:86:          .replace(`__HMR_BASE__`, hmrBaseReplacement)
+packages/vite/src/node/plugins/clientInjections.ts:87:          .replace(`__HMR_TIMEOUT__`, hmrTimeoutReplacement)
+packages/vite/src/node/plugins/clientInjections.ts:88:          .replace(`__HMR_ENABLE_OVERLAY__`, hmrEnableOverlayReplacement)
+packages/vite/src/node/plugins/clientInjections.ts:89:          .replace(`__HMR_CONFIG_NAME__`, hmrConfigNameReplacement)
+packages/vite/src/node/plugins/importAnalysis.ts:29:} from '../server/hmr'
+packages/vite/src/node/plugins/importAnalysis.ts:186:  const enablePartialAccept = config.experimental?.hmrPartialAccept
+packages/vite/src/node/plugins/importAnalysis.ts:393:          // check if the dep has been hmr updated. If yes, we need to attach
+packages/vite/src/node/plugins/importAnalysis.ts:623:            const hmrUrl = unwrapId(stripBase(url, base))
+packages/vite/src/node/plugins/importAnalysis.ts:624:            const isLocalImport = !isExternalUrl(hmrUrl) && !isDataUrl(hmrUrl)
+packages/vite/src/node/plugins/importAnalysis.ts:626:              orderedImportedUrls[index] = hmrUrl
+packages/vite/src/node/plugins/importAnalysis.ts:646:              const url = removeImportQuery(hmrUrl)
+packages/vite/src/node/server/hmr.ts:5:import type { CustomPayload, HMRPayload, Update } from 'types/hmrPayload'
+packages/vite/src/node/server/hmr.ts:19:export const debugHmr = createDebugger('vite:hmr')
+packages/vite/src/node/server/hmr.ts:181:  const hmrContext: HmrContext = {
+packages/vite/src/node/server/hmr.ts:191:      const filteredModules = await hook(hmrContext)
+packages/vite/src/node/server/hmr.ts:193:        hmrContext.modules = filteredModules
+packages/vite/src/node/server/hmr.ts:198:  if (!hmrContext.modules.length) {
+packages/vite/src/node/server/hmr.ts:218:  updateModules(shortFile, hmrContext.modules, timestamp, server)
+packages/vite/src/node/server/hmr.ts:293:    colors.green(`hmr update `) +
+packages/vite/src/node/server/hmr.ts:533:  // update the disposed modules' hmr timestamp
+packages/vite/src/node/server/index.ts:87:import type { HMRBroadcaster, HmrOptions } from './hmr'
+packages/vite/src/node/server/index.ts:94:} from './hmr'
+packages/vite/src/node/server/index.ts:105:  hmr?: HmrOptions | boolean
+packages/vite/src/node/server/index.ts:268:   * and hmr state.
+packages/vite/src/node/server/index.ts:329:   * API to retrieve the module to be reloaded. If `hmr` is false, this is a no-op.
+packages/vite/src/node/server/index.ts:472:  if (typeof config.server.hmr === 'object' && config.server.hmr.channels) {
+packages/vite/src/node/server/index.ts:473:    config.server.hmr.channels.forEach((channel) => hot.addChannel(channel))
+packages/vite/src/node/server/index.ts:578:      if (serverConfig.hmr !== false && module.file) {
+packages/vite/src/node/server/index.ts:752:    if (serverConfig.hmr !== false) {
+packages/vite/src/node/server/index.ts:814:        colors.yellow(`hmr invalidate `) +
+packages/vite/src/node/server/middlewares/error.ts:6:import type { ErrorPayload } from 'types/hmrPayload'
+packages/vite/src/node/server/moduleGraph.ts:324:    // update accepted hmr deps
+packages/vite/src/node/server/moduleGraph.ts:348:    // update accepted hmr exports
+packages/vite/src/node/server/moduleGraph.ts:417:  // hmr in the importing css file.
+packages/vite/src/node/server/transformRequest.ts:214:    debugCache?.(`[memory-hmr] ${prettyUrl}`)
+packages/vite/src/node/server/transformRequest.ts:464:      // hmrUrl must be derived the same way as importAnalysis
+packages/vite/src/node/server/transformRequest.ts:465:      const hmrUrl = unwrapId(
+packages/vite/src/node/server/transformRequest.ts:469:        if (importedMod.url !== hmrUrl) continue
+packages/vite/src/node/server/transformRequest.ts:482:          server.warmupRequest(hmrUrl, { ssr })
+packages/vite/src/node/server/ws.ts:12:import type { CustomPayload, ErrorPayload, HMRPayload } from 'types/hmrPayload'
+packages/vite/src/node/server/ws.ts:16:import type { HMRChannel } from './hmr'
+packages/vite/src/node/server/ws.ts:27:export const HMR_HEADER = 'vite-hmr'
+packages/vite/src/node/server/ws.ts:116:  const hmr = isObject(config.server.hmr) && config.server.hmr
+packages/vite/src/node/server/ws.ts:117:  const hmrServer = hmr && hmr.server
+packages/vite/src/node/server/ws.ts:118:  const hmrPort = hmr && hmr.port
+packages/vite/src/node/server/ws.ts:120:  const portsAreCompatible = !hmrPort || hmrPort === config.server.port
+packages/vite/src/node/server/ws.ts:121:  const wsServer = hmrServer || (portsAreCompatible && server)
+packages/vite/src/node/server/ws.ts:122:  let hmrServerWsListener: (
+packages/vite/src/node/server/ws.ts:129:  const port = hmrPort || 24678
+packages/vite/src/node/server/ws.ts:130:  const host = (hmr && hmr.host) || undefined
+packages/vite/src/node/server/ws.ts:133:    let hmrBase = config.base
+packages/vite/src/node/server/ws.ts:134:    const hmrPath = hmr ? hmr.path : undefined
+packages/vite/src/node/server/ws.ts:135:    if (hmrPath) {
+packages/vite/src/node/server/ws.ts:136:      hmrBase = path.posix.join(hmrBase, hmrPath)
+packages/vite/src/node/server/ws.ts:139:    hmrServerWsListener = (req, socket, head) => {
+packages/vite/src/node/server/ws.ts:142:        req.url === hmrBase
+packages/vite/src/node/server/ws.ts:149:    wsServer.on('upgrade', hmrServerWsListener)
+packages/vite/src/node/server/ws.ts:298:      // should remove listener if hmr.server is set
+packages/vite/src/node/server/ws.ts:300:      if (hmrServerWsListener && wsServer) {
+packages/vite/src/node/server/ws.ts:301:        wsServer.off('upgrade', hmrServerWsListener)
+packages/vite/src/node/ssr/runtime/__tests__/fixtures/hmr.js:1:export const hmr = import.meta.hot
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:5:  'vite-runtime hmr works as expected',
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:14:    it('hmr options are defined', async ({ runtime }) => {
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:15:      expect(runtime.hmrClient).toBeDefined()
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:17:      const mod = await runtime.executeUrl('/fixtures/hmr.js')
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:18:      expect(mod).toHaveProperty('hmr')
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:19:      expect(mod.hmr).toHaveProperty('accept')
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:22:    it('correctly populates hmr client', async ({ runtime }) => {
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:29:      expect(runtime.hmrClient!.hotModulesMap.size).toBe(2)
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:30:      expect(runtime.hmrClient!.dataMap.size).toBe(2)
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:31:      expect(runtime.hmrClient!.ctxToListenersMap.size).toBe(2)
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:34:        expect(runtime.hmrClient!.hotModulesMap.has(fixture)).toBe(true)
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:35:        expect(runtime.hmrClient!.dataMap.has(fixture)).toBe(true)
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:36:        expect(runtime.hmrClient!.ctxToListenersMap.has(fixture)).toBe(true)
+packages/vite/src/node/ssr/runtime/__tests__/server-no-hmr.spec.ts:4:describe('vite-runtime hmr works as expected', async () => {
+packages/vite/src/node/ssr/runtime/__tests__/server-no-hmr.spec.ts:9:      hmr: false,
+packages/vite/src/node/ssr/runtime/__tests__/server-no-hmr.spec.ts:13:  it("hmr client is not defined if it's disabled", async ({ runtime }) => {
+packages/vite/src/node/ssr/runtime/__tests__/server-no-hmr.spec.ts:14:    expect(runtime.hmrClient).toBeUndefined()
+packages/vite/src/node/ssr/runtime/__tests__/server-no-hmr.spec.ts:16:    const mod = await runtime.executeUrl('/fixtures/hmr.js')
+packages/vite/src/node/ssr/runtime/__tests__/server-no-hmr.spec.ts:17:    expect(mod).toHaveProperty('hmr')
+packages/vite/src/node/ssr/runtime/__tests__/server-no-hmr.spec.ts:18:    expect(mod.hmr).toBeUndefined()
+packages/vite/src/node/ssr/runtime/__tests__/utils.ts:75:      hmr: {
+packages/vite/src/node/ssr/runtime/mainThreadRuntime.ts:5:import type { HMRLogger } from '../../../shared/hmr'
+packages/vite/src/node/ssr/runtime/mainThreadRuntime.ts:12:  extends Omit<ViteRuntimeOptions, 'root' | 'fetchModule' | 'hmr'> {
+packages/vite/src/node/ssr/runtime/mainThreadRuntime.ts:16:  hmr?:
+packages/vite/src/node/ssr/runtime/mainThreadRuntime.ts:31:  if (server.config.server.hmr === false || options.hmr === false) {
+packages/vite/src/node/ssr/runtime/mainThreadRuntime.ts:37:    logger: options.hmr?.logger,
+packages/vite/src/node/ssr/runtime/mainThreadRuntime.ts:73:  const hmr = createHMROptions(server, options)
+packages/vite/src/node/ssr/runtime/mainThreadRuntime.ts:79:      hmr,
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:1:import type { CustomPayload, HMRPayload } from 'types/hmrPayload'
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:4:import type { HMRBroadcasterClient, ServerHMRChannel } from '../../server/hmr'
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:7:  constructor(private readonly hmrChannel: ServerHMRChannel) {}
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:25:    this.hmrChannel.send(payload)
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:35:  private hmrChannel: ServerHMRChannel
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:36:  private hmrClient: ServerHMRBroadcasterClient
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:41:    const hmrChannel = server.hot?.channels.find(
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:44:    if (!hmrChannel) {
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:49:    this.hmrClient = new ServerHMRBroadcasterClient(hmrChannel)
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:50:    hmrChannel.api.outsideEmitter.on('send', (payload: HMRPayload) => {
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:53:    this.hmrChannel = hmrChannel
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:62:    this.hmrChannel.api.innerEmitter.emit(
+packages/vite/src/node/ssr/runtime/serverHmrConnector.ts:65:      this.hmrClient,
+packages/vite/src/node/utils.ts:1113:    } else if (key === 'server' && rootPath === 'server.hmr') {

@@ -1,0 +1,13 @@
+diff --git a/command.go b/command.go
+index 54748fc..35fe51f 100644
+--- a/command.go
++++ b/command.go
+@@ -606,7 +606,7 @@ func (c *Command) VersionTemplate() string {
+ 	if c.HasParent() {
+ 		return c.parent.VersionTemplate()
+ 	}
+-	return `{{with .Name}}{{printf "%s " .}}{{end}}{{printf "version %s" .Version}}
++	return `{{with .Name}}{{printf "%s " .}}{{end}}{{printf "version: %s" .Version}}
+ `
+ }
+ 

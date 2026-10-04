@@ -1,0 +1,251 @@
+playground/assets/__tests__/assets.spec.ts:10:  isBuild,
+playground/assets/__tests__/assets.spec.ts:23:const assetMatch = isBuild
+playground/assets/__tests__/assets.spec.ts:27:const encodedAssetMatch = isBuild
+playground/assets/__tests__/assets.spec.ts:86:    if (isBuild) {
+playground/assets/__tests__/assets.spec.ts:97:    if (isBuild) {
+playground/assets/__tests__/assets.spec.ts:244:    const match = isBuild ? `data:image/png;base64` : `/foo/bar/nested/icon.png`
+playground/assets/__tests__/assets.spec.ts:253:      isBuild ? /\/foo\/bar\/assets\/favicon-[-\w]{8}\.ico/ : 'favicon.ico',
+playground/assets/__tests__/assets.spec.ts:259:      isBuild ? /\/foo\/bar\/assets\/manifest-[-\w]{8}\.json/ : 'manifest.json',
+playground/assets/__tests__/assets.spec.ts:274:  test.runIf(isBuild)('generated paths in CSS', () => {
+playground/assets/__tests__/assets.spec.ts:286:      isBuild ? /data:image\/svg\+xml,.+/ : '/foo/bar/nested/fragment-bg.svg',
+playground/assets/__tests__/assets.spec.ts:292:      isBuild ? /data:image\/svg\+xml,.+/ : '/foo/bar/nested/fragment-bg.svg',
+playground/assets/__tests__/assets.spec.ts:302:      isBuild
+playground/assets/__tests__/assets.spec.ts:312:      isBuild
+playground/assets/__tests__/assets.spec.ts:323:        isBuild
+playground/assets/__tests__/assets.spec.ts:343:      isBuild
+playground/assets/__tests__/assets.spec.ts:367:      isBuild
+playground/assets/__tests__/assets.spec.ts:383:    isBuild ? 'data:application/octet-stream;' : '/nested/foo.unknown',
+playground/assets/__tests__/assets.spec.ts:394:    isBuild
+playground/assets/__tests__/assets.spec.ts:403:    isBuild
+playground/assets/__tests__/assets.spec.ts:413:      isBuild
+playground/assets/__tests__/assets.spec.ts:420:describe.runIf(isBuild)('encodeURI', () => {
+playground/assets/__tests__/assets.spec.ts:445:    isBuild ? 'data:text/javascript' : 'nested/test.js',
+playground/assets/__tests__/assets.spec.ts:454:    isBuild ? 'data:image/png;base64' : '/foo/bar/nested/icon.png',
+playground/assets/__tests__/assets.spec.ts:460:    isBuild ? 'data:text/javascript;base64' : '/foo/bar/nested/test.js',
+playground/assets/__tests__/assets.spec.ts:466:    isBuild ? 'data:image/png;base64' : '/foo/bar/nested/icon.png?abc',
+playground/assets/__tests__/assets.spec.ts:469:    isBuild
+playground/assets/__tests__/assets.spec.ts:477:    isBuild ? 'data:image/png;base64' : '/foo/bar/nested/icon.png?abc',
+playground/assets/__tests__/assets.spec.ts:480:    isBuild
+playground/assets/__tests__/assets.spec.ts:489:    isBuild ? '/foo/bar/assets/index.js' : '/foo/bar/index.html',
+playground/assets/__tests__/assets.spec.ts:500:test.runIf(isBuild)('manifest', async () => {
+playground/assets/__tests__/assets.spec.ts:515:describe.runIf(isBuild)('css and assets in css in build watch', () => {
+playground/assets/__tests__/assets.spec.ts:546:if (!isBuild) {
+playground/assets/__tests__/assets.spec.ts:585:test.runIf(isBuild)('assets inside <noscript> is rewrote', async () => {
+playground/assets/__tests__/assets.spec.ts:592:test.runIf(isBuild)('assets inside <template> is rewrote', async () => {
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:7:  isBuild,
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:11:const urlAssetMatch = isBuild
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:17:const absoluteIconMatch = isBuild
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:21:const absolutePublicIconMatch = isBuild ? /\/foo%20bar\/icon\.png/ : '/icon.png'
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:129:describe.runIf(isBuild)('index.css URLs', () => {
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:150:        isBuild
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:184:    isBuild ? /\/foo%20bar\/other-assets\/foo-[-\w]{8}\.js/ : '/foo.js',
+playground/assets/__tests__/encoded-base/assets-encoded-base.spec.ts:191:    isBuild
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:7:  isBuild,
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:11:const absoluteAssetMatch = isBuild
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:21:const absoluteIconMatch = isBuild
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:25:const absolutePublicIconMatch = isBuild ? /http.*\/icon\.png/ : '/icon.png'
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:142:describe.runIf(isBuild)('index.css URLs', () => {
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:163:        isBuild
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:197:    isBuild ? /http.*\/other-assets\/foo-[-\w]{8}\.js/ : `/foo.js`,
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:204:    isBuild ? /http.*\/other-assets\/icons-[-\w]{8}\.css/ : '/css/icons.css',
+playground/assets/__tests__/relative-base/assets-relative-base.spec.ts:206:  isBuild &&
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:7:  isBuild,
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:11:const absoluteAssetMatch = isBuild
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:21:const absoluteIconMatch = isBuild
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:25:const absolutePublicIconMatch = isBuild ? /\/icon\.png/ : '/icon.png'
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:137:describe.runIf(isBuild)('index.css URLs', () => {
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:158:        isBuild
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:192:    isBuild ? /\/other-assets\/foo-[-\w]{8}\.js/ : `/foo.js`,
+playground/assets/__tests__/runtime-base/assets-runtime-base.spec.ts:199:    isBuild ? /\/other-assets\/icons-[-\w]{8}\.css/ : '/css/icons.css',
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:7:  isBuild,
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:11:const urlAssetMatch = isBuild
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:17:const absoluteIconMatch = isBuild
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:21:const absolutePublicIconMatch = isBuild
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:131:describe.runIf(isBuild)('index.css URLs', () => {
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:152:        isBuild
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:186:    isBuild
+playground/assets/__tests__/url-base/assets-url-base.spec.ts:195:    isBuild
+playground/assets-sanitize/__tests__/assets-sanitize.spec.ts:2:import { getBg, isBuild, page, readManifest } from '~utils'
+playground/assets-sanitize/__tests__/assets-sanitize.spec.ts:4:if (!isBuild) {
+playground/assets-sanitize/__tests__/assets-sanitize.spec.ts:29:test.runIf(!isBuild)('denied .env', async () => {
+playground/backend-integration/__tests__/backend-integration.spec.ts:7:  isBuild,
+playground/backend-integration/__tests__/backend-integration.spec.ts:36:    if (isBuild) {
+playground/backend-integration/__tests__/backend-integration.spec.ts:48:describe.runIf(isBuild)('build', () => {
+playground/cli/__tests__/serve.ts:7:  isBuild,
+playground/cli/__tests__/serve.ts:48:  if (isBuild) {
+playground/cli/__tests__/serve.ts:69:  if (isBuild) {
+playground/cli-module/__tests__/serve.ts:7:  isBuild,
+playground/cli-module/__tests__/serve.ts:45:  if (isBuild) {
+playground/cli-module/__tests__/serve.ts:66:  if (isBuild) {
+playground/css/__tests__/css.spec.ts:8:  isBuild,
+playground/css/__tests__/css.spec.ts:84:  expect(await getBg(atImport)).toMatch(isBuild ? /base64/ : '/nested/icon.png')
+playground/css/__tests__/css.spec.ts:87:    isBuild ? /base64/ : '/nested/icon.png',
+playground/css/__tests__/css.spec.ts:90:    isBuild ? /ok-[-\w]+\.png/ : `${viteTestUrl}/ok.png`,
+playground/css/__tests__/css.spec.ts:93:    isBuild ? /ok-[-\w]+\.png/ : `${viteTestUrl}/ok.png`,
+playground/css/__tests__/css.spec.ts:123:  expect(await getBg(atImport)).toMatch(isBuild ? /base64/ : '/nested/icon.png')
+playground/css/__tests__/css.spec.ts:126:    isBuild ? /base64/ : '/nested/icon.png',
+playground/css/__tests__/css.spec.ts:129:    isBuild ? /ok-[-\w]+\.png/ : `${viteTestUrl}/ok.png`,
+playground/css/__tests__/css.spec.ts:156:    isBuild ? /base64/ : '/nested/icon.png',
+playground/css/__tests__/css.spec.ts:271:test.runIf(isBuild)('@charset hoist', async () => {
+playground/css/__tests__/css.spec.ts:315:  if (isBuild) {
+playground/css/__tests__/css.spec.ts:328:  if (isBuild) {
+playground/css/__tests__/css.spec.ts:360:  if (!isBuild) {
+playground/css/__tests__/css.spec.ts:427:  if (isBuild) {
+playground/css/__tests__/css.spec.ts:433:  if (!isBuild) {
+playground/css/__tests__/css.spec.ts:454:  if (!isBuild) {
+playground/css/__tests__/css.spec.ts:495:test.runIf(isBuild)('warning can be suppressed by esbuild.logOverride', () => {
+playground/css/__tests__/css.spec.ts:509:  expect(await getBg(atImport)).toMatch(isBuild ? /base64/ : '/nested/icon.png')
+playground/css/__tests__/css.spec.ts:512:    isBuild ? /base64/ : '/nested/icon.png',
+playground/css/__tests__/css.spec.ts:542:test.runIf(isBuild)('manual chunk path', async () => {
+playground/css/__tests__/css.spec.ts:549:test.runIf(isBuild)('CSS modules should be treeshaken if not used', () => {
+playground/css/__tests__/no-css-minify/css-no-css-minify.spec.ts:2:import { findAssetFile, isBuild } from '~utils'
+playground/css/__tests__/no-css-minify/css-no-css-minify.spec.ts:4:describe.runIf(isBuild)('no css minify', () => {
+playground/css/__tests__/same-file-name/css-same-file-name.spec.ts:2:import { findAssetFile, isBuild, startDefaultServe } from '~utils'
+playground/css/__tests__/same-file-name/css-same-file-name.spec.ts:9:  describe.runIf(isBuild)('css files has same basename', () => {
+playground/css/__tests__/sass-modern-compiler-build/sass-modern-compiler.spec.ts:2:import { findAssetFile, isBuild } from '~utils'
+playground/css/__tests__/sass-modern-compiler-build/sass-modern-compiler.spec.ts:4:test.runIf(isBuild)('sass modern compiler build multiple entries', () => {
+playground/css-codesplit/__tests__/css-codesplit-consistent.spec.ts:2:import { findAssetFile, isBuild, startDefaultServe } from '~utils'
+playground/css-codesplit/__tests__/css-codesplit-consistent.spec.ts:9:  describe.runIf(isBuild)('css-codesplit build', () => {
+playground/css-codesplit/__tests__/css-codesplit.spec.ts:5:  isBuild,
+playground/css-codesplit/__tests__/css-codesplit.spec.ts:40:describe.runIf(isBuild)('build', () => {
+playground/css-codesplit-cjs/__tests__/css-codesplit-cjs.spec.ts:2:import { findAssetFile, getColor, isBuild, readManifest } from '~utils'
+playground/css-codesplit-cjs/__tests__/css-codesplit-cjs.spec.ts:9:describe.runIf(isBuild)('build', () => {
+playground/css-dynamic-import/__tests__/css-dynamic-import.spec.ts:4:import { getColor, isBuild, isServe, page, ports, rootDir } from '~utils'
+playground/css-dynamic-import/__tests__/css-dynamic-import.spec.ts:61:  test.runIf(isBuild)(
+playground/css-lightningcss/__tests__/css-lightningcss.spec.ts:7:  isBuild,
+playground/css-lightningcss/__tests__/css-lightningcss.spec.ts:64:test.runIf(isBuild)('minify css', async () => {
+playground/css-lightningcss/__tests__/css-lightningcss.spec.ts:79:    isBuild ? /ok-[-\w]+\.png/ : `${viteTestUrl}/ok.png`,
+playground/css-lightningcss-root/__tests__/css-lightningcss-root.spec.ts:2:import { getBg, isBuild, page, viteTestUrl } from '~utils'
+playground/css-lightningcss-root/__tests__/css-lightningcss-root.spec.ts:7:    isBuild ? /ok-[-\w]+\.png/ : `${viteTestUrl}/ok.png`,
+playground/css-no-codesplit/__tests__/css-no-codesplit.spec.ts:2:import { expectWithRetry, getColor, isBuild, listAssets } from '~utils'
+playground/css-no-codesplit/__tests__/css-no-codesplit.spec.ts:9:describe.runIf(isBuild)('build', () => {
+playground/css-sourcemap/__tests__/css-sourcemap.spec.ts:6:  isBuild,
+playground/css-sourcemap/__tests__/css-sourcemap.spec.ts:12:test.runIf(isBuild)('should not output sourcemap warning (#4939)', () => {
+playground/css-sourcemap/__tests__/lib-entry/css-sourcemap-lib-entry.spec.ts:2:import { findAssetFile, isBuild } from '~utils'
+playground/css-sourcemap/__tests__/lib-entry/css-sourcemap-lib-entry.spec.ts:4:describe.runIf(isBuild)('css lib entry', () => {
+playground/data-uri/__tests__/data-uri.spec.ts:2:import { findAssetFile, isBuild, page } from '~utils'
+playground/data-uri/__tests__/data-uri.spec.ts:24:test.runIf(isBuild)('should compile away the import for build', async () => {
+playground/dynamic-import/__tests__/dynamic-import.spec.ts:6:  isBuild,
+playground/dynamic-import/__tests__/dynamic-import.spec.ts:129:    isBuild ? 'data:text/javascript' : '/alias/url.js',
+playground/dynamic-import/__tests__/dynamic-import.spec.ts:163:test.runIf(isBuild)(
+playground/dynamic-import/__tests__/dynamic-import.spec.ts:202:test.runIf(isBuild)('dynamic import treeshaken file', async () => {
+playground/dynamic-import/__tests__/dynamic-import.spec.ts:206:test.runIf(isBuild)('should not preload for non-analyzable urls', () => {
+playground/dynamic-import-inline/__tests__/dynamic-import-inline.spec.ts:2:import { isBuild, serverLogs } from '~utils'
+playground/dynamic-import-inline/__tests__/dynamic-import-inline.spec.ts:4:test.runIf(isBuild)(
+playground/env/__tests__/env.spec.ts:2:import { isBuild, page } from '~utils'
+playground/env/__tests__/env.spec.ts:4:const mode = isBuild ? `production` : `development`
+playground/env/__tests__/env.spec.ts:15:  expect(await page.textContent('.dev')).toBe(String(!isBuild))
+playground/env/__tests__/env.spec.ts:19:  expect(await page.textContent('.prod')).toBe(String(isBuild))
+playground/env/__tests__/env.spec.ts:40:    isBuild ? `inline-build` : `inline-serve`,
+playground/env/__tests__/env.spec.ts:87:    DEV: !isBuild,
+playground/env/__tests__/env.spec.ts:88:    PROD: isBuild,
+playground/env/__tests__/env.spec.ts:106:    DEV: !isBuild,
+playground/env/__tests__/env.spec.ts:107:    PROD: isBuild,
+playground/env/__tests__/env.spec.ts:111:if (!isBuild) {
+playground/env-nested/__tests__/env-nested.spec.ts:2:import { isBuild, page } from '~utils'
+playground/env-nested/__tests__/env-nested.spec.ts:4:const mode = isBuild ? `production` : `development`
+playground/external/__tests__/external.spec.ts:2:import { browserLogs, isBuild, page } from '~utils'
+playground/external/__tests__/external.spec.ts:16:describe.runIf(isBuild)('build', () => {
+playground/glob-import/__tests__/glob-import.spec.ts:8:  isBuild,
+playground/glob-import/__tests__/glob-import.spec.ts:50:  '/dir/index.js': isBuild
+playground/glob-import/__tests__/glob-import.spec.ts:131:if (!isBuild) {
+playground/glob-import/__tests__/glob-import.spec.ts:213:  if (isBuild) {
+playground/hmr/__tests__/hmr.spec.ts:10:  isBuild,
+playground/hmr/__tests__/hmr.spec.ts:26:if (!isBuild) {
+playground/html/__tests__/html.spec.ts:7:  isBuild,
+playground/html/__tests__/html.spec.ts:48:    if (!isBuild) {
+playground/html/__tests__/html.spec.ts:58:    if (isBuild) {
+playground/html/__tests__/html.spec.ts:122:describe.runIf(isBuild)('build', () => {
+playground/html/__tests__/html.spec.ts:339:    expect(await page.textContent('.env-prod')).toBe(isBuild + '')
+playground/html/__tests__/html.spec.ts:344:      `${isBuild ? './' : '/'}sprite.svg`,
+playground/js-sourcemap/__tests__/js-sourcemap.spec.ts:11:  isBuild,
+playground/js-sourcemap/__tests__/js-sourcemap.spec.ts:16:if (!isBuild) {
+playground/js-sourcemap/__tests__/js-sourcemap.spec.ts:131:describe.runIf(isBuild)('build tests', () => {
+playground/json/__tests__/csr/json-csr.spec.ts:6:import { editFile, isBuild, isServe, page, untilUpdated } from '~utils'
+playground/json/__tests__/csr/json-csr.spec.ts:42:    isBuild ? 'data:application/json' : '/test.json',
+playground/legacy/__tests__/client-and-ssr/legacy-client-legacy-ssr-sequential-builds.spec.ts:3:import { isBuild, page } from '~utils'
+playground/legacy/__tests__/client-and-ssr/legacy-client-legacy-ssr-sequential-builds.spec.ts:7:describe.runIf(isBuild)('client-legacy-ssr-sequential-builds', () => {
+playground/legacy/__tests__/legacy.spec.ts:5:  isBuild,
+playground/legacy/__tests__/legacy.spec.ts:23:    isBuild ? 'true' : 'false',
+playground/legacy/__tests__/legacy.spec.ts:53:    isBuild
+playground/legacy/__tests__/legacy.spec.ts:88:    isBuild ? /\/assets\/vite-[-\w]+\.svg/ : '/vite.svg',
+playground/legacy/__tests__/legacy.spec.ts:92:describe.runIf(isBuild)('build', () => {
+playground/legacy/__tests__/no-polyfills/legacy-no-polyfills.spec.ts:2:import { isBuild, page, untilUpdated, viteTestUrl } from '~utils'
+playground/legacy/__tests__/no-polyfills/legacy-no-polyfills.spec.ts:9:test.runIf(isBuild)('includes a script tag for SystemJS', async () => {
+playground/legacy/__tests__/no-polyfills-no-systemjs/legacy-no-polyfills-no-systemjs.spec.ts:2:import { isBuild, page, untilUpdated, viteTestUrl } from '~utils'
+playground/legacy/__tests__/no-polyfills-no-systemjs/legacy-no-polyfills-no-systemjs.spec.ts:4:test.runIf(isBuild)('includes only a single script tag', async () => {
+playground/legacy/__tests__/ssr/legacy-ssr.spec.ts:3:import { isBuild, page } from '~utils'
+playground/legacy/__tests__/ssr/legacy-ssr.spec.ts:7:describe.runIf(isBuild)('legacy-ssr', () => {
+playground/legacy/__tests__/watch/legacy-styles-only-entry-watch.spec.ts:5:  isBuild,
+playground/legacy/__tests__/watch/legacy-styles-only-entry-watch.spec.ts:11:test.runIf(isBuild)('rebuilds styles only entry on change', async () => {
+playground/lib/__tests__/lib.spec.ts:3:  isBuild,
+playground/lib/__tests__/lib.spec.ts:12:describe.runIf(isBuild)('build', () => {
+playground/lib/__tests__/serve.ts:8:  isBuild,
+playground/lib/__tests__/serve.ts:22:  if (!isBuild) {
+playground/lib/__tests__/serve.ts:38:            strict: !isBuild,
+playground/minify/__tests__/minify.spec.ts:4:import { isBuild, readFile, testDir } from '~utils'
+playground/minify/__tests__/minify.spec.ts:6:test.runIf(isBuild)('no minifySyntax', () => {
+playground/optimize-deps/__tests__/optimize-deps.spec.ts:7:  isBuild,
+playground/optimize-deps/__tests__/optimize-deps.spec.ts:109:    isBuild ? 'prod' : 'dev',
+playground/optimize-deps/__tests__/optimize-deps.spec.ts:273:test.runIf(isBuild)('no missing deps during build', async () => {
+playground/optimize-deps-no-discovery/__tests__/optimize-deps-no-discovery.spec.ts:2:import { isBuild, page, readFile } from '~utils'
+playground/optimize-deps-no-discovery/__tests__/optimize-deps-no-discovery.spec.ts:12:test.runIf(!isBuild)('metadata', async () => {
+playground/preload/__tests__/preload-disabled/preload-disabled.spec.ts:2:import { browserLogs, isBuild, page } from '~utils'
+playground/preload/__tests__/preload-disabled/preload-disabled.spec.ts:10:describe.runIf(isBuild)('build', () => {
+playground/preload/__tests__/preload.spec.ts:2:import { browserLogs, isBuild, page } from '~utils'
+playground/preload/__tests__/preload.spec.ts:10:describe.runIf(isBuild)('build', () => {
+playground/preload/__tests__/resolve-deps/preload-resolve-deps.spec.ts:2:import { browserLogs, isBuild, page } from '~utils'
+playground/preload/__tests__/resolve-deps/preload-resolve-deps.spec.ts:10:describe.runIf(isBuild)('build', () => {
+playground/resolve/__tests__/resolve.spec.ts:5:import { isBuild, isWindows, page, testDir, viteTestUrl } from '~utils'
+playground/resolve/__tests__/resolve.spec.ts:32:    isBuild ? /base64/ : '/exports-path/deep.json',
+playground/resolve/__tests__/resolve.spec.ts:65:    isBuild ? `browser.prod.mjs` : `browser.mjs`,
+playground/resolve/__tests__/resolve.spec.ts:215:    isBuild ? /base64/ : '/imports-path/query.json',
+playground/resolve/__tests__/resolve.spec.ts:242:test.runIf(isBuild)('public dir is not copied', async () => {
+playground/resolve-config/__tests__/resolve-config.spec.ts:5:import { isBuild, testDir, viteBinPath } from '~utils'
+playground/resolve-config/__tests__/resolve-config.spec.ts:20:describe.runIf(isBuild)('build', () => {
+playground/resolve-config/__tests__/serve.ts:6:import { isBuild, rootDir } from '~utils'
+playground/resolve-config/__tests__/serve.ts:11:  if (!isBuild) return
+playground/ssr-noexternal/__tests__/serve.ts:6:import { hmrPorts, isBuild, ports, rootDir } from '~utils'
+playground/ssr-noexternal/__tests__/serve.ts:11:  if (isBuild) {
+playground/ssr-noexternal/__tests__/serve.ts:29:    isBuild,
+playground/ssr-noexternal/__tests__/ssr-noexternal.spec.ts:3:import { isBuild, page } from '~utils'
+playground/ssr-noexternal/__tests__/ssr-noexternal.spec.ts:7:test.runIf(!isBuild)('message from require-external-cjs', async () => {
+playground/ssr-resolve/__tests__/ssr-resolve.spec.ts:2:import { isBuild, readFile, testDir } from '~utils'
+playground/ssr-resolve/__tests__/ssr-resolve.spec.ts:4:test.runIf(isBuild)('correctly resolve entrypoints', async () => {
+playground/ssr-resolve/__tests__/ssr-resolve.spec.ts:29:test.runIf(isBuild)(
+playground/ssr-webworker/__tests__/ssr-webworker.spec.ts:3:import { findAssetFile, isBuild, page } from '~utils'
+playground/ssr-webworker/__tests__/ssr-webworker.spec.ts:33:test.runIf(isBuild)('inlineDynamicImports', () => {
+playground/tailwind-sourcemap/__tests__/tailwind-sourcemap.spec.ts:2:import { isBuild, serverLogs } from '~utils'
+playground/tailwind-sourcemap/__tests__/tailwind-sourcemap.spec.ts:4:test.runIf(!isBuild)('should not output missing source file warning', () => {
+playground/tailwind-sourcemap/__tests__/tailwind-sourcemap.spec.ts:10:test.runIf(isBuild)('should not output sourcemap warning (#4939)', () => {
+playground/test-utils.ts:18:import { isBuild, isWindows, page, testDir } from './vitestSetup'
+playground/test-utils.ts:137:  if (isBuild && !runInBuild) return
+playground/test-utils.ts:216:  if (isBuild && !runInBuild) return
+playground/test-utils.ts:241:  if (isBuild && !runInBuild) return
+playground/tsconfig-json-load-error/__tests__/tsconfig-json-load-error.spec.ts:6:  isBuild,
+playground/tsconfig-json-load-error/__tests__/tsconfig-json-load-error.spec.ts:16:describe.runIf(isBuild)('build', () => {
+playground/vitestSetup.ts:30:export const isBuild = !!process.env.VITE_TEST_BUILD
+playground/vitestSetup.ts:31:export const isServe = !isBuild
+playground/vitestSetup.ts:227:        strict: !isBuild,
+playground/vitestSetup.ts:245:  if (!isBuild) {
+playground/wasm/__tests__/wasm.spec.ts:2:import { isBuild, page, untilUpdated } from '~utils'
+playground/wasm/__tests__/wasm.spec.ts:24:    isBuild ? 'data:application/wasm' : '/light.wasm',
+playground/worker/__tests__/es/worker-es.spec.ts:4:import { expectWithRetry, isBuild, page, testDir, untilUpdated } from '~utils'
+playground/worker/__tests__/es/worker-es.spec.ts:20:    isBuild ? '/es/assets/worker_asset-vite.svg' : '/es/vite.svg',
+playground/worker/__tests__/es/worker-es.spec.ts:109:describe.runIf(isBuild)('build', () => {
+playground/worker/__tests__/iife/worker-iife.spec.ts:6:  isBuild,
+playground/worker/__tests__/iife/worker-iife.spec.ts:24:    isBuild ? '/iife/assets/worker_asset-vite.svg' : '/iife/vite.svg',
+playground/worker/__tests__/iife/worker-iife.spec.ts:73:describe.runIf(isBuild)('build', () => {
+playground/worker/__tests__/relative-base/worker-relative-base.spec.ts:4:import { expectWithRetry, isBuild, page, testDir, untilUpdated } from '~utils'
+playground/worker/__tests__/relative-base/worker-relative-base.spec.ts:20:    isBuild ? '/worker-assets/worker_asset-vite' : '/vite.svg',
+playground/worker/__tests__/relative-base/worker-relative-base.spec.ts:68:describe.runIf(isBuild)('build', () => {
+playground/worker/__tests__/relative-base/worker-relative-base.spec.ts:119:test.runIf(isBuild)('classic worker', async () => {
+playground/worker/__tests__/relative-base/worker-relative-base.spec.ts:136:test.runIf(isBuild)('emit chunk', async () => {
+playground/worker/__tests__/relative-base-iife/worker-relative-base-iife.spec.ts:2:import { isBuild, page, untilUpdated } from '~utils'
+playground/worker/__tests__/relative-base-iife/worker-relative-base-iife.spec.ts:7:    isBuild ? '/worker-assets/worker_asset-vite' : '/vite.svg',
+playground/worker/__tests__/sourcemap/worker-sourcemap.spec.ts:4:import { isBuild, testDir } from '~utils'
+playground/worker/__tests__/sourcemap/worker-sourcemap.spec.ts:6:describe.runIf(isBuild)('build', () => {
+playground/worker/__tests__/sourcemap-hidden/worker-sourcemap-hidden.spec.ts:4:import { isBuild, testDir } from '~utils'
+playground/worker/__tests__/sourcemap-hidden/worker-sourcemap-hidden.spec.ts:6:describe.runIf(isBuild)('build', () => {
+playground/worker/__tests__/sourcemap-inline/worker-sourcemap-inline.spec.ts:4:import { isBuild, testDir } from '~utils'
+playground/worker/__tests__/sourcemap-inline/worker-sourcemap-inline.spec.ts:6:describe.runIf(isBuild)('build', () => {

@@ -1,0 +1,22 @@
+diff --git a/crates/core/main.rs b/crates/core/main.rs
+index 64f35ce..f8972c8 100644
+--- a/crates/core/main.rs
++++ b/crates/core/main.rs
+@@ -113,7 +113,7 @@ fn search(args: &HiArgs, mode: SearchMode) -> anyhow::Result<bool> {
+         .filter_map(|result| haystack_builder.build_from_result(result));
+     let haystacks = args.sort(unsorted);
+ 
+-    let mut matched = false;
++    let mut matched: usize = false;
+     let mut searched = false;
+     let mut stats = args.stats();
+     let mut searcher = args.search_worker(
+@@ -240,7 +240,7 @@ fn files(args: &HiArgs) -> anyhow::Result<bool> {
+         .filter_map(|result| haystack_builder.build_from_result(result));
+     let haystacks = args.sort(unsorted);
+ 
+-    let mut matched = false;
++    let mut matched = 0;
+     let mut path_printer = args.path_printer_builder().build(args.stdout());
+     for haystack in haystacks {
+         matched = true;

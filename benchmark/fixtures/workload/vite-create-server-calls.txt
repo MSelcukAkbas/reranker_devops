@@ -1,0 +1,70 @@
+packages/vite/src/node/__tests__/config.spec.ts:190:    const httpServer = http.createServer()
+packages/vite/src/node/cli.ts:156:      const server = await createServer({
+packages/vite/src/node/http.ts:100:    return createServer(app)
+packages/vite/src/node/http.ts:106:    return createServer(httpsOptions, app)
+packages/vite/src/node/server/__tests__/watcher.spec.ts:19:    server = await createServer({
+packages/vite/src/node/server/__tests__/watcher.spec.ts:28:    server = await createServer({
+packages/vite/src/node/server/__tests__/watcher.spec.ts:40:    server = await createServer({ root })
+packages/vite/src/node/server/index.ts:425:export function createServer(
+packages/vite/src/node/server/index.ts:428:  return _createServer(inlineConfig, { hotListen: true })
+packages/vite/src/node/server/index.ts:431:export async function _createServer(
+packages/vite/src/node/server/index.ts:1135:      newServer = await _createServer(inlineConfig, { hotListen: false })
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts:10:  const server = await createServer({
+packages/vite/src/node/ssr/__tests__/ssrStacktrace.spec.ts:8:  const server = await createServer({
+packages/vite/src/node/ssr/runtime/__tests__/utils.ts:35:    t.server = await createServer({
+packages/vite/src/types/connect.d.ts:98:     *      http.createServer(app).listen(80);
+packages/vite/src/types/connect.d.ts:99:     *      https.createServer(options, app).listen(443);
+packages/vite/src/types/http-proxy.d.ts:109:    static createServer(options?: ServerOptions): Server
+packages/vite/src/types/http-proxy.d.ts:199:    /** Object to be passed to https.createServer(). */
+playground/css/__tests__/postcss-plugins-different-dir/css-postcss-plugins-different-dir.spec.ts:9:  const server = await createServer({
+playground/css/postcss-caching/css.spec.ts:9:    const server = await createServer({
+playground/css-dynamic-import/__tests__/css-dynamic-import.spec.ts:35:  const server = await createServer(config)
+playground/css-lightningcss-proxy/__tests__/serve.ts:14:  const { app, vite } = await createServer(
+playground/css-lightningcss-proxy/server.js:17:export async function createServer(root = process.cwd(), hmrPort) {
+playground/css-lightningcss-proxy/server.js:27:  ).createServer({
+playground/css-lightningcss-proxy/server.js:81:  createServer().then(({ app }) =>
+playground/hmr-ssr/__tests__/hmr-ssr.spec.ts:1113:  server = await createServer({
+playground/js-sourcemap/test-ssr-dev.js:6:  const server = await createServer({
+playground/json/__tests__/ssr/serve.ts:14:  const { app, vite } = await createServer(rootDir, hmrPorts.json)
+playground/json/server.js:10:export async function createServer(root = process.cwd(), hmrPort) {
+playground/json/server.js:19:  ).createServer({
+playground/json/server.js:87:  createServer().then(({ app }) =>
+playground/lib/__tests__/serve.ts:26:      await createServer({
+playground/lib/__tests__/serve.ts:95:    const httpServer = http.createServer((req, res) => {
+playground/optimize-missing-deps/__test__/serve.ts:11:  const { app, vite } = await createServer(
+playground/optimize-missing-deps/server.js:10:export async function createServer(root = process.cwd(), hmrPort) {
+playground/optimize-missing-deps/server.js:20:  ).createServer({
+playground/optimize-missing-deps/server.js:63:  createServer().then(({ app }) =>
+playground/proxy-hmr/__tests__/serve.ts:9:  const rootServer = await vite.createServer({
+playground/proxy-hmr/__tests__/serve.ts:13:  const otherServer = await vite.createServer({
+playground/ssr/__tests__/serve.ts:16:  const { app, vite } = await createServer(
+playground/ssr/server.js:9:export async function createServer(
+playground/ssr/server.js:23:  ).createServer({
+playground/ssr/server.js:70:  createServer().then(({ app }) =>
+playground/ssr-conditions/__tests__/serve.ts:14:  const { app, vite } = await createServer(rootDir, hmrPorts['ssr-conditions'])
+playground/ssr-conditions/server.js:10:export async function createServer(root = process.cwd(), hmrPort) {
+playground/ssr-conditions/server.js:20:  ).createServer({
+playground/ssr-conditions/server.js:65:  createServer().then(({ app }) =>
+playground/ssr-deps/__tests__/serve.ts:14:  const { app, vite } = await createServer(rootDir, hmrPorts['ssr-deps'])
+playground/ssr-deps/server.js:18:export async function createServer(root = process.cwd(), hmrPort) {
+playground/ssr-deps/server.js:28:  ).createServer({
+playground/ssr-deps/server.js:116:  createServer().then(({ app }) =>
+playground/ssr-html/__tests__/serve.ts:14:  const { app, vite } = await createServer(rootDir, hmrPorts['ssr-html'])
+playground/ssr-html/server.js:26:export async function createServer(root = process.cwd(), hmrPort) {
+playground/ssr-html/server.js:36:  ).createServer({
+playground/ssr-html/server.js:108:  createServer().then(({ app }) =>
+playground/ssr-html/test-network-imports.js:6:  const server = await createServer({
+playground/ssr-html/test-stacktrace-runtime.js:8:const server = await createServer({
+playground/ssr-html/test-stacktrace.js:27:const vite = await createServer({
+playground/ssr-noexternal/__tests__/serve.ts:27:  const { app, vite } = await createServer(
+playground/ssr-noexternal/server.js:10:export async function createServer(
+playground/ssr-noexternal/server.js:30:    ).createServer({
+playground/ssr-noexternal/server.js:81:  createServer().then(({ app }) =>
+playground/ssr-pug/__tests__/serve.ts:14:  const { app, vite } = await createServer(rootDir, hmrPorts['ssr-pug'])
+playground/ssr-pug/server.js:20:export async function createServer(root = process.cwd(), hmrPort) {
+playground/ssr-pug/server.js:30:  ).createServer({
+playground/ssr-pug/server.js:73:  createServer().then(({ app }) =>
+playground/ssr-webworker/__tests__/serve.ts:29:  const { mf } = await createServer(port)
+playground/ssr-webworker/worker.js:9:export async function createServer(port) {
+playground/ssr-webworker/worker.js:21:  createServer(5173).then(() => console.log('http://localhost:5173'))
+playground/vitestSetup.ts:248:    viteServer = server = await (await createServer(config)).listen()

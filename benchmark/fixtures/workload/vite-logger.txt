@@ -1,0 +1,112 @@
+packages/vite/src/node/__tests__/build.spec.ts:9:import { createLogger } from '../logger'
+packages/vite/src/node/__tests__/build.spec.ts:159:    const logger = createLogger()
+packages/vite/src/node/__tests__/build.spec.ts:172:    const logger = createLogger()
+packages/vite/src/node/__tests__/build.spec.ts:187:    const logger = createLogger()
+packages/vite/src/node/__tests__/build.spec.ts:195:    const logger = createLogger()
+packages/vite/src/node/__tests__/build.spec.ts:211:    const logger = createLogger()
+packages/vite/src/node/__tests__/build.spec.ts:222:    const logger = createLogger()
+packages/vite/src/node/__tests__/build.spec.ts:230:    const logger = createLogger()
+packages/vite/src/node/__tests__/build.spec.ts:241:    const logger = createLogger()
+packages/vite/src/node/__tests__/config.spec.ts:7:import { createLogger, mergeConfig } from '../publicUtils'
+packages/vite/src/node/__tests__/config.spec.ts:352:    const logger = createLogger('info')
+packages/vite/src/node/__tests__/config.spec.ts:353:    logger.warn = (str) => {
+packages/vite/src/node/__tests__/plugins/import.spec.ts:15:    config.logger.warn.mockClear()
+packages/vite/src/node/__tests__/plugins/import.spec.ts:93:    expect(config.logger.warn).toBeCalledWith(
+packages/vite/src/node/__tests__/plugins/import.spec.ts:108:    expect(config.logger.warn).toBeCalledTimes(1)
+packages/vite/src/node/build.ts:319:      logger.warn(
+packages/vite/src/node/build.ts:606:    logger.error(e.message, { error: e })
+packages/vite/src/node/build.ts:615:        logger.warn(
+packages/vite/src/node/build.ts:628:        logger.warnOnce(
+packages/vite/src/node/build.ts:774:      logger.error(
+packages/vite/src/node/build.ts:815:        config.logger.warn(
+packages/vite/src/node/build.ts:915:      logger.warn(
+packages/vite/src/node/build.ts:994:        config.logger.warn(
+packages/vite/src/node/cli.ts:11:import { createLogger } from './logger'
+packages/vite/src/node/cli.ts:224:      const logger = createLogger(options.logLevel)
+packages/vite/src/node/cli.ts:225:      logger.error(colors.red(`error when starting dev server:\n${e.stack}`), {
+packages/vite/src/node/cli.ts:282:      createLogger(options.logLevel).error(
+packages/vite/src/node/cli.ts:288:      stopProfiler((message) => createLogger(options.logLevel).info(message))
+packages/vite/src/node/cli.ts:316:        createLogger(options.logLevel).error(
+packages/vite/src/node/cli.ts:366:        createLogger(options.logLevel).error(
+packages/vite/src/node/cli.ts:372:        stopProfiler((message) => createLogger(options.logLevel).info(message))
+packages/vite/src/node/config.ts:65:import { createLogger } from './logger'
+packages/vite/src/node/config.ts:440:    logger.warn(
+packages/vite/src/node/config.ts:521:  const logger = createLogger(config.logLevel, {
+packages/vite/src/node/config.ts:563:    logger.warn(
+packages/vite/src/node/config.ts:589:      logger.warn(
+packages/vite/src/node/config.ts:705:    logger.warn(
+packages/vite/src/node/config.ts:876:    logger.warn(
+packages/vite/src/node/config.ts:899:        resolved.logger.warn(
+packages/vite/src/node/config.ts:915:    resolved.logger.warn(
+packages/vite/src/node/config.ts:930:    resolved.logger.warn(
+packages/vite/src/node/config.ts:950:    logger.warn(
+packages/vite/src/node/config.ts:965:    logger.warn(
+packages/vite/src/node/config.ts:1062:    createLogger(logLevel, { customLogger }).error(
+packages/vite/src/node/config.ts:1327:      resolved.logger.warn(
+packages/vite/src/node/config.ts:1342:      resolved.logger.warn(
+packages/vite/src/node/http.ts:188:      logger.warn(
+packages/vite/src/node/logger.ts:66:export function createLogger(
+packages/vite/src/node/optimizer/index.ts:607:        config.logger.error('Failed to dispose esbuild context', { error: e })
+packages/vite/src/node/optimizer/index.ts:825:        logger.warn(
+packages/vite/src/node/optimizer/index.ts:1309:    config.logger.error(err)
+packages/vite/src/node/optimizer/optimizer.ts:281:            logger.error(e.stack || e.message)
+packages/vite/src/node/optimizer/optimizer.ts:505:            logger.warn(
+packages/vite/src/node/optimizer/optimizer.ts:521:      logger.error(
+packages/vite/src/node/optimizer/scan.ts:83:        config.logger.warn(
+packages/vite/src/node/optimizer/scan.ts:107:          config.logger.error('Failed to dispose esbuild context', { error: e })
+packages/vite/src/node/plugins/asset.ts:366:      config.logger.warn(
+packages/vite/src/node/plugins/assetImportMetaUrl.ts:139:            config.logger.warnOnce(
+packages/vite/src/node/plugins/css.ts:358:            config.logger.warnOnce(
+packages/vite/src/node/plugins/css.ts:1302:            config.logger.error(
+packages/vite/src/node/plugins/css.ts:1439:        config.logger.warn(colors.yellow(msg))
+packages/vite/src/node/plugins/css.ts:1682:          opts.logger.warnOnce(
+packages/vite/src/node/plugins/css.ts:1848:      config.logger.warn(
+packages/vite/src/node/plugins/css.ts:1871:      config.logger.warn(
+packages/vite/src/node/plugins/html.ts:476:                config.logger.warn(
+packages/vite/src/node/plugins/html.ts:634:          config.logger.warn(
+packages/vite/src/node/plugins/html.ts:667:            config.logger.warnOnce(
+packages/vite/src/node/plugins/html.ts:1072:      config.logger.warnOnce(
+packages/vite/src/node/plugins/html.ts:1158:          config.logger.warn(
+packages/vite/src/node/plugins/html.ts:1241:        logger.warnOnce(
+packages/vite/src/node/plugins/html.ts:1248:        logger.warnOnce(
+packages/vite/src/node/plugins/importAnalysis.ts:575:                    config.logger.error(
+packages/vite/src/node/plugins/importAnalysis.ts:955:    config.logger.warn(
+packages/vite/src/node/plugins/importMetaGlob.ts:180:    logger.warn(
+packages/vite/src/node/plugins/reporter.ts:283:        config.logger.warn(
+packages/vite/src/node/publicUtils.ts:21:export { createLogger } from './logger'
+packages/vite/src/node/server/hmr.ts:150:      config.logger.error(colors.red(e))
+packages/vite/src/node/server/index.ts:556:        server.config.logger.error(`Pre-transform error: ${e.message}`, {
+packages/vite/src/node/server/index.ts:636:        server.config.logger.warn('No URL available to open in browser')
+packages/vite/src/node/server/index.ts:1078:      logger.warn(`Get yarn cache dir error: ${e.message}`, {
+packages/vite/src/node/server/index.ts:1101:    logger.warn(
+packages/vite/src/node/server/index.ts:1137:      server.config.logger.error(err.message, {
+packages/vite/src/node/server/index.ts:1140:      server.config.logger.error('server restart failed', { timestamp: true })
+packages/vite/src/node/server/middlewares/error.ts:50:  server.config.logger.error(msg, {
+packages/vite/src/node/server/middlewares/proxy.ts:51:      config.logger.warn(
+packages/vite/src/node/server/middlewares/proxy.ts:97:        config.logger.error(
+packages/vite/src/node/server/middlewares/proxy.ts:105:        config.logger.error(
+packages/vite/src/node/server/middlewares/proxy.ts:122:        config.logger.error(`${colors.red(`ws proxy error:`)}\n${err.stack}`, {
+packages/vite/src/node/server/middlewares/proxy.ts:134:        config.logger.error(
+packages/vite/src/node/server/middlewares/static.ts:251:    server.config.logger.error(urlMessage)
+packages/vite/src/node/server/middlewares/static.ts:252:    server.config.logger.warnOnce(hintMessage + '\n')
+packages/vite/src/node/server/middlewares/transform.ts:236:        server.config.logger.error(e.message)
+packages/vite/src/node/server/middlewares/transform.ts:275:        server.config.logger.warn(colors.yellow(e.message))
+packages/vite/src/node/server/middlewares/transform.ts:317:    server.config.logger.warn(colors.yellow(warning))
+packages/vite/src/node/server/openBrowser.ts:48:      logger.error(
+packages/vite/src/node/server/openBrowser.ts:134:      logger.error(err.stack || err.message)
+packages/vite/src/node/server/pluginContainer.ts:635:    this._container.config.logger.warn(msg, {
+packages/vite/src/node/server/pluginContainer.ts:674:          this._container.config.logger.error(
+packages/vite/src/node/server/pluginContainer.ts:756:    this._container.config.logger.warn(
+packages/vite/src/node/server/sourcemap.ts:81:    logger.warnOnce(`Sourcemap for "${file}" points to missing source files`)
+packages/vite/src/node/server/sourcemap.ts:136:      logger.warn('sourcemapIgnoreList function must return a boolean.')
+packages/vite/src/node/server/transformRequest.ts:285:        logger.warn(`Failed to load source map for ${file}.\n${e}`, {
+packages/vite/src/node/server/warmup.ts:41:        server.config.logger.error(
+packages/vite/src/node/server/ws.ts:189:      config.logger.error(`${colors.red(`ws error:`)}\n${err.stack}`, {
+packages/vite/src/node/server/ws.ts:203:      config.logger.error(
+packages/vite/src/node/server/ws.ts:208:      config.logger.error(
+packages/vite/src/node/shortcuts.ts:148:        server.config.logger.warn('No URL available to open in browser')
+packages/vite/src/node/ssr/ssrModuleLoader.ts:234:    server.config.logger.error(
+packages/vite/src/runtime/hmrHandler.ts:35:          hmrClient.logger.error(
+packages/vite/src/runtime/hmrHandler.ts:75:      hmrClient.logger.error(
+packages/vite/src/shared/hmr.ts:252:      this.logger.error(err)
+packages/vite/src/shared/hmr.ts:254:    this.logger.error(

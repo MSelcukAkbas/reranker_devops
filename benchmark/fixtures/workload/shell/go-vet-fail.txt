@@ -1,0 +1,37 @@
+# github.com/spf13/cobra
+./active_help.go:50:46: not enough arguments in call to cmd.Root().Name
+	have ()
+	want (bool)
+./bash_completions.go:453:64: not enough arguments in call to c.Name
+	have ()
+	want (bool)
+./bash_completions.go:467:63: not enough arguments in call to cmd.Root().Name
+	have ()
+	want (bool)
+./bash_completions.go:486:59: not enough arguments in call to cmd.Root().Name
+	have ()
+	want (bool)
+./bash_completions.go:547:98: not enough arguments in call to cmd.Root().Name
+	have ()
+	want (bool)
+./bash_completions.go:639:77: not enough arguments in call to cmd.Name
+	have ()
+	want (bool)
+./bash_completions.go:685:21: not enough arguments in call to c.Name
+	have ()
+	want (bool)
+./bash_completions.go:690:23: not enough arguments in call to c.Name
+	have ()
+	want (bool)
+./bash_completionsV2.go:26:19: not enough arguments in call to c.Name
+	have ()
+	want (bool)
+./command.go:772:25: not enough arguments in call to cmd.Name
+	have ()
+	want (bool)
+./command.go:772:25: too many errors
+# github.com/spf13/cobra
+# [github.com/spf13/cobra]
+vet: ./active_help.go:50:62: not enough arguments in call to cmd.Root().Name
+	have ()
+	want (bool)

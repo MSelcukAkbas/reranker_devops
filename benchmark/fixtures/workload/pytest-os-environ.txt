@@ -1,0 +1,84 @@
+src/_pytest/_argcomplete.py:102:if os.environ.get("_ARGCOMPLETE"):
+src/_pytest/_io/terminalwriter.py:37:    if os.environ.get("PY_COLORS") == "1":
+src/_pytest/_io/terminalwriter.py:39:    if os.environ.get("PY_COLORS") == "0":
+src/_pytest/_io/terminalwriter.py:41:    if os.environ.get("NO_COLOR"):
+src/_pytest/_io/terminalwriter.py:43:    if os.environ.get("FORCE_COLOR"):
+src/_pytest/_io/terminalwriter.py:46:        hasattr(file, "isatty") and file.isatty() and os.environ.get("TERM") != "dumb"
+src/_pytest/_py/path.py:1208:                    paths = os.environ["Path"].split(";")
+src/_pytest/_py/path.py:1212:                        systemroot = os.environ["SYSTEMROOT"]
+src/_pytest/_py/path.py:1220:                    paths = os.environ["PATH"].split(":")
+src/_pytest/_py/path.py:1223:                tryadd += os.environ["PATHEXT"].split(os.pathsep)
+src/_pytest/_py/path.py:1242:            x = os.environ["HOME"]
+src/_pytest/_py/path.py:1245:                x = os.environ["HOMEDRIVE"] + os.environ["HOMEPATH"]
+src/_pytest/_py/path.py:1416:            username = os.environ["USER"]  # linux, et al
+src/_pytest/_py/path.py:1419:                username = os.environ["USERNAME"]  # windows
+src/_pytest/assertion/util.py:609:    return any(var in os.environ for var in env_vars)
+src/_pytest/cacheprovider.py:522:    if "TOX_ENV_DIR" in os.environ:
+src/_pytest/cacheprovider.py:523:        cache_dir_default = os.path.join(os.environ["TOX_ENV_DIR"], cache_dir_default)
+src/_pytest/config/__init__.py:152:    old_pytest_version = os.environ.get("PYTEST_VERSION")
+src/_pytest/config/__init__.py:154:        os.environ["PYTEST_VERSION"] = __version__
+src/_pytest/config/__init__.py:189:            os.environ.pop("PYTEST_VERSION", None)
+src/_pytest/config/__init__.py:191:            os.environ["PYTEST_VERSION"] = old_pytest_version
+src/_pytest/config/__init__.py:431:        if os.environ.get("PYTEST_DEBUG"):
+src/_pytest/config/__init__.py:820:        self._import_plugin_specs(os.environ.get("PYTEST_PLUGINS"))
+src/_pytest/config/__init__.py:1286:        if os.environ.get("PYTEST_DISABLE_PLUGIN_AUTOLOAD"):
+src/_pytest/config/__init__.py:1360:            env_addopts = os.environ.get("PYTEST_ADDOPTS", "")
+src/_pytest/config/__init__.py:1378:        if not os.environ.get("PYTEST_DISABLE_PLUGIN_AUTOLOAD"):
+src/_pytest/monkeypatch.py:35:    :data:`os.environ`:
+src/_pytest/monkeypatch.py:327:        if prepend and name in os.environ:
+src/_pytest/monkeypatch.py:328:            value = value + prepend + os.environ[name]
+src/_pytest/monkeypatch.py:329:        self.setitem(os.environ, name, value)
+src/_pytest/monkeypatch.py:337:        environ: MutableMapping[str, str] = os.environ
+src/_pytest/pathlib.py:588:    ignore = os.environ.get("PY_IGNORE_IMPORTMISMATCH", "")
+src/_pytest/pytester.py:1340:        env = os.environ.copy()
+src/_pytest/runner.py:205:        os.environ[var_name] = value
+src/_pytest/runner.py:207:        os.environ.pop(var_name)
+src/_pytest/tmpdir.py:157:            from_env = os.environ.get("PYTEST_DEBUG_TEMPROOT")
+testing/_py/test_local.py:1531:        if "LANG" not in os.environ:
+testing/_py/test_local.py:1539:        if "LANG" not in os.environ:
+testing/io/test_terminalwriter.py:186:    monkeypatch.setitem(os.environ, "PY_COLORS", "1")
+testing/io/test_terminalwriter.py:191:    monkeypatch.setitem(os.environ, "PY_COLORS", "0")
+testing/io/test_terminalwriter.py:196:    monkeypatch.setitem(os.environ, "NO_COLOR", "1")
+testing/io/test_terminalwriter.py:201:    monkeypatch.setitem(os.environ, "FORCE_COLOR", "1")
+testing/io/test_terminalwriter.py:219:    monkeypatch.setitem(os.environ, "NO_COLOR", NO_COLOR)
+testing/io/test_terminalwriter.py:220:    monkeypatch.setitem(os.environ, "FORCE_COLOR", FORCE_COLOR)
+testing/io/test_terminalwriter.py:225:    monkeypatch.setitem(os.environ, "NO_COLOR", "")
+testing/io/test_terminalwriter.py:226:    monkeypatch.setitem(os.environ, "FORCE_COLOR", "")
+testing/python/fixtures.py:4118:            VARIANT = os.environ.get(VAR)
+testing/test_cacheprovider.py:524:            env = os.environ
+testing/test_cacheprovider.py:557:            env = os.environ
+testing/test_cacheprovider.py:568:            env = os.environ
+testing/test_debugging.py:984:            os.environ['PYTHONBREAKPOINT'] = '_pytest._CustomDebugger.set_trace'
+testing/test_doctest.py:580:            >>> os.environ["HELLO"]
+testing/test_faulthandler.py:92:        time.sleep(1 if "CI" in os.environ else 0.1)
+testing/test_monkeypatch.py:150:        os.environ[key] = "world"
+testing/test_monkeypatch.py:153:    del os.environ[key]
+testing/test_monkeypatch.py:156:        assert os.environ[key] == "world"
+testing/test_monkeypatch.py:157:        del os.environ[key]
+testing/test_monkeypatch.py:159:        assert key not in os.environ
+testing/test_monkeypatch.py:185:    assert os.environ["XYZ123"] == "2"
+testing/test_monkeypatch.py:187:    assert "XYZ123" not in os.environ
+testing/test_monkeypatch.py:192:    assert name not in os.environ
+testing/test_monkeypatch.py:197:    os.environ[name] = "1"
+testing/test_monkeypatch.py:201:        assert name not in os.environ
+testing/test_monkeypatch.py:203:        assert os.environ[name] == "3"
+testing/test_monkeypatch.py:205:        assert os.environ[name] == "1"
+testing/test_monkeypatch.py:207:        if name in os.environ:
+testing/test_monkeypatch.py:208:            del os.environ[name]
+testing/test_monkeypatch.py:213:    os.environ keys and values should be native strings, otherwise it will cause problems with other modules (notably
+testing/test_monkeypatch.py:214:    subprocess). On Python 2 os.environ accepts anything without complaining, while Python 3 does the right thing
+testing/test_monkeypatch.py:236:    assert os.environ["XYZ123"] == "3-2"
+testing/test_monkeypatch.py:238:    assert "XYZ123" not in os.environ
+testing/test_parseopt.py:334:    # to handle a keyword argument env that replaces os.environ in popen or
+testing/test_pluginmanager.py:349:        monkeypatch.setitem(os.environ, "PYTEST_PLUGINS", "xy123")
+testing/test_pytester.py:612:    assert "PYTEST_ADDOPTS" not in os.environ
+testing/test_pytester.py:704:    assert os.environ.get("HOME") == tmphome
+testing/test_pytester.py:713:            assert os.environ["HOME"] == {tmphome!r}
+testing/test_pytester.py:714:            assert os.environ["CUSTOMENV"] == "42"
+testing/test_runner.py:1061:            sys.pytest_current_test_vars.append(('setup', os.environ['PYTEST_CURRENT_TEST']))
+testing/test_runner.py:1063:            sys.pytest_current_test_vars.append(('teardown', os.environ['PYTEST_CURRENT_TEST']))
+testing/test_runner.py:1066:            sys.pytest_current_test_vars.append(('call', os.environ['PYTEST_CURRENT_TEST']))
+testing/test_runner.py:1077:    assert "PYTEST_CURRENT_TEST" not in os.environ
+testing/test_runner.py:1211:            assert os.environ.get("PYTEST_VERSION") == pytest.__version__
+testing/test_runner.py:1216:    assert os.environ["PYTEST_VERSION"] == "old version"
+testing/test_tmpdir.py:266:    # os.environ["PWD"]

@@ -1,0 +1,758 @@
+{
+  "version": 1,
+  "goal": {
+    "min_saving": 0.3,
+    "evidence_recall": 1.0,
+    "location_recall": 1.0,
+    "average": "category"
+  },
+  "repos": {
+    "vite": {
+      "url": "https://github.com/vitejs/vite",
+      "tag": "v5.4.10",
+      "commit": "5f52bc8b9e4090cdcaf3f704278db30dafc825cc",
+      "lang": "typescript"
+    }
+  },
+  "categories": {
+    "symbol": {
+      "label": "Symbol lookup",
+      "group": "search",
+      "weight": 1
+    },
+    "usage": {
+      "label": "Usage search",
+      "group": "search",
+      "weight": 1
+    },
+    "exhaustive": {
+      "label": "Exhaustive / list-all",
+      "group": "search",
+      "weight": 1
+    },
+    "env": {
+      "label": "process.env / config scan",
+      "group": "search",
+      "weight": 1
+    },
+    "imports": {
+      "label": "import / require scan",
+      "group": "search",
+      "weight": 1
+    },
+    "broad": {
+      "label": "Broad grep",
+      "group": "search",
+      "weight": 1
+    },
+    "monorepo": {
+      "label": "Monorepo search",
+      "group": "search",
+      "weight": 1
+    },
+    "test-pass": {
+      "label": "Test success",
+      "group": "build",
+      "weight": 1
+    },
+    "test-fail-one": {
+      "label": "Single test failure",
+      "group": "build",
+      "weight": 1
+    },
+    "test-fail-many": {
+      "label": "Many test failures",
+      "group": "build",
+      "weight": 1
+    },
+    "build-fail": {
+      "label": "Compiler / build failure",
+      "group": "build",
+      "weight": 1
+    },
+    "repeated-diag": {
+      "label": "Repeated diagnostics",
+      "group": "build",
+      "weight": 1
+    }
+  },
+  "tasks": [
+    {
+      "ref": "pytest-raises-impl",
+      "category": "symbol"
+    },
+    {
+      "ref": "cobra-execute",
+      "category": "symbol"
+    },
+    {
+      "ref": "ripgrep-search-fns",
+      "category": "symbol"
+    },
+    {
+      "ref": "pytest-fixture-defs",
+      "category": "symbol"
+    },
+    {
+      "ref": "cobra-command-funcs",
+      "category": "symbol"
+    },
+    {
+      "ref": "ripgrep-standard-fns",
+      "category": "symbol"
+    },
+    {
+      "ref": "pytest-scope-mismatch-2step",
+      "category": "symbol"
+    },
+    {
+      "ref": "express-req-query",
+      "category": "usage"
+    },
+    {
+      "ref": "cobra-persistent-flags",
+      "category": "usage"
+    },
+    {
+      "ref": "ripgrep-max-columns",
+      "category": "usage"
+    },
+    {
+      "ref": "express-redirect-status",
+      "category": "usage"
+    },
+    {
+      "ref": "pytest-fixture-scope",
+      "category": "usage"
+    },
+    {
+      "ref": "pytest-addoption-hooks",
+      "category": "usage"
+    },
+    {
+      "ref": "express-redirect-2step",
+      "category": "usage"
+    },
+    {
+      "ref": "express-router-handle",
+      "category": "usage"
+    },
+    {
+      "ref": "pytest-warnings-importers",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "pytest-fixture-tests-file",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "pytest-src-files-find",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "pytest-test-counts",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "ripgrep-unwrap-counts",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "pytest-fixture-mentions",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "ripgrep-crate-files",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "express-redirect-tests-glob",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "cobra-completion-tests-find",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "ripgrep-globset-glob",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "pytest-all-files-find",
+      "category": "exhaustive"
+    },
+    {
+      "ref": "pytest-usage-error-p-option",
+      "category": "broad"
+    },
+    {
+      "id": "vite-create-server-calls",
+      "category": "usage",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "createServer\\(",
+        "packages",
+        "playground"
+      ],
+      "intent": "Which code paths create a Vite dev server programmatically?",
+      "subtask": "Find every createServer( call in packages and playground.",
+      "evidence": [
+        {
+          "path": "packages/vite/src/node/server/index.ts",
+          "line": 431,
+          "text": "export async function _createServer(",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-process-env",
+      "category": "env",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "process\\.env"
+      ],
+      "intent": "List every environment variable Vite's own source code (packages/*/src) reads from process.env, and where.",
+      "subtask": "Grep process.env across the whole repository.",
+      "evidence": [
+        {
+          "path": "packages/vite/src/node/env.ts",
+          "line": 40,
+          "text": "process.env",
+          "critical": true
+        },
+        {
+          "path": "packages/vite/src/node/server/pluginContainer.ts",
+          "line": 92,
+          "text": "DEBUG_VITE_SOURCEMAP_COMBINE_FILTER",
+          "critical": true
+        },
+        {
+          "mention": "BROWSER_ARGS",
+          "critical": true
+        }
+      ],
+      "tool": "Grep"
+    },
+    {
+      "id": "vite-process-env-names",
+      "category": "env",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "-o",
+        "process\\.env\\.[A-Z_]+"
+      ],
+      "intent": "Which named environment variables does the repo use?",
+      "subtask": "List every process.env.NAME occurrence.",
+      "evidence": [
+        {
+          "path": "packages/vite/bin/vite.js",
+          "line": 31,
+          "text": "process.env.DEBUG",
+          "critical": true
+        }
+      ],
+      "tool": "Grep"
+    },
+    {
+      "id": "pytest-os-environ",
+      "category": "env",
+      "repo": "pytest",
+      "cmd": [
+        "rg",
+        "-n",
+        "os\\.environ",
+        "src",
+        "testing"
+      ],
+      "intent": "Which environment variables does pytest read or set?",
+      "subtask": "Find os.environ uses in src and testing.",
+      "evidence": [
+        {
+          "path": "src/_pytest/config/__init__.py",
+          "line": 1360,
+          "text": "PYTEST_ADDOPTS",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "express-require",
+      "category": "imports",
+      "repo": "express",
+      "cmd": [
+        "rg",
+        "-n",
+        "require\\(",
+        "lib",
+        "test"
+      ],
+      "intent": "Which modules does express depend on and where are they required?",
+      "subtask": "List every require( call in lib and test.",
+      "evidence": [
+        {
+          "path": "lib/express.js",
+          "line": 15,
+          "text": "require('body-parser')",
+          "critical": true
+        },
+        {
+          "path": "lib/router/index.js",
+          "line": 16,
+          "text": "require('./route')",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-imports",
+      "category": "imports",
+      "repo": "pytest",
+      "cmd": [
+        "rg",
+        "-n",
+        "^(import|from) ",
+        "src/_pytest"
+      ],
+      "intent": "What does each _pytest module import?",
+      "subtask": "List import lines under src/_pytest.",
+      "evidence": [
+        {
+          "path": "src/_pytest/fixtures.py",
+          "line": 4,
+          "text": "import abc",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-node-imports",
+      "category": "imports",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "^import .* from '",
+        "packages/vite/src/node"
+      ],
+      "intent": "Map the import graph of Vite's node side.",
+      "subtask": "List ES imports under packages/vite/src/node.",
+      "evidence": [
+        {
+          "path": "packages/vite/src/node/server/index.ts",
+          "line": 87,
+          "text": "from './hmr'",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-hmr-node",
+      "category": "broad",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "hmr",
+        "packages/vite/src/node"
+      ],
+      "intent": "How does Vite's server side handle HMR?",
+      "subtask": "Grep hmr in the node sources.",
+      "evidence": [
+        {
+          "path": "packages/vite/src/node/server/hmr.ts",
+          "line": 19,
+          "text": "export const debugHmr",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-logger",
+      "category": "broad",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "createLogger|logger\\.(warn|error)",
+        "packages/vite/src"
+      ],
+      "intent": "Where does Vite log warnings and errors?",
+      "subtask": "Find createLogger and logger.warn/error calls.",
+      "evidence": [
+        {
+          "path": "packages/vite/src/node/logger.ts",
+          "line": 66,
+          "text": "export function createLogger(",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-todo",
+      "category": "broad",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "TODO"
+      ],
+      "intent": "What TODOs are left in the repo?",
+      "subtask": "Grep TODO across the repository.",
+      "evidence": [
+        {
+          "path": "packages/create-vite/build.config.ts",
+          "line": 26,
+          "text": "TODO",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-from-vite",
+      "category": "monorepo",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "from 'vite'"
+      ],
+      "intent": "Which workspace packages and playgrounds import from vite?",
+      "subtask": "Find `from 'vite'` imports across the monorepo.",
+      "evidence": [
+        {
+          "path": "playground/ssr/vite.config.ts",
+          "line": 1,
+          "text": "from 'vite'",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-ssr-load-module",
+      "category": "monorepo",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "-C2",
+        "ssrLoadModule",
+        "packages"
+      ],
+      "intent": "How is ssrLoadModule implemented and used?",
+      "subtask": "Find ssrLoadModule with context in packages.",
+      "evidence": [
+        {
+          "path": "packages/vite/src/node/ssr/ssrModuleLoader.ts",
+          "line": 41,
+          "text": "export async function ssrLoadModule(",
+          "critical": true
+        },
+        {
+          "path": "packages/vite/src/node/server/index.ts",
+          "line": 42,
+          "text": "import { ssrLoadModule }",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-isbuild-playground",
+      "category": "monorepo",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-n",
+        "isBuild",
+        "playground"
+      ],
+      "intent": "Which playground tests behave differently in build mode?",
+      "subtask": "Find isBuild across playground.",
+      "evidence": [
+        {
+          "path": "playground/vitestSetup.ts",
+          "line": 30,
+          "text": "export const isBuild",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-defineconfig-files",
+      "category": "monorepo",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "-l",
+        "export default defineConfig"
+      ],
+      "intent": "Which packages and playgrounds have a Vite config?",
+      "subtask": "List files with `export default defineConfig`.",
+      "evidence": [
+        {
+          "path": "playground/ssr/vite.config.ts",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "vite-src-files",
+      "category": "monorepo",
+      "repo": "vite",
+      "cmd": [
+        "rg",
+        "--files",
+        "packages/vite/src"
+      ],
+      "intent": "What files make up the vite package source?",
+      "subtask": "List files under packages/vite/src.",
+      "evidence": [
+        {
+          "path": "packages/vite/src/node/server/index.ts",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "pytest-v-pass",
+      "category": "test-pass",
+      "kind": "shell",
+      "fixture": "shell/pytest-v-pass.txt",
+      "source": "searchslim tests at 93dc856: python -m pytest -v",
+      "evidence": [
+        "327 passed, 1 skipped"
+      ]
+    },
+    {
+      "id": "pytest-pass",
+      "category": "test-pass",
+      "kind": "shell",
+      "fixture": "shell/pytest-pass.txt",
+      "source": "searchslim tests at 93dc856: python -m pytest",
+      "evidence": [
+        "327 passed, 1 skipped"
+      ]
+    },
+    {
+      "id": "cargo-test-pass",
+      "category": "test-pass",
+      "kind": "shell",
+      "fixture": "shell/cargo-test-pass.txt",
+      "source": "ripgrep 14.1.1: cargo test -p globset (incremental)",
+      "evidence": [
+        "test result: ok. 259 passed"
+      ]
+    },
+    {
+      "id": "pytest-v-one-fail",
+      "category": "test-fail-one",
+      "kind": "shell",
+      "fixture": "shell/pytest-v-one-fail.txt",
+      "source": "searchslim tests at 93dc856, rules._clip reports one char too many: python -m pytest -v",
+      "evidence": [
+        "FAILED tests/test_rules.py::test_long_lines_are_clipped_not_dropped",
+        "1 failed, 326 passed"
+      ]
+    },
+    {
+      "id": "go-test-v-one-fail",
+      "category": "test-fail-one",
+      "kind": "shell",
+      "fixture": "shell/go-test-v-one-fail.txt",
+      "source": "cobra v1.8.1 as root: go test -v -count=1 ./...",
+      "evidence": [
+        "--- FAIL: TestFailGenFishCompletionFile",
+        "panic: runtime error: invalid memory address or nil pointer dereference",
+        "FAIL\tgithub.com/spf13/cobra"
+      ]
+    },
+    {
+      "id": "vitest-verbose-one-fail",
+      "category": "test-fail-one",
+      "kind": "shell",
+      "fixture": "shell/vitest-verbose.txt",
+      "source": "tests/fixtures/compact/vitest-verbose.txt (40 suites, 1 failing)",
+      "evidence": [
+        "FAIL  s7.test.js > suite 7 > broken",
+        "1 failed | 321 passed"
+      ]
+    },
+    {
+      "id": "jest-one-fail",
+      "category": "test-fail-one",
+      "kind": "shell",
+      "fixture": "shell/jest.txt",
+      "source": "tests/fixtures/compact/jest.txt (40 suites, 1 failing)",
+      "evidence": [
+        "● suite 7 › broken",
+        "1 failed, 321 passed"
+      ]
+    },
+    {
+      "id": "pytest-many-fail",
+      "category": "test-fail-many",
+      "kind": "shell",
+      "fixture": "shell/pytest-many-fail.txt",
+      "source": "searchslim tests at 93dc856, estimate_tokens divides by 3: python -m pytest",
+      "evidence": [
+        "FAILED tests/test_compact.py::test_other_output_passes_unchanged",
+        "FAILED tests/test_hooks.py::test_single_file_grep_under_budget_lets_builtin_tool_run",
+        "FAILED tests/test_lossless.py::test_huge_require_listing_keeps_every_location",
+        "FAILED tests/test_lossless.py::test_env_listing_is_projected_when_still_too_big",
+        "FAILED tests/test_windows_locale.py::test_run_keeps_turkish_output_under_cp1254",
+        "tests/test_lossless.py:85: KeyError"
+      ]
+    },
+    {
+      "id": "cargo-test-many-fail",
+      "category": "test-fail-many",
+      "kind": "shell",
+      "fixture": "shell/cargo-test-many-fail.txt",
+      "source": "ripgrep 14.1.1 + patches/ripgrep-globset-recursive-prefix.patch: cargo test -p globset",
+      "evidence": [
+        "---- glob::tests::matchrec15 stdout ----",
+        "---- glob::tests::re27 stdout ----",
+        "panicked at crates/globset/src/glob.rs:1295:5:",
+        "test result: FAILED. 250 passed; 9 failed"
+      ]
+    },
+    {
+      "id": "cargo-build-fail",
+      "category": "build-fail",
+      "kind": "shell",
+      "fixture": "shell/cargo-build-fail.txt",
+      "source": "ripgrep 14.1.1 + patches/ripgrep-core-matched-type.patch: cargo clean && cargo build",
+      "evidence": [
+        "--> crates/core/main.rs:116:30",
+        "--> crates/core/main.rs:260:8",
+        "error: could not compile `ripgrep`"
+      ]
+    },
+    {
+      "id": "go-vet-fail",
+      "category": "build-fail",
+      "kind": "shell",
+      "fixture": "shell/go-vet-fail.txt",
+      "source": "cobra v1.8.1 + patches/cobra-name-signature.patch: go vet ./...",
+      "evidence": [
+        "./active_help.go:50:46: not enough arguments in call to cmd.Root().Name"
+      ]
+    },
+    {
+      "id": "tsc-repeated",
+      "category": "repeated-diag",
+      "kind": "shell",
+      "fixture": "shell/tsc-repeated.txt",
+      "source": "scratch TS project, formatUser gained a parameter, 120 callers: tsc -p .",
+      "evidence": [
+        "src/handlers/handler01.ts(4,18): error TS2554",
+        "src/handlers/handler120.ts(9,27): error TS2554"
+      ]
+    },
+    {
+      "id": "pytest-warnings",
+      "category": "repeated-diag",
+      "kind": "shell",
+      "fixture": "shell/pytest-warnings.txt",
+      "source": "scratch project, deprecated parse_date() warns in 240 tests, 1 fails: python -m pytest",
+      "evidence": [
+        "FAILED test_month07.py::test_month07_leap",
+        "test_month07.py:65: AssertionError",
+        "1 failed, 240 passed, 241 warnings"
+      ]
+    }
+  ],
+  "live": [
+    {
+      "id": "live-cargo-test-pass",
+      "category": "test-pass",
+      "repo": "ripgrep",
+      "prompt": "Run `cargo test -p globset` in this repository and report whether the tests pass and how many unit tests ran.",
+      "evidence": [
+        {
+          "mention": "259",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "live-go-version-fail",
+      "category": "test-fail-many",
+      "repo": "cobra",
+      "patch": "patches/cobra-version-template.patch",
+      "prompt": "Run `go test ./...` in this repository. Tell me which tests fail and the root cause in the code, cited as path:line.",
+      "evidence": [
+        {
+          "mention": "TestVersionFlagExecuted",
+          "critical": true
+        },
+        {
+          "path": "command.go",
+          "line": 609,
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "live-globset-test-fail",
+      "category": "test-fail-many",
+      "repo": "ripgrep",
+      "patch": "patches/ripgrep-globset-recursive-prefix.patch",
+      "prompt": "Run `cargo test -p globset` in this repository. Tell me which tests fail and the root cause in the code, cited as path:line.",
+      "evidence": [
+        {
+          "mention": "matchrec15",
+          "critical": true
+        },
+        {
+          "path": "crates/globset/src/glob.rs",
+          "line": 685,
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "live-cargo-build-fail",
+      "category": "build-fail",
+      "repo": "ripgrep",
+      "patch": "patches/ripgrep-core-matched-type.patch",
+      "prompt": "Run `cargo build` in this repository. List every compile error's root cause, cited as path:line.",
+      "evidence": [
+        {
+          "path": "crates/core/main.rs",
+          "line": 116,
+          "critical": true
+        },
+        {
+          "path": "crates/core/main.rs",
+          "line": 243,
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "live-go-vet-fail",
+      "category": "build-fail",
+      "repo": "cobra",
+      "patch": "patches/cobra-name-signature.patch",
+      "prompt": "Run `go vet ./...` in this repository. Explain why it fails and where the breaking change is, cited as path:line.",
+      "evidence": [
+        {
+          "path": "command.go",
+          "line": 1503,
+          "critical": true
+        },
+        {
+          "mention": "active_help.go",
+          "critical": true
+        }
+      ]
+    }
+  ]
+}
