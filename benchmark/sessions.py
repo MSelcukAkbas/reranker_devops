@@ -139,14 +139,16 @@ def cmd_latency(args) -> int:
         env = {**os.environ, "SEARCHSLIM_CACHE_DIR": tmp, "PYTHONPATH": str(ROOT.parent / "src")}
 
         def call(i: int) -> float:
+            # PostToolUse without a tool_response: the hook runs rg itself, then reduces,
+            # so this times both (the Grep hook answers on PostToolUse since 0.5).
             event = {
-                "hook_event_name": "PreToolUse", "tool_name": "Grep", "cwd": str(repo), "session_id": f"s{i % 2}",
+                "hook_event_name": "PostToolUse", "tool_name": "Grep", "cwd": str(repo), "session_id": f"s{i % 2}",
                 "tool_input": {"pattern": ["scope", "fixture", "raises", "def "][i % 4], "output_mode": "content", "-C": 1},
             }
             start = time.perf_counter()
             proc = subprocess.run([sys.executable, "-m", "searchslim", "hook"], input=json.dumps(event), capture_output=True, text=True, env=env)
             elapsed = (time.perf_counter() - start) * 1000
-            assert proc.returncode == 0 and '"deny"' in proc.stdout, proc.stderr
+            assert proc.returncode == 0 and '"updatedToolOutput"' in proc.stdout, proc.stderr or proc.stdout
             return elapsed
 
         serial = [call(i) for i in range(args.parallel)]

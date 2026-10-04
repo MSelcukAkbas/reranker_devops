@@ -1,0 +1,1308 @@
+src/_pytest/__init__.py:1:from __future__ import annotations
+src/_pytest/_argcomplete.py:65:from __future__ import annotations
+src/_pytest/_argcomplete.py:67:import argparse
+src/_pytest/_argcomplete.py:68:from glob import glob
+src/_pytest/_argcomplete.py:69:import os
+src/_pytest/_argcomplete.py:70:import sys
+src/_pytest/_argcomplete.py:71:from typing import Any
+src/_pytest/_code/__init__.py:3:from __future__ import annotations
+src/_pytest/_code/__init__.py:5:from .code import Code
+src/_pytest/_code/__init__.py:6:from .code import ExceptionInfo
+src/_pytest/_code/__init__.py:7:from .code import filter_traceback
+src/_pytest/_code/__init__.py:8:from .code import Frame
+src/_pytest/_code/__init__.py:9:from .code import getfslineno
+src/_pytest/_code/__init__.py:10:from .code import Traceback
+src/_pytest/_code/__init__.py:11:from .code import TracebackEntry
+src/_pytest/_code/__init__.py:12:from .source import getrawcode
+src/_pytest/_code/__init__.py:13:from .source import Source
+src/_pytest/_code/code.py:2:from __future__ import annotations
+src/_pytest/_code/code.py:4:import ast
+src/_pytest/_code/code.py:5:import dataclasses
+src/_pytest/_code/code.py:6:import inspect
+src/_pytest/_code/code.py:7:from inspect import CO_VARARGS
+src/_pytest/_code/code.py:8:from inspect import CO_VARKEYWORDS
+src/_pytest/_code/code.py:9:from io import StringIO
+src/_pytest/_code/code.py:10:import os
+src/_pytest/_code/code.py:11:from pathlib import Path
+src/_pytest/_code/code.py:12:import re
+src/_pytest/_code/code.py:13:import sys
+src/_pytest/_code/code.py:14:import traceback
+src/_pytest/_code/code.py:15:from traceback import format_exception_only
+src/_pytest/_code/code.py:16:from types import CodeType
+src/_pytest/_code/code.py:17:from types import FrameType
+src/_pytest/_code/code.py:18:from types import TracebackType
+src/_pytest/_code/code.py:19:from typing import Any
+src/_pytest/_code/code.py:20:from typing import Callable
+src/_pytest/_code/code.py:21:from typing import ClassVar
+src/_pytest/_code/code.py:22:from typing import Final
+src/_pytest/_code/code.py:23:from typing import final
+src/_pytest/_code/code.py:24:from typing import Generic
+src/_pytest/_code/code.py:25:from typing import Iterable
+src/_pytest/_code/code.py:26:from typing import List
+src/_pytest/_code/code.py:27:from typing import Literal
+src/_pytest/_code/code.py:28:from typing import Mapping
+src/_pytest/_code/code.py:29:from typing import overload
+src/_pytest/_code/code.py:30:from typing import Pattern
+src/_pytest/_code/code.py:31:from typing import Sequence
+src/_pytest/_code/code.py:32:from typing import SupportsIndex
+src/_pytest/_code/code.py:33:from typing import Tuple
+src/_pytest/_code/code.py:34:from typing import Type
+src/_pytest/_code/code.py:35:from typing import TypeVar
+src/_pytest/_code/code.py:36:from typing import Union
+src/_pytest/_code/code.py:38:import pluggy
+src/_pytest/_code/code.py:40:import _pytest
+src/_pytest/_code/code.py:41:from _pytest._code.source import findsource
+src/_pytest/_code/code.py:42:from _pytest._code.source import getrawcode
+src/_pytest/_code/code.py:43:from _pytest._code.source import getstatementrange_ast
+src/_pytest/_code/code.py:44:from _pytest._code.source import Source
+src/_pytest/_code/code.py:45:from _pytest._io import TerminalWriter
+src/_pytest/_code/code.py:46:from _pytest._io.saferepr import safeformat
+src/_pytest/_code/code.py:47:from _pytest._io.saferepr import saferepr
+src/_pytest/_code/code.py:48:from _pytest.compat import get_real_func
+src/_pytest/_code/code.py:49:from _pytest.deprecated import check_ispytest
+src/_pytest/_code/code.py:50:from _pytest.pathlib import absolutepath
+src/_pytest/_code/code.py:51:from _pytest.pathlib import bestrelpath
+src/_pytest/_code/source.py:2:from __future__ import annotations
+src/_pytest/_code/source.py:4:import ast
+src/_pytest/_code/source.py:5:from bisect import bisect_right
+src/_pytest/_code/source.py:6:import inspect
+src/_pytest/_code/source.py:7:import textwrap
+src/_pytest/_code/source.py:8:import tokenize
+src/_pytest/_code/source.py:9:import types
+src/_pytest/_code/source.py:10:from typing import Iterable
+src/_pytest/_code/source.py:11:from typing import Iterator
+src/_pytest/_code/source.py:12:from typing import overload
+src/_pytest/_code/source.py:13:import warnings
+src/_pytest/_io/__init__.py:1:from __future__ import annotations
+src/_pytest/_io/__init__.py:3:from .terminalwriter import get_terminal_width
+src/_pytest/_io/__init__.py:4:from .terminalwriter import TerminalWriter
+src/_pytest/_io/pprint.py:16:from __future__ import annotations
+src/_pytest/_io/pprint.py:18:import collections as _collections
+src/_pytest/_io/pprint.py:19:import dataclasses as _dataclasses
+src/_pytest/_io/pprint.py:20:from io import StringIO as _StringIO
+src/_pytest/_io/pprint.py:21:import re
+src/_pytest/_io/pprint.py:22:import types as _types
+src/_pytest/_io/pprint.py:23:from typing import Any
+src/_pytest/_io/pprint.py:24:from typing import Callable
+src/_pytest/_io/pprint.py:25:from typing import IO
+src/_pytest/_io/pprint.py:26:from typing import Iterator
+src/_pytest/_io/saferepr.py:1:from __future__ import annotations
+src/_pytest/_io/saferepr.py:3:import pprint
+src/_pytest/_io/saferepr.py:4:import reprlib
+src/_pytest/_io/terminalwriter.py:3:from __future__ import annotations
+src/_pytest/_io/terminalwriter.py:5:import os
+src/_pytest/_io/terminalwriter.py:6:import shutil
+src/_pytest/_io/terminalwriter.py:7:import sys
+src/_pytest/_io/terminalwriter.py:8:from typing import final
+src/_pytest/_io/terminalwriter.py:9:from typing import Literal
+src/_pytest/_io/terminalwriter.py:10:from typing import Sequence
+src/_pytest/_io/terminalwriter.py:11:from typing import TextIO
+src/_pytest/_io/terminalwriter.py:12:from typing import TYPE_CHECKING
+src/_pytest/_io/terminalwriter.py:14:from ..compat import assert_never
+src/_pytest/_io/terminalwriter.py:15:from .wcwidth import wcswidth
+src/_pytest/_io/wcwidth.py:1:from __future__ import annotations
+src/_pytest/_io/wcwidth.py:3:from functools import lru_cache
+src/_pytest/_io/wcwidth.py:4:import unicodedata
+src/_pytest/_py/error.py:3:from __future__ import annotations
+src/_pytest/_py/error.py:5:import errno
+src/_pytest/_py/error.py:6:import os
+src/_pytest/_py/error.py:7:import sys
+src/_pytest/_py/error.py:8:from typing import Callable
+src/_pytest/_py/error.py:9:from typing import TYPE_CHECKING
+src/_pytest/_py/error.py:10:from typing import TypeVar
+src/_pytest/_py/path.py:4:from __future__ import annotations
+src/_pytest/_py/path.py:6:import atexit
+src/_pytest/_py/path.py:7:from contextlib import contextmanager
+src/_pytest/_py/path.py:8:import fnmatch
+src/_pytest/_py/path.py:9:import importlib.util
+src/_pytest/_py/path.py:10:import io
+src/_pytest/_py/path.py:11:import os
+src/_pytest/_py/path.py:12:from os.path import abspath
+src/_pytest/_py/path.py:13:from os.path import dirname
+src/_pytest/_py/path.py:14:from os.path import exists
+src/_pytest/_py/path.py:15:from os.path import isabs
+src/_pytest/_py/path.py:16:from os.path import isdir
+src/_pytest/_py/path.py:17:from os.path import isfile
+src/_pytest/_py/path.py:18:from os.path import islink
+src/_pytest/_py/path.py:19:from os.path import normpath
+src/_pytest/_py/path.py:20:import posixpath
+src/_pytest/_py/path.py:21:from stat import S_ISDIR
+src/_pytest/_py/path.py:22:from stat import S_ISLNK
+src/_pytest/_py/path.py:23:from stat import S_ISREG
+src/_pytest/_py/path.py:24:import sys
+src/_pytest/_py/path.py:25:from typing import Any
+src/_pytest/_py/path.py:26:from typing import Callable
+src/_pytest/_py/path.py:27:from typing import cast
+src/_pytest/_py/path.py:28:from typing import Literal
+src/_pytest/_py/path.py:29:from typing import overload
+src/_pytest/_py/path.py:30:from typing import TYPE_CHECKING
+src/_pytest/_py/path.py:31:import uuid
+src/_pytest/_py/path.py:32:import warnings
+src/_pytest/_py/path.py:34:from . import error
+src/_pytest/assertion/__init__.py:4:from __future__ import annotations
+src/_pytest/assertion/__init__.py:6:import sys
+src/_pytest/assertion/__init__.py:7:from typing import Any
+src/_pytest/assertion/__init__.py:8:from typing import Generator
+src/_pytest/assertion/__init__.py:9:from typing import TYPE_CHECKING
+src/_pytest/assertion/__init__.py:11:from _pytest.assertion import rewrite
+src/_pytest/assertion/__init__.py:12:from _pytest.assertion import truncate
+src/_pytest/assertion/__init__.py:13:from _pytest.assertion import util
+src/_pytest/assertion/__init__.py:14:from _pytest.assertion.rewrite import assertstate_key
+src/_pytest/assertion/__init__.py:15:from _pytest.config import Config
+src/_pytest/assertion/__init__.py:16:from _pytest.config import hookimpl
+src/_pytest/assertion/__init__.py:17:from _pytest.config.argparsing import Parser
+src/_pytest/assertion/__init__.py:18:from _pytest.nodes import Item
+src/_pytest/assertion/rewrite.py:3:from __future__ import annotations
+src/_pytest/assertion/rewrite.py:5:import ast
+src/_pytest/assertion/rewrite.py:6:from collections import defaultdict
+src/_pytest/assertion/rewrite.py:7:import errno
+src/_pytest/assertion/rewrite.py:8:import functools
+src/_pytest/assertion/rewrite.py:9:import importlib.abc
+src/_pytest/assertion/rewrite.py:10:import importlib.machinery
+src/_pytest/assertion/rewrite.py:11:import importlib.util
+src/_pytest/assertion/rewrite.py:12:import io
+src/_pytest/assertion/rewrite.py:13:import itertools
+src/_pytest/assertion/rewrite.py:14:import marshal
+src/_pytest/assertion/rewrite.py:15:import os
+src/_pytest/assertion/rewrite.py:16:from pathlib import Path
+src/_pytest/assertion/rewrite.py:17:from pathlib import PurePath
+src/_pytest/assertion/rewrite.py:18:import struct
+src/_pytest/assertion/rewrite.py:19:import sys
+src/_pytest/assertion/rewrite.py:20:import tokenize
+src/_pytest/assertion/rewrite.py:21:import types
+src/_pytest/assertion/rewrite.py:22:from typing import Callable
+src/_pytest/assertion/rewrite.py:23:from typing import IO
+src/_pytest/assertion/rewrite.py:24:from typing import Iterable
+src/_pytest/assertion/rewrite.py:25:from typing import Iterator
+src/_pytest/assertion/rewrite.py:26:from typing import Sequence
+src/_pytest/assertion/rewrite.py:27:from typing import TYPE_CHECKING
+src/_pytest/assertion/rewrite.py:29:from _pytest._io.saferepr import DEFAULT_REPR_MAX_SIZE
+src/_pytest/assertion/rewrite.py:30:from _pytest._io.saferepr import saferepr
+src/_pytest/assertion/rewrite.py:31:from _pytest._version import version
+src/_pytest/assertion/rewrite.py:32:from _pytest.assertion import util
+src/_pytest/assertion/rewrite.py:33:from _pytest.config import Config
+src/_pytest/assertion/rewrite.py:34:from _pytest.main import Session
+src/_pytest/assertion/rewrite.py:35:from _pytest.pathlib import absolutepath
+src/_pytest/assertion/rewrite.py:36:from _pytest.pathlib import fnmatch_ex
+src/_pytest/assertion/rewrite.py:37:from _pytest.stash import StashKey
+src/_pytest/assertion/rewrite.py:41:from _pytest.assertion.util import format_explanation as _format_explanation  # noqa:F401, isort:skip
+src/_pytest/assertion/truncate.py:7:from __future__ import annotations
+src/_pytest/assertion/truncate.py:9:from _pytest.assertion import util
+src/_pytest/assertion/truncate.py:10:from _pytest.config import Config
+src/_pytest/assertion/truncate.py:11:from _pytest.nodes import Item
+src/_pytest/assertion/util.py:4:from __future__ import annotations
+src/_pytest/assertion/util.py:6:import collections.abc
+src/_pytest/assertion/util.py:7:import os
+src/_pytest/assertion/util.py:8:import pprint
+src/_pytest/assertion/util.py:9:from typing import AbstractSet
+src/_pytest/assertion/util.py:10:from typing import Any
+src/_pytest/assertion/util.py:11:from typing import Callable
+src/_pytest/assertion/util.py:12:from typing import Iterable
+src/_pytest/assertion/util.py:13:from typing import Literal
+src/_pytest/assertion/util.py:14:from typing import Mapping
+src/_pytest/assertion/util.py:15:from typing import Protocol
+src/_pytest/assertion/util.py:16:from typing import Sequence
+src/_pytest/assertion/util.py:17:from unicodedata import normalize
+src/_pytest/assertion/util.py:19:from _pytest import outcomes
+src/_pytest/assertion/util.py:20:import _pytest._code
+src/_pytest/assertion/util.py:21:from _pytest._io.pprint import PrettyPrinter
+src/_pytest/assertion/util.py:22:from _pytest._io.saferepr import saferepr
+src/_pytest/assertion/util.py:23:from _pytest._io.saferepr import saferepr_unlimited
+src/_pytest/assertion/util.py:24:from _pytest.config import Config
+src/_pytest/cacheprovider.py:6:from __future__ import annotations
+src/_pytest/cacheprovider.py:8:import dataclasses
+src/_pytest/cacheprovider.py:9:import errno
+src/_pytest/cacheprovider.py:10:import json
+src/_pytest/cacheprovider.py:11:import os
+src/_pytest/cacheprovider.py:12:from pathlib import Path
+src/_pytest/cacheprovider.py:13:import tempfile
+src/_pytest/cacheprovider.py:14:from typing import final
+src/_pytest/cacheprovider.py:15:from typing import Generator
+src/_pytest/cacheprovider.py:16:from typing import Iterable
+src/_pytest/cacheprovider.py:18:from .pathlib import resolve_from_str
+src/_pytest/cacheprovider.py:19:from .pathlib import rm_rf
+src/_pytest/cacheprovider.py:20:from .reports import CollectReport
+src/_pytest/cacheprovider.py:21:from _pytest import nodes
+src/_pytest/cacheprovider.py:22:from _pytest._io import TerminalWriter
+src/_pytest/cacheprovider.py:23:from _pytest.config import Config
+src/_pytest/cacheprovider.py:24:from _pytest.config import ExitCode
+src/_pytest/cacheprovider.py:25:from _pytest.config import hookimpl
+src/_pytest/cacheprovider.py:26:from _pytest.config.argparsing import Parser
+src/_pytest/cacheprovider.py:27:from _pytest.deprecated import check_ispytest
+src/_pytest/cacheprovider.py:28:from _pytest.fixtures import fixture
+src/_pytest/cacheprovider.py:29:from _pytest.fixtures import FixtureRequest
+src/_pytest/cacheprovider.py:30:from _pytest.main import Session
+src/_pytest/cacheprovider.py:31:from _pytest.nodes import Directory
+src/_pytest/cacheprovider.py:32:from _pytest.nodes import File
+src/_pytest/cacheprovider.py:33:from _pytest.reports import TestReport
+src/_pytest/capture.py:4:from __future__ import annotations
+src/_pytest/capture.py:6:import abc
+src/_pytest/capture.py:7:import collections
+src/_pytest/capture.py:8:import contextlib
+src/_pytest/capture.py:9:import io
+src/_pytest/capture.py:10:from io import UnsupportedOperation
+src/_pytest/capture.py:11:import os
+src/_pytest/capture.py:12:import sys
+src/_pytest/capture.py:13:from tempfile import TemporaryFile
+src/_pytest/capture.py:14:from types import TracebackType
+src/_pytest/capture.py:15:from typing import Any
+src/_pytest/capture.py:16:from typing import AnyStr
+src/_pytest/capture.py:17:from typing import BinaryIO
+src/_pytest/capture.py:18:from typing import Final
+src/_pytest/capture.py:19:from typing import final
+src/_pytest/capture.py:20:from typing import Generator
+src/_pytest/capture.py:21:from typing import Generic
+src/_pytest/capture.py:22:from typing import Iterable
+src/_pytest/capture.py:23:from typing import Iterator
+src/_pytest/capture.py:24:from typing import Literal
+src/_pytest/capture.py:25:from typing import NamedTuple
+src/_pytest/capture.py:26:from typing import TextIO
+src/_pytest/capture.py:27:from typing import TYPE_CHECKING
+src/_pytest/capture.py:33:from _pytest.config import Config
+src/_pytest/capture.py:34:from _pytest.config import hookimpl
+src/_pytest/capture.py:35:from _pytest.config.argparsing import Parser
+src/_pytest/capture.py:36:from _pytest.deprecated import check_ispytest
+src/_pytest/capture.py:37:from _pytest.fixtures import fixture
+src/_pytest/capture.py:38:from _pytest.fixtures import SubRequest
+src/_pytest/capture.py:39:from _pytest.nodes import Collector
+src/_pytest/capture.py:40:from _pytest.nodes import File
+src/_pytest/capture.py:41:from _pytest.nodes import Item
+src/_pytest/capture.py:42:from _pytest.reports import CollectReport
+src/_pytest/compat.py:4:from __future__ import annotations
+src/_pytest/compat.py:6:import dataclasses
+src/_pytest/compat.py:7:import enum
+src/_pytest/compat.py:8:import functools
+src/_pytest/compat.py:9:import inspect
+src/_pytest/compat.py:10:from inspect import Parameter
+src/_pytest/compat.py:11:from inspect import signature
+src/_pytest/compat.py:12:import os
+src/_pytest/compat.py:13:from pathlib import Path
+src/_pytest/compat.py:14:import sys
+src/_pytest/compat.py:15:from typing import Any
+src/_pytest/compat.py:16:from typing import Callable
+src/_pytest/compat.py:17:from typing import Final
+src/_pytest/compat.py:18:from typing import NoReturn
+src/_pytest/compat.py:20:import py
+src/_pytest/config/__init__.py:4:from __future__ import annotations
+src/_pytest/config/__init__.py:6:import argparse
+src/_pytest/config/__init__.py:7:import collections.abc
+src/_pytest/config/__init__.py:8:import copy
+src/_pytest/config/__init__.py:9:import dataclasses
+src/_pytest/config/__init__.py:10:import enum
+src/_pytest/config/__init__.py:11:from functools import lru_cache
+src/_pytest/config/__init__.py:12:import glob
+src/_pytest/config/__init__.py:13:import importlib.metadata
+src/_pytest/config/__init__.py:14:import inspect
+src/_pytest/config/__init__.py:15:import os
+src/_pytest/config/__init__.py:16:import pathlib
+src/_pytest/config/__init__.py:17:import re
+src/_pytest/config/__init__.py:18:import shlex
+src/_pytest/config/__init__.py:19:import sys
+src/_pytest/config/__init__.py:20:from textwrap import dedent
+src/_pytest/config/__init__.py:21:import types
+src/_pytest/config/__init__.py:22:from types import FunctionType
+src/_pytest/config/__init__.py:23:from typing import Any
+src/_pytest/config/__init__.py:24:from typing import Callable
+src/_pytest/config/__init__.py:25:from typing import cast
+src/_pytest/config/__init__.py:26:from typing import Final
+src/_pytest/config/__init__.py:27:from typing import final
+src/_pytest/config/__init__.py:28:from typing import Generator
+src/_pytest/config/__init__.py:29:from typing import IO
+src/_pytest/config/__init__.py:30:from typing import Iterable
+src/_pytest/config/__init__.py:31:from typing import Iterator
+src/_pytest/config/__init__.py:32:from typing import Sequence
+src/_pytest/config/__init__.py:33:from typing import TextIO
+src/_pytest/config/__init__.py:34:from typing import Type
+src/_pytest/config/__init__.py:35:from typing import TYPE_CHECKING
+src/_pytest/config/__init__.py:36:import warnings
+src/_pytest/config/__init__.py:38:import pluggy
+src/_pytest/config/__init__.py:39:from pluggy import HookimplMarker
+src/_pytest/config/__init__.py:40:from pluggy import HookimplOpts
+src/_pytest/config/__init__.py:41:from pluggy import HookspecMarker
+src/_pytest/config/__init__.py:42:from pluggy import HookspecOpts
+src/_pytest/config/__init__.py:43:from pluggy import PluginManager
+src/_pytest/config/__init__.py:45:from .compat import PathAwareHookProxy
+src/_pytest/config/__init__.py:46:from .exceptions import PrintHelp as PrintHelp
+src/_pytest/config/__init__.py:47:from .exceptions import UsageError as UsageError
+src/_pytest/config/__init__.py:48:from .findpaths import determine_setup
+src/_pytest/config/__init__.py:49:from _pytest import __version__
+src/_pytest/config/__init__.py:50:import _pytest._code
+src/_pytest/config/__init__.py:51:from _pytest._code import ExceptionInfo
+src/_pytest/config/__init__.py:52:from _pytest._code import filter_traceback
+src/_pytest/config/__init__.py:53:from _pytest._code.code import TracebackStyle
+src/_pytest/config/__init__.py:54:from _pytest._io import TerminalWriter
+src/_pytest/config/__init__.py:55:from _pytest.config.argparsing import Argument
+src/_pytest/config/__init__.py:56:from _pytest.config.argparsing import Parser
+src/_pytest/config/__init__.py:57:import _pytest.deprecated
+src/_pytest/config/__init__.py:58:import _pytest.hookspec
+src/_pytest/config/__init__.py:59:from _pytest.outcomes import fail
+src/_pytest/config/__init__.py:60:from _pytest.outcomes import Skipped
+src/_pytest/config/__init__.py:61:from _pytest.pathlib import absolutepath
+src/_pytest/config/__init__.py:62:from _pytest.pathlib import bestrelpath
+src/_pytest/config/__init__.py:63:from _pytest.pathlib import import_path
+src/_pytest/config/__init__.py:64:from _pytest.pathlib import ImportMode
+src/_pytest/config/__init__.py:65:from _pytest.pathlib import resolve_package_path
+src/_pytest/config/__init__.py:66:from _pytest.pathlib import safe_exists
+src/_pytest/config/__init__.py:67:from _pytest.stash import Stash
+src/_pytest/config/__init__.py:68:from _pytest.warning_types import PytestConfigWarning
+src/_pytest/config/__init__.py:69:from _pytest.warning_types import warn_explicit_for
+src/_pytest/config/argparsing.py:2:from __future__ import annotations
+src/_pytest/config/argparsing.py:4:import argparse
+src/_pytest/config/argparsing.py:5:from gettext import gettext
+src/_pytest/config/argparsing.py:6:import os
+src/_pytest/config/argparsing.py:7:import sys
+src/_pytest/config/argparsing.py:8:from typing import Any
+src/_pytest/config/argparsing.py:9:from typing import Callable
+src/_pytest/config/argparsing.py:10:from typing import cast
+src/_pytest/config/argparsing.py:11:from typing import final
+src/_pytest/config/argparsing.py:12:from typing import List
+src/_pytest/config/argparsing.py:13:from typing import Literal
+src/_pytest/config/argparsing.py:14:from typing import Mapping
+src/_pytest/config/argparsing.py:15:from typing import NoReturn
+src/_pytest/config/argparsing.py:16:from typing import Sequence
+src/_pytest/config/argparsing.py:18:import _pytest._io
+src/_pytest/config/argparsing.py:19:from _pytest.config.exceptions import UsageError
+src/_pytest/config/argparsing.py:20:from _pytest.deprecated import check_ispytest
+src/_pytest/config/compat.py:1:from __future__ import annotations
+src/_pytest/config/compat.py:3:import functools
+src/_pytest/config/compat.py:4:from pathlib import Path
+src/_pytest/config/compat.py:5:from typing import Any
+src/_pytest/config/compat.py:6:from typing import Mapping
+src/_pytest/config/compat.py:7:import warnings
+src/_pytest/config/compat.py:9:import pluggy
+src/_pytest/config/compat.py:11:from ..compat import LEGACY_PATH
+src/_pytest/config/compat.py:12:from ..compat import legacy_path
+src/_pytest/config/compat.py:13:from ..deprecated import HOOK_LEGACY_PATH_ARG
+src/_pytest/config/exceptions.py:1:from __future__ import annotations
+src/_pytest/config/exceptions.py:3:from typing import final
+src/_pytest/config/findpaths.py:1:from __future__ import annotations
+src/_pytest/config/findpaths.py:3:import os
+src/_pytest/config/findpaths.py:4:from pathlib import Path
+src/_pytest/config/findpaths.py:5:import sys
+src/_pytest/config/findpaths.py:6:from typing import Iterable
+src/_pytest/config/findpaths.py:7:from typing import Sequence
+src/_pytest/config/findpaths.py:9:import iniconfig
+src/_pytest/config/findpaths.py:11:from .exceptions import UsageError
+src/_pytest/config/findpaths.py:12:from _pytest.outcomes import fail
+src/_pytest/config/findpaths.py:13:from _pytest.pathlib import absolutepath
+src/_pytest/config/findpaths.py:14:from _pytest.pathlib import commonpath
+src/_pytest/config/findpaths.py:15:from _pytest.pathlib import safe_exists
+src/_pytest/debugging.py:5:from __future__ import annotations
+src/_pytest/debugging.py:7:import argparse
+src/_pytest/debugging.py:8:import functools
+src/_pytest/debugging.py:9:import sys
+src/_pytest/debugging.py:10:import types
+src/_pytest/debugging.py:11:from typing import Any
+src/_pytest/debugging.py:12:from typing import Callable
+src/_pytest/debugging.py:13:from typing import Generator
+src/_pytest/debugging.py:14:import unittest
+src/_pytest/debugging.py:16:from _pytest import outcomes
+src/_pytest/debugging.py:17:from _pytest._code import ExceptionInfo
+src/_pytest/debugging.py:18:from _pytest.capture import CaptureManager
+src/_pytest/debugging.py:19:from _pytest.config import Config
+src/_pytest/debugging.py:20:from _pytest.config import ConftestImportFailure
+src/_pytest/debugging.py:21:from _pytest.config import hookimpl
+src/_pytest/debugging.py:22:from _pytest.config import PytestPluginManager
+src/_pytest/debugging.py:23:from _pytest.config.argparsing import Parser
+src/_pytest/debugging.py:24:from _pytest.config.exceptions import UsageError
+src/_pytest/debugging.py:25:from _pytest.nodes import Node
+src/_pytest/debugging.py:26:from _pytest.reports import BaseReport
+src/_pytest/debugging.py:27:from _pytest.runner import CallInfo
+src/_pytest/deprecated.py:12:from __future__ import annotations
+src/_pytest/deprecated.py:14:from warnings import warn
+src/_pytest/deprecated.py:16:from _pytest.warning_types import PytestDeprecationWarning
+src/_pytest/deprecated.py:17:from _pytest.warning_types import PytestRemovedIn9Warning
+src/_pytest/deprecated.py:18:from _pytest.warning_types import UnformattedWarning
+src/_pytest/doctest.py:4:from __future__ import annotations
+src/_pytest/doctest.py:6:import bdb
+src/_pytest/doctest.py:7:from contextlib import contextmanager
+src/_pytest/doctest.py:8:import functools
+src/_pytest/doctest.py:9:import inspect
+src/_pytest/doctest.py:10:import os
+src/_pytest/doctest.py:11:from pathlib import Path
+src/_pytest/doctest.py:12:import platform
+src/_pytest/doctest.py:13:import sys
+src/_pytest/doctest.py:14:import traceback
+src/_pytest/doctest.py:15:import types
+src/_pytest/doctest.py:16:from typing import Any
+src/_pytest/doctest.py:17:from typing import Callable
+src/_pytest/doctest.py:18:from typing import Generator
+src/_pytest/doctest.py:19:from typing import Iterable
+src/_pytest/doctest.py:20:from typing import Pattern
+src/_pytest/doctest.py:21:from typing import Sequence
+src/_pytest/doctest.py:22:from typing import TYPE_CHECKING
+src/_pytest/doctest.py:23:import warnings
+src/_pytest/doctest.py:25:from _pytest import outcomes
+src/_pytest/doctest.py:26:from _pytest._code.code import ExceptionInfo
+src/_pytest/doctest.py:27:from _pytest._code.code import ReprFileLocation
+src/_pytest/doctest.py:28:from _pytest._code.code import TerminalRepr
+src/_pytest/doctest.py:29:from _pytest._io import TerminalWriter
+src/_pytest/doctest.py:30:from _pytest.compat import safe_getattr
+src/_pytest/doctest.py:31:from _pytest.config import Config
+src/_pytest/doctest.py:32:from _pytest.config.argparsing import Parser
+src/_pytest/doctest.py:33:from _pytest.fixtures import fixture
+src/_pytest/doctest.py:34:from _pytest.fixtures import TopRequest
+src/_pytest/doctest.py:35:from _pytest.nodes import Collector
+src/_pytest/doctest.py:36:from _pytest.nodes import Item
+src/_pytest/doctest.py:37:from _pytest.outcomes import OutcomeException
+src/_pytest/doctest.py:38:from _pytest.outcomes import skip
+src/_pytest/doctest.py:39:from _pytest.pathlib import fnmatch_ex
+src/_pytest/doctest.py:40:from _pytest.python import Module
+src/_pytest/doctest.py:41:from _pytest.python_api import approx
+src/_pytest/doctest.py:42:from _pytest.warning_types import PytestWarning
+src/_pytest/faulthandler.py:1:from __future__ import annotations
+src/_pytest/faulthandler.py:3:import os
+src/_pytest/faulthandler.py:4:import sys
+src/_pytest/faulthandler.py:5:from typing import Generator
+src/_pytest/faulthandler.py:7:from _pytest.config import Config
+src/_pytest/faulthandler.py:8:from _pytest.config.argparsing import Parser
+src/_pytest/faulthandler.py:9:from _pytest.nodes import Item
+src/_pytest/faulthandler.py:10:from _pytest.stash import StashKey
+src/_pytest/faulthandler.py:11:import pytest
+src/_pytest/fixtures.py:2:from __future__ import annotations
+src/_pytest/fixtures.py:4:import abc
+src/_pytest/fixtures.py:5:from collections import defaultdict
+src/_pytest/fixtures.py:6:from collections import deque
+src/_pytest/fixtures.py:7:import dataclasses
+src/_pytest/fixtures.py:8:import functools
+src/_pytest/fixtures.py:9:import inspect
+src/_pytest/fixtures.py:10:import os
+src/_pytest/fixtures.py:11:from pathlib import Path
+src/_pytest/fixtures.py:12:import sys
+src/_pytest/fixtures.py:13:import types
+src/_pytest/fixtures.py:14:from typing import AbstractSet
+src/_pytest/fixtures.py:15:from typing import Any
+src/_pytest/fixtures.py:16:from typing import Callable
+src/_pytest/fixtures.py:17:from typing import cast
+src/_pytest/fixtures.py:18:from typing import Dict
+src/_pytest/fixtures.py:19:from typing import Final
+src/_pytest/fixtures.py:20:from typing import final
+src/_pytest/fixtures.py:21:from typing import Generator
+src/_pytest/fixtures.py:22:from typing import Generic
+src/_pytest/fixtures.py:23:from typing import Iterable
+src/_pytest/fixtures.py:24:from typing import Iterator
+src/_pytest/fixtures.py:25:from typing import Mapping
+src/_pytest/fixtures.py:26:from typing import MutableMapping
+src/_pytest/fixtures.py:27:from typing import NoReturn
+src/_pytest/fixtures.py:28:from typing import Optional
+src/_pytest/fixtures.py:29:from typing import OrderedDict
+src/_pytest/fixtures.py:30:from typing import overload
+src/_pytest/fixtures.py:31:from typing import Sequence
+src/_pytest/fixtures.py:32:from typing import Tuple
+src/_pytest/fixtures.py:33:from typing import TYPE_CHECKING
+src/_pytest/fixtures.py:34:from typing import TypeVar
+src/_pytest/fixtures.py:35:from typing import Union
+src/_pytest/fixtures.py:36:import warnings
+src/_pytest/fixtures.py:38:import _pytest
+src/_pytest/fixtures.py:39:from _pytest import nodes
+src/_pytest/fixtures.py:40:from _pytest._code import getfslineno
+src/_pytest/fixtures.py:41:from _pytest._code import Source
+src/_pytest/fixtures.py:42:from _pytest._code.code import FormattedExcinfo
+src/_pytest/fixtures.py:43:from _pytest._code.code import TerminalRepr
+src/_pytest/fixtures.py:44:from _pytest._io import TerminalWriter
+src/_pytest/fixtures.py:45:from _pytest.compat import _PytestWrapper
+src/_pytest/fixtures.py:46:from _pytest.compat import assert_never
+src/_pytest/fixtures.py:47:from _pytest.compat import get_real_func
+src/_pytest/fixtures.py:48:from _pytest.compat import get_real_method
+src/_pytest/fixtures.py:49:from _pytest.compat import getfuncargnames
+src/_pytest/fixtures.py:50:from _pytest.compat import getimfunc
+src/_pytest/fixtures.py:51:from _pytest.compat import getlocation
+src/_pytest/fixtures.py:52:from _pytest.compat import is_generator
+src/_pytest/fixtures.py:53:from _pytest.compat import NOTSET
+src/_pytest/fixtures.py:54:from _pytest.compat import NotSetType
+src/_pytest/fixtures.py:55:from _pytest.compat import safe_getattr
+src/_pytest/fixtures.py:56:from _pytest.compat import safe_isclass
+src/_pytest/fixtures.py:57:from _pytest.config import _PluggyPlugin
+src/_pytest/fixtures.py:58:from _pytest.config import Config
+src/_pytest/fixtures.py:59:from _pytest.config import ExitCode
+src/_pytest/fixtures.py:60:from _pytest.config.argparsing import Parser
+src/_pytest/fixtures.py:61:from _pytest.deprecated import check_ispytest
+src/_pytest/fixtures.py:62:from _pytest.deprecated import MARKED_FIXTURE
+src/_pytest/fixtures.py:63:from _pytest.deprecated import YIELD_FIXTURE
+src/_pytest/fixtures.py:64:from _pytest.main import Session
+src/_pytest/fixtures.py:65:from _pytest.mark import Mark
+src/_pytest/fixtures.py:66:from _pytest.mark import ParameterSet
+src/_pytest/fixtures.py:67:from _pytest.mark.structures import MarkDecorator
+src/_pytest/fixtures.py:68:from _pytest.outcomes import fail
+src/_pytest/fixtures.py:69:from _pytest.outcomes import skip
+src/_pytest/fixtures.py:70:from _pytest.outcomes import TEST_OUTCOME
+src/_pytest/fixtures.py:71:from _pytest.pathlib import absolutepath
+src/_pytest/fixtures.py:72:from _pytest.pathlib import bestrelpath
+src/_pytest/fixtures.py:73:from _pytest.scope import _ScopeName
+src/_pytest/fixtures.py:74:from _pytest.scope import HIGH_SCOPES
+src/_pytest/fixtures.py:75:from _pytest.scope import Scope
+src/_pytest/freeze_support.py:4:from __future__ import annotations
+src/_pytest/freeze_support.py:6:import types
+src/_pytest/freeze_support.py:7:from typing import Iterator
+src/_pytest/helpconfig.py:4:from __future__ import annotations
+src/_pytest/helpconfig.py:6:from argparse import Action
+src/_pytest/helpconfig.py:7:import os
+src/_pytest/helpconfig.py:8:import sys
+src/_pytest/helpconfig.py:9:from typing import Generator
+src/_pytest/helpconfig.py:11:from _pytest.config import Config
+src/_pytest/helpconfig.py:12:from _pytest.config import ExitCode
+src/_pytest/helpconfig.py:13:from _pytest.config import PrintHelp
+src/_pytest/helpconfig.py:14:from _pytest.config.argparsing import Parser
+src/_pytest/helpconfig.py:15:from _pytest.terminal import TerminalReporter
+src/_pytest/helpconfig.py:16:import pytest
+src/_pytest/hookspec.py:6:from __future__ import annotations
+src/_pytest/hookspec.py:8:from pathlib import Path
+src/_pytest/hookspec.py:9:from typing import Any
+src/_pytest/hookspec.py:10:from typing import Mapping
+src/_pytest/hookspec.py:11:from typing import Sequence
+src/_pytest/hookspec.py:12:from typing import TYPE_CHECKING
+src/_pytest/hookspec.py:14:from pluggy import HookspecMarker
+src/_pytest/hookspec.py:16:from .deprecated import HOOK_LEGACY_PATH_ARG
+src/_pytest/junitxml.py:11:from __future__ import annotations
+src/_pytest/junitxml.py:13:from datetime import datetime
+src/_pytest/junitxml.py:14:from datetime import timezone
+src/_pytest/junitxml.py:15:import functools
+src/_pytest/junitxml.py:16:import os
+src/_pytest/junitxml.py:17:import platform
+src/_pytest/junitxml.py:18:import re
+src/_pytest/junitxml.py:19:from typing import Callable
+src/_pytest/junitxml.py:20:from typing import Match
+src/_pytest/junitxml.py:21:import xml.etree.ElementTree as ET
+src/_pytest/junitxml.py:23:from _pytest import nodes
+src/_pytest/junitxml.py:24:from _pytest import timing
+src/_pytest/junitxml.py:25:from _pytest._code.code import ExceptionRepr
+src/_pytest/junitxml.py:26:from _pytest._code.code import ReprFileLocation
+src/_pytest/junitxml.py:27:from _pytest.config import Config
+src/_pytest/junitxml.py:28:from _pytest.config import filename_arg
+src/_pytest/junitxml.py:29:from _pytest.config.argparsing import Parser
+src/_pytest/junitxml.py:30:from _pytest.fixtures import FixtureRequest
+src/_pytest/junitxml.py:31:from _pytest.reports import TestReport
+src/_pytest/junitxml.py:32:from _pytest.stash import StashKey
+src/_pytest/junitxml.py:33:from _pytest.terminal import TerminalReporter
+src/_pytest/junitxml.py:34:import pytest
+src/_pytest/legacypath.py:4:from __future__ import annotations
+src/_pytest/legacypath.py:6:import dataclasses
+src/_pytest/legacypath.py:7:from pathlib import Path
+src/_pytest/legacypath.py:8:import shlex
+src/_pytest/legacypath.py:9:import subprocess
+src/_pytest/legacypath.py:10:from typing import Final
+src/_pytest/legacypath.py:11:from typing import final
+src/_pytest/legacypath.py:12:from typing import TYPE_CHECKING
+src/_pytest/legacypath.py:14:from iniconfig import SectionWrapper
+src/_pytest/legacypath.py:16:from _pytest.cacheprovider import Cache
+src/_pytest/legacypath.py:17:from _pytest.compat import LEGACY_PATH
+src/_pytest/legacypath.py:18:from _pytest.compat import legacy_path
+src/_pytest/legacypath.py:19:from _pytest.config import Config
+src/_pytest/legacypath.py:20:from _pytest.config import hookimpl
+src/_pytest/legacypath.py:21:from _pytest.config import PytestPluginManager
+src/_pytest/legacypath.py:22:from _pytest.deprecated import check_ispytest
+src/_pytest/legacypath.py:23:from _pytest.fixtures import fixture
+src/_pytest/legacypath.py:24:from _pytest.fixtures import FixtureRequest
+src/_pytest/legacypath.py:25:from _pytest.main import Session
+src/_pytest/legacypath.py:26:from _pytest.monkeypatch import MonkeyPatch
+src/_pytest/legacypath.py:27:from _pytest.nodes import Collector
+src/_pytest/legacypath.py:28:from _pytest.nodes import Item
+src/_pytest/legacypath.py:29:from _pytest.nodes import Node
+src/_pytest/legacypath.py:30:from _pytest.pytester import HookRecorder
+src/_pytest/legacypath.py:31:from _pytest.pytester import Pytester
+src/_pytest/legacypath.py:32:from _pytest.pytester import RunResult
+src/_pytest/legacypath.py:33:from _pytest.terminal import TerminalReporter
+src/_pytest/legacypath.py:34:from _pytest.tmpdir import TempPathFactory
+src/_pytest/logging.py:4:from __future__ import annotations
+src/_pytest/logging.py:6:from contextlib import contextmanager
+src/_pytest/logging.py:7:from contextlib import nullcontext
+src/_pytest/logging.py:8:from datetime import datetime
+src/_pytest/logging.py:9:from datetime import timedelta
+src/_pytest/logging.py:10:from datetime import timezone
+src/_pytest/logging.py:11:import io
+src/_pytest/logging.py:12:from io import StringIO
+src/_pytest/logging.py:13:import logging
+src/_pytest/logging.py:14:from logging import LogRecord
+src/_pytest/logging.py:15:import os
+src/_pytest/logging.py:16:from pathlib import Path
+src/_pytest/logging.py:17:import re
+src/_pytest/logging.py:18:from types import TracebackType
+src/_pytest/logging.py:19:from typing import AbstractSet
+src/_pytest/logging.py:20:from typing import Dict
+src/_pytest/logging.py:21:from typing import final
+src/_pytest/logging.py:22:from typing import Generator
+src/_pytest/logging.py:23:from typing import Generic
+src/_pytest/logging.py:24:from typing import List
+src/_pytest/logging.py:25:from typing import Literal
+src/_pytest/logging.py:26:from typing import Mapping
+src/_pytest/logging.py:27:from typing import TYPE_CHECKING
+src/_pytest/logging.py:28:from typing import TypeVar
+src/_pytest/logging.py:30:from _pytest import nodes
+src/_pytest/logging.py:31:from _pytest._io import TerminalWriter
+src/_pytest/logging.py:32:from _pytest.capture import CaptureManager
+src/_pytest/logging.py:33:from _pytest.config import _strtobool
+src/_pytest/logging.py:34:from _pytest.config import Config
+src/_pytest/logging.py:35:from _pytest.config import create_terminal_writer
+src/_pytest/logging.py:36:from _pytest.config import hookimpl
+src/_pytest/logging.py:37:from _pytest.config import UsageError
+src/_pytest/logging.py:38:from _pytest.config.argparsing import Parser
+src/_pytest/logging.py:39:from _pytest.deprecated import check_ispytest
+src/_pytest/logging.py:40:from _pytest.fixtures import fixture
+src/_pytest/logging.py:41:from _pytest.fixtures import FixtureRequest
+src/_pytest/logging.py:42:from _pytest.main import Session
+src/_pytest/logging.py:43:from _pytest.stash import StashKey
+src/_pytest/logging.py:44:from _pytest.terminal import TerminalReporter
+src/_pytest/main.py:3:from __future__ import annotations
+src/_pytest/main.py:5:import argparse
+src/_pytest/main.py:6:import dataclasses
+src/_pytest/main.py:7:import fnmatch
+src/_pytest/main.py:8:import functools
+src/_pytest/main.py:9:import importlib
+src/_pytest/main.py:10:import importlib.util
+src/_pytest/main.py:11:import os
+src/_pytest/main.py:12:from pathlib import Path
+src/_pytest/main.py:13:import sys
+src/_pytest/main.py:14:from typing import AbstractSet
+src/_pytest/main.py:15:from typing import Callable
+src/_pytest/main.py:16:from typing import Dict
+src/_pytest/main.py:17:from typing import final
+src/_pytest/main.py:18:from typing import Iterable
+src/_pytest/main.py:19:from typing import Iterator
+src/_pytest/main.py:20:from typing import Literal
+src/_pytest/main.py:21:from typing import overload
+src/_pytest/main.py:22:from typing import Sequence
+src/_pytest/main.py:23:from typing import TYPE_CHECKING
+src/_pytest/main.py:24:import warnings
+src/_pytest/main.py:26:import pluggy
+src/_pytest/main.py:28:from _pytest import nodes
+src/_pytest/main.py:29:import _pytest._code
+src/_pytest/main.py:30:from _pytest.config import Config
+src/_pytest/main.py:31:from _pytest.config import directory_arg
+src/_pytest/main.py:32:from _pytest.config import ExitCode
+src/_pytest/main.py:33:from _pytest.config import hookimpl
+src/_pytest/main.py:34:from _pytest.config import PytestPluginManager
+src/_pytest/main.py:35:from _pytest.config import UsageError
+src/_pytest/main.py:36:from _pytest.config.argparsing import Parser
+src/_pytest/main.py:37:from _pytest.config.compat import PathAwareHookProxy
+src/_pytest/main.py:38:from _pytest.outcomes import exit
+src/_pytest/main.py:39:from _pytest.pathlib import absolutepath
+src/_pytest/main.py:40:from _pytest.pathlib import bestrelpath
+src/_pytest/main.py:41:from _pytest.pathlib import fnmatch_ex
+src/_pytest/main.py:42:from _pytest.pathlib import safe_exists
+src/_pytest/main.py:43:from _pytest.pathlib import scandir
+src/_pytest/main.py:44:from _pytest.reports import CollectReport
+src/_pytest/main.py:45:from _pytest.reports import TestReport
+src/_pytest/main.py:46:from _pytest.runner import collect_one_node
+src/_pytest/main.py:47:from _pytest.runner import SetupState
+src/_pytest/main.py:48:from _pytest.warning_types import PytestWarning
+src/_pytest/mark/__init__.py:3:from __future__ import annotations
+src/_pytest/mark/__init__.py:5:import collections
+src/_pytest/mark/__init__.py:6:import dataclasses
+src/_pytest/mark/__init__.py:7:from typing import AbstractSet
+src/_pytest/mark/__init__.py:8:from typing import Collection
+src/_pytest/mark/__init__.py:9:from typing import Iterable
+src/_pytest/mark/__init__.py:10:from typing import Optional
+src/_pytest/mark/__init__.py:11:from typing import TYPE_CHECKING
+src/_pytest/mark/__init__.py:13:from .expression import Expression
+src/_pytest/mark/__init__.py:14:from .expression import ParseError
+src/_pytest/mark/__init__.py:15:from .structures import EMPTY_PARAMETERSET_OPTION
+src/_pytest/mark/__init__.py:16:from .structures import get_empty_parameterset_mark
+src/_pytest/mark/__init__.py:17:from .structures import Mark
+src/_pytest/mark/__init__.py:18:from .structures import MARK_GEN
+src/_pytest/mark/__init__.py:19:from .structures import MarkDecorator
+src/_pytest/mark/__init__.py:20:from .structures import MarkGenerator
+src/_pytest/mark/__init__.py:21:from .structures import ParameterSet
+src/_pytest/mark/__init__.py:22:from _pytest.config import Config
+src/_pytest/mark/__init__.py:23:from _pytest.config import ExitCode
+src/_pytest/mark/__init__.py:24:from _pytest.config import hookimpl
+src/_pytest/mark/__init__.py:25:from _pytest.config import UsageError
+src/_pytest/mark/__init__.py:26:from _pytest.config.argparsing import NOT_SET
+src/_pytest/mark/__init__.py:27:from _pytest.config.argparsing import Parser
+src/_pytest/mark/__init__.py:28:from _pytest.stash import StashKey
+src/_pytest/mark/expression.py:23:from __future__ import annotations
+src/_pytest/mark/expression.py:25:import ast
+src/_pytest/mark/expression.py:26:import dataclasses
+src/_pytest/mark/expression.py:27:import enum
+src/_pytest/mark/expression.py:28:import keyword
+src/_pytest/mark/expression.py:29:import re
+src/_pytest/mark/expression.py:30:import types
+src/_pytest/mark/expression.py:31:from typing import Iterator
+src/_pytest/mark/expression.py:32:from typing import Literal
+src/_pytest/mark/expression.py:33:from typing import Mapping
+src/_pytest/mark/expression.py:34:from typing import NoReturn
+src/_pytest/mark/expression.py:35:from typing import overload
+src/_pytest/mark/expression.py:36:from typing import Protocol
+src/_pytest/mark/expression.py:37:from typing import Sequence
+src/_pytest/mark/structures.py:2:from __future__ import annotations
+src/_pytest/mark/structures.py:4:import collections.abc
+src/_pytest/mark/structures.py:5:import dataclasses
+src/_pytest/mark/structures.py:6:import inspect
+src/_pytest/mark/structures.py:7:from typing import Any
+src/_pytest/mark/structures.py:8:from typing import Callable
+src/_pytest/mark/structures.py:9:from typing import Collection
+src/_pytest/mark/structures.py:10:from typing import final
+src/_pytest/mark/structures.py:11:from typing import Iterable
+src/_pytest/mark/structures.py:12:from typing import Iterator
+src/_pytest/mark/structures.py:13:from typing import Mapping
+src/_pytest/mark/structures.py:14:from typing import MutableMapping
+src/_pytest/mark/structures.py:15:from typing import NamedTuple
+src/_pytest/mark/structures.py:16:from typing import overload
+src/_pytest/mark/structures.py:17:from typing import Sequence
+src/_pytest/mark/structures.py:18:from typing import TYPE_CHECKING
+src/_pytest/mark/structures.py:19:from typing import TypeVar
+src/_pytest/mark/structures.py:20:from typing import Union
+src/_pytest/mark/structures.py:21:import warnings
+src/_pytest/mark/structures.py:23:from .._code import getfslineno
+src/_pytest/mark/structures.py:24:from ..compat import ascii_escaped
+src/_pytest/mark/structures.py:25:from ..compat import NOTSET
+src/_pytest/mark/structures.py:26:from ..compat import NotSetType
+src/_pytest/mark/structures.py:27:from _pytest.config import Config
+src/_pytest/mark/structures.py:28:from _pytest.deprecated import check_ispytest
+src/_pytest/mark/structures.py:29:from _pytest.deprecated import MARKED_FIXTURE
+src/_pytest/mark/structures.py:30:from _pytest.outcomes import fail
+src/_pytest/mark/structures.py:31:from _pytest.scope import _ScopeName
+src/_pytest/mark/structures.py:32:from _pytest.warning_types import PytestUnknownMarkWarning
+src/_pytest/monkeypatch.py:4:from __future__ import annotations
+src/_pytest/monkeypatch.py:6:from contextlib import contextmanager
+src/_pytest/monkeypatch.py:7:import os
+src/_pytest/monkeypatch.py:8:import re
+src/_pytest/monkeypatch.py:9:import sys
+src/_pytest/monkeypatch.py:10:from typing import Any
+src/_pytest/monkeypatch.py:11:from typing import final
+src/_pytest/monkeypatch.py:12:from typing import Generator
+src/_pytest/monkeypatch.py:13:from typing import Mapping
+src/_pytest/monkeypatch.py:14:from typing import MutableMapping
+src/_pytest/monkeypatch.py:15:from typing import overload
+src/_pytest/monkeypatch.py:16:from typing import TypeVar
+src/_pytest/monkeypatch.py:17:import warnings
+src/_pytest/monkeypatch.py:19:from _pytest.fixtures import fixture
+src/_pytest/monkeypatch.py:20:from _pytest.warning_types import PytestWarning
+src/_pytest/nodes.py:2:from __future__ import annotations
+src/_pytest/nodes.py:4:import abc
+src/_pytest/nodes.py:5:from functools import cached_property
+src/_pytest/nodes.py:6:from inspect import signature
+src/_pytest/nodes.py:7:import os
+src/_pytest/nodes.py:8:import pathlib
+src/_pytest/nodes.py:9:from pathlib import Path
+src/_pytest/nodes.py:10:from typing import Any
+src/_pytest/nodes.py:11:from typing import Callable
+src/_pytest/nodes.py:12:from typing import cast
+src/_pytest/nodes.py:13:from typing import Iterable
+src/_pytest/nodes.py:14:from typing import Iterator
+src/_pytest/nodes.py:15:from typing import MutableMapping
+src/_pytest/nodes.py:16:from typing import NoReturn
+src/_pytest/nodes.py:17:from typing import overload
+src/_pytest/nodes.py:18:from typing import TYPE_CHECKING
+src/_pytest/nodes.py:19:from typing import TypeVar
+src/_pytest/nodes.py:20:import warnings
+src/_pytest/nodes.py:22:import pluggy
+src/_pytest/nodes.py:24:import _pytest._code
+src/_pytest/nodes.py:25:from _pytest._code import getfslineno
+src/_pytest/nodes.py:26:from _pytest._code.code import ExceptionInfo
+src/_pytest/nodes.py:27:from _pytest._code.code import TerminalRepr
+src/_pytest/nodes.py:28:from _pytest._code.code import Traceback
+src/_pytest/nodes.py:29:from _pytest._code.code import TracebackStyle
+src/_pytest/nodes.py:30:from _pytest.compat import LEGACY_PATH
+src/_pytest/nodes.py:31:from _pytest.config import Config
+src/_pytest/nodes.py:32:from _pytest.config import ConftestImportFailure
+src/_pytest/nodes.py:33:from _pytest.config.compat import _check_path
+src/_pytest/nodes.py:34:from _pytest.deprecated import NODE_CTOR_FSPATH_ARG
+src/_pytest/nodes.py:35:from _pytest.mark.structures import Mark
+src/_pytest/nodes.py:36:from _pytest.mark.structures import MarkDecorator
+src/_pytest/nodes.py:37:from _pytest.mark.structures import NodeKeywords
+src/_pytest/nodes.py:38:from _pytest.outcomes import fail
+src/_pytest/nodes.py:39:from _pytest.pathlib import absolutepath
+src/_pytest/nodes.py:40:from _pytest.pathlib import commonpath
+src/_pytest/nodes.py:41:from _pytest.stash import Stash
+src/_pytest/nodes.py:42:from _pytest.warning_types import PytestWarning
+src/_pytest/outcomes.py:4:from __future__ import annotations
+src/_pytest/outcomes.py:6:import sys
+src/_pytest/outcomes.py:7:from typing import Any
+src/_pytest/outcomes.py:8:from typing import Callable
+src/_pytest/outcomes.py:9:from typing import cast
+src/_pytest/outcomes.py:10:from typing import NoReturn
+src/_pytest/outcomes.py:11:from typing import Protocol
+src/_pytest/outcomes.py:12:from typing import Type
+src/_pytest/outcomes.py:13:from typing import TypeVar
+src/_pytest/outcomes.py:15:from .warning_types import PytestDeprecationWarning
+src/_pytest/pastebin.py:4:from __future__ import annotations
+src/_pytest/pastebin.py:6:from io import StringIO
+src/_pytest/pastebin.py:7:import tempfile
+src/_pytest/pastebin.py:8:from typing import IO
+src/_pytest/pastebin.py:10:from _pytest.config import Config
+src/_pytest/pastebin.py:11:from _pytest.config import create_terminal_writer
+src/_pytest/pastebin.py:12:from _pytest.config.argparsing import Parser
+src/_pytest/pastebin.py:13:from _pytest.stash import StashKey
+src/_pytest/pastebin.py:14:from _pytest.terminal import TerminalReporter
+src/_pytest/pastebin.py:15:import pytest
+src/_pytest/pathlib.py:1:from __future__ import annotations
+src/_pytest/pathlib.py:3:import atexit
+src/_pytest/pathlib.py:4:import contextlib
+src/_pytest/pathlib.py:5:from enum import Enum
+src/_pytest/pathlib.py:6:from errno import EBADF
+src/_pytest/pathlib.py:7:from errno import ELOOP
+src/_pytest/pathlib.py:8:from errno import ENOENT
+src/_pytest/pathlib.py:9:from errno import ENOTDIR
+src/_pytest/pathlib.py:10:import fnmatch
+src/_pytest/pathlib.py:11:from functools import partial
+src/_pytest/pathlib.py:12:from importlib.machinery import ModuleSpec
+src/_pytest/pathlib.py:13:import importlib.util
+src/_pytest/pathlib.py:14:import itertools
+src/_pytest/pathlib.py:15:import os
+src/_pytest/pathlib.py:16:from os.path import expanduser
+src/_pytest/pathlib.py:17:from os.path import expandvars
+src/_pytest/pathlib.py:18:from os.path import isabs
+src/_pytest/pathlib.py:19:from os.path import sep
+src/_pytest/pathlib.py:20:from pathlib import Path
+src/_pytest/pathlib.py:21:from pathlib import PurePath
+src/_pytest/pathlib.py:22:from posixpath import sep as posix_sep
+src/_pytest/pathlib.py:23:import shutil
+src/_pytest/pathlib.py:24:import sys
+src/_pytest/pathlib.py:25:import types
+src/_pytest/pathlib.py:26:from types import ModuleType
+src/_pytest/pathlib.py:27:from typing import Any
+src/_pytest/pathlib.py:28:from typing import Callable
+src/_pytest/pathlib.py:29:from typing import Iterable
+src/_pytest/pathlib.py:30:from typing import Iterator
+src/_pytest/pathlib.py:31:from typing import TypeVar
+src/_pytest/pathlib.py:32:import uuid
+src/_pytest/pathlib.py:33:import warnings
+src/_pytest/pathlib.py:35:from _pytest.compat import assert_never
+src/_pytest/pathlib.py:36:from _pytest.outcomes import skip
+src/_pytest/pathlib.py:37:from _pytest.warning_types import PytestWarning
+src/_pytest/pytester.py:7:from __future__ import annotations
+src/_pytest/pytester.py:9:import collections.abc
+src/_pytest/pytester.py:10:import contextlib
+src/_pytest/pytester.py:11:from fnmatch import fnmatch
+src/_pytest/pytester.py:12:import gc
+src/_pytest/pytester.py:13:import importlib
+src/_pytest/pytester.py:14:from io import StringIO
+src/_pytest/pytester.py:15:import locale
+src/_pytest/pytester.py:16:import os
+src/_pytest/pytester.py:17:from pathlib import Path
+src/_pytest/pytester.py:18:import platform
+src/_pytest/pytester.py:19:import re
+src/_pytest/pytester.py:20:import shutil
+src/_pytest/pytester.py:21:import subprocess
+src/_pytest/pytester.py:22:import sys
+src/_pytest/pytester.py:23:import traceback
+src/_pytest/pytester.py:24:from typing import Any
+src/_pytest/pytester.py:25:from typing import Callable
+src/_pytest/pytester.py:26:from typing import Final
+src/_pytest/pytester.py:27:from typing import final
+src/_pytest/pytester.py:28:from typing import Generator
+src/_pytest/pytester.py:29:from typing import IO
+src/_pytest/pytester.py:30:from typing import Iterable
+src/_pytest/pytester.py:31:from typing import Literal
+src/_pytest/pytester.py:32:from typing import overload
+src/_pytest/pytester.py:33:from typing import Sequence
+src/_pytest/pytester.py:34:from typing import TextIO
+src/_pytest/pytester.py:35:from typing import TYPE_CHECKING
+src/_pytest/pytester.py:36:from weakref import WeakKeyDictionary
+src/_pytest/pytester.py:38:from iniconfig import IniConfig
+src/_pytest/pytester.py:39:from iniconfig import SectionWrapper
+src/_pytest/pytester.py:41:from _pytest import timing
+src/_pytest/pytester.py:42:from _pytest._code import Source
+src/_pytest/pytester.py:43:from _pytest.capture import _get_multicapture
+src/_pytest/pytester.py:44:from _pytest.compat import NOTSET
+src/_pytest/pytester.py:45:from _pytest.compat import NotSetType
+src/_pytest/pytester.py:46:from _pytest.config import _PluggyPlugin
+src/_pytest/pytester.py:47:from _pytest.config import Config
+src/_pytest/pytester.py:48:from _pytest.config import ExitCode
+src/_pytest/pytester.py:49:from _pytest.config import hookimpl
+src/_pytest/pytester.py:50:from _pytest.config import main
+src/_pytest/pytester.py:51:from _pytest.config import PytestPluginManager
+src/_pytest/pytester.py:52:from _pytest.config.argparsing import Parser
+src/_pytest/pytester.py:53:from _pytest.deprecated import check_ispytest
+src/_pytest/pytester.py:54:from _pytest.fixtures import fixture
+src/_pytest/pytester.py:55:from _pytest.fixtures import FixtureRequest
+src/_pytest/pytester.py:56:from _pytest.main import Session
+src/_pytest/pytester.py:57:from _pytest.monkeypatch import MonkeyPatch
+src/_pytest/pytester.py:58:from _pytest.nodes import Collector
+src/_pytest/pytester.py:59:from _pytest.nodes import Item
+src/_pytest/pytester.py:60:from _pytest.outcomes import fail
+src/_pytest/pytester.py:61:from _pytest.outcomes import importorskip
+src/_pytest/pytester.py:62:from _pytest.outcomes import skip
+src/_pytest/pytester.py:63:from _pytest.pathlib import bestrelpath
+src/_pytest/pytester.py:64:from _pytest.pathlib import make_numbered_dir
+src/_pytest/pytester.py:65:from _pytest.reports import CollectReport
+src/_pytest/pytester.py:66:from _pytest.reports import TestReport
+src/_pytest/pytester.py:67:from _pytest.tmpdir import TempPathFactory
+src/_pytest/pytester.py:68:from _pytest.warning_types import PytestWarning
+src/_pytest/pytester_assertions.py:7:from __future__ import annotations
+src/_pytest/pytester_assertions.py:9:from typing import Sequence
+src/_pytest/pytester_assertions.py:11:from _pytest.reports import CollectReport
+src/_pytest/pytester_assertions.py:12:from _pytest.reports import TestReport
+src/_pytest/python.py:4:from __future__ import annotations
+src/_pytest/python.py:6:import abc
+src/_pytest/python.py:7:from collections import Counter
+src/_pytest/python.py:8:from collections import defaultdict
+src/_pytest/python.py:9:import dataclasses
+src/_pytest/python.py:10:import enum
+src/_pytest/python.py:11:import fnmatch
+src/_pytest/python.py:12:from functools import partial
+src/_pytest/python.py:13:import inspect
+src/_pytest/python.py:14:import itertools
+src/_pytest/python.py:15:import os
+src/_pytest/python.py:16:from pathlib import Path
+src/_pytest/python.py:17:import types
+src/_pytest/python.py:18:from typing import Any
+src/_pytest/python.py:19:from typing import Callable
+src/_pytest/python.py:20:from typing import Dict
+src/_pytest/python.py:21:from typing import final
+src/_pytest/python.py:22:from typing import Generator
+src/_pytest/python.py:23:from typing import Iterable
+src/_pytest/python.py:24:from typing import Iterator
+src/_pytest/python.py:25:from typing import Literal
+src/_pytest/python.py:26:from typing import Mapping
+src/_pytest/python.py:27:from typing import Pattern
+src/_pytest/python.py:28:from typing import Sequence
+src/_pytest/python.py:29:from typing import TYPE_CHECKING
+src/_pytest/python.py:30:import warnings
+src/_pytest/python.py:32:import _pytest
+src/_pytest/python.py:33:from _pytest import fixtures
+src/_pytest/python.py:34:from _pytest import nodes
+src/_pytest/python.py:35:from _pytest._code import filter_traceback
+src/_pytest/python.py:36:from _pytest._code import getfslineno
+src/_pytest/python.py:37:from _pytest._code.code import ExceptionInfo
+src/_pytest/python.py:38:from _pytest._code.code import TerminalRepr
+src/_pytest/python.py:39:from _pytest._code.code import Traceback
+src/_pytest/python.py:40:from _pytest._io.saferepr import saferepr
+src/_pytest/python.py:41:from _pytest.compat import ascii_escaped
+src/_pytest/python.py:42:from _pytest.compat import get_default_arg_names
+src/_pytest/python.py:43:from _pytest.compat import get_real_func
+src/_pytest/python.py:44:from _pytest.compat import getimfunc
+src/_pytest/python.py:45:from _pytest.compat import is_async_function
+src/_pytest/python.py:46:from _pytest.compat import is_generator
+src/_pytest/python.py:47:from _pytest.compat import LEGACY_PATH
+src/_pytest/python.py:48:from _pytest.compat import NOTSET
+src/_pytest/python.py:49:from _pytest.compat import safe_getattr
+src/_pytest/python.py:50:from _pytest.compat import safe_isclass
+src/_pytest/python.py:51:from _pytest.config import Config
+src/_pytest/python.py:52:from _pytest.config import hookimpl
+src/_pytest/python.py:53:from _pytest.config.argparsing import Parser
+src/_pytest/python.py:54:from _pytest.deprecated import check_ispytest
+src/_pytest/python.py:55:from _pytest.fixtures import FixtureDef
+src/_pytest/python.py:56:from _pytest.fixtures import FixtureRequest
+src/_pytest/python.py:57:from _pytest.fixtures import FuncFixtureInfo
+src/_pytest/python.py:58:from _pytest.fixtures import get_scope_node
+src/_pytest/python.py:59:from _pytest.main import Session
+src/_pytest/python.py:60:from _pytest.mark import MARK_GEN
+src/_pytest/python.py:61:from _pytest.mark import ParameterSet
+src/_pytest/python.py:62:from _pytest.mark.structures import get_unpacked_marks
+src/_pytest/python.py:63:from _pytest.mark.structures import Mark
+src/_pytest/python.py:64:from _pytest.mark.structures import MarkDecorator
+src/_pytest/python.py:65:from _pytest.mark.structures import normalize_mark_list
+src/_pytest/python.py:66:from _pytest.outcomes import fail
+src/_pytest/python.py:67:from _pytest.outcomes import skip
+src/_pytest/python.py:68:from _pytest.pathlib import fnmatch_ex
+src/_pytest/python.py:69:from _pytest.pathlib import import_path
+src/_pytest/python.py:70:from _pytest.pathlib import ImportPathMismatchError
+src/_pytest/python.py:71:from _pytest.pathlib import scandir
+src/_pytest/python.py:72:from _pytest.scope import _ScopeName
+src/_pytest/python.py:73:from _pytest.scope import Scope
+src/_pytest/python.py:74:from _pytest.stash import StashKey
+src/_pytest/python.py:75:from _pytest.warning_types import PytestCollectionWarning
+src/_pytest/python.py:76:from _pytest.warning_types import PytestReturnNotNoneWarning
+src/_pytest/python.py:77:from _pytest.warning_types import PytestUnhandledCoroutineWarning
+src/_pytest/python_api.py:2:from __future__ import annotations
+src/_pytest/python_api.py:4:from collections.abc import Collection
+src/_pytest/python_api.py:5:from collections.abc import Sized
+src/_pytest/python_api.py:6:from decimal import Decimal
+src/_pytest/python_api.py:7:import math
+src/_pytest/python_api.py:8:from numbers import Complex
+src/_pytest/python_api.py:9:import pprint
+src/_pytest/python_api.py:10:import re
+src/_pytest/python_api.py:11:from types import TracebackType
+src/_pytest/python_api.py:12:from typing import Any
+src/_pytest/python_api.py:13:from typing import Callable
+src/_pytest/python_api.py:14:from typing import cast
+src/_pytest/python_api.py:15:from typing import ContextManager
+src/_pytest/python_api.py:16:from typing import final
+src/_pytest/python_api.py:17:from typing import Mapping
+src/_pytest/python_api.py:18:from typing import overload
+src/_pytest/python_api.py:19:from typing import Pattern
+src/_pytest/python_api.py:20:from typing import Sequence
+src/_pytest/python_api.py:21:from typing import Tuple
+src/_pytest/python_api.py:22:from typing import Type
+src/_pytest/python_api.py:23:from typing import TYPE_CHECKING
+src/_pytest/python_api.py:24:from typing import TypeVar
+src/_pytest/python_api.py:26:import _pytest._code
+src/_pytest/python_api.py:27:from _pytest.outcomes import fail
+src/_pytest/python_path.py:1:from __future__ import annotations
+src/_pytest/python_path.py:3:import sys
+src/_pytest/python_path.py:5:import pytest
+src/_pytest/python_path.py:6:from pytest import Config
+src/_pytest/python_path.py:7:from pytest import Parser
+src/_pytest/recwarn.py:4:from __future__ import annotations
+src/_pytest/recwarn.py:6:from pprint import pformat
+src/_pytest/recwarn.py:7:import re
+src/_pytest/recwarn.py:8:from types import TracebackType
+src/_pytest/recwarn.py:9:from typing import Any
+src/_pytest/recwarn.py:10:from typing import Callable
+src/_pytest/recwarn.py:11:from typing import final
+src/_pytest/recwarn.py:12:from typing import Generator
+src/_pytest/recwarn.py:13:from typing import Iterator
+src/_pytest/recwarn.py:14:from typing import overload
+src/_pytest/recwarn.py:15:from typing import Pattern
+src/_pytest/recwarn.py:16:from typing import TYPE_CHECKING
+src/_pytest/recwarn.py:17:from typing import TypeVar
+src/_pytest/recwarn.py:23:import warnings
+src/_pytest/recwarn.py:25:from _pytest.deprecated import check_ispytest
+src/_pytest/recwarn.py:26:from _pytest.fixtures import fixture
+src/_pytest/recwarn.py:27:from _pytest.outcomes import Exit
+src/_pytest/recwarn.py:28:from _pytest.outcomes import fail
+src/_pytest/reports.py:2:from __future__ import annotations
+src/_pytest/reports.py:4:import dataclasses
+src/_pytest/reports.py:5:from io import StringIO
+src/_pytest/reports.py:6:import os
+src/_pytest/reports.py:7:from pprint import pprint
+src/_pytest/reports.py:8:from typing import Any
+src/_pytest/reports.py:9:from typing import cast
+src/_pytest/reports.py:10:from typing import final
+src/_pytest/reports.py:11:from typing import Iterable
+src/_pytest/reports.py:12:from typing import Iterator
+src/_pytest/reports.py:13:from typing import Literal
+src/_pytest/reports.py:14:from typing import Mapping
+src/_pytest/reports.py:15:from typing import NoReturn
+src/_pytest/reports.py:16:from typing import Sequence
+src/_pytest/reports.py:17:from typing import TYPE_CHECKING
+src/_pytest/reports.py:19:from _pytest._code.code import ExceptionChainRepr
+src/_pytest/reports.py:20:from _pytest._code.code import ExceptionInfo
+src/_pytest/reports.py:21:from _pytest._code.code import ExceptionRepr
+src/_pytest/reports.py:22:from _pytest._code.code import ReprEntry
+src/_pytest/reports.py:23:from _pytest._code.code import ReprEntryNative
+src/_pytest/reports.py:24:from _pytest._code.code import ReprExceptionInfo
+src/_pytest/reports.py:25:from _pytest._code.code import ReprFileLocation
+src/_pytest/reports.py:26:from _pytest._code.code import ReprFuncArgs
+src/_pytest/reports.py:27:from _pytest._code.code import ReprLocals
+src/_pytest/reports.py:28:from _pytest._code.code import ReprTraceback
+src/_pytest/reports.py:29:from _pytest._code.code import TerminalRepr
+src/_pytest/reports.py:30:from _pytest._io import TerminalWriter
+src/_pytest/reports.py:31:from _pytest.config import Config
+src/_pytest/reports.py:32:from _pytest.nodes import Collector
+src/_pytest/reports.py:33:from _pytest.nodes import Item
+src/_pytest/reports.py:34:from _pytest.outcomes import fail
+src/_pytest/reports.py:35:from _pytest.outcomes import skip
+src/_pytest/runner.py:4:from __future__ import annotations
+src/_pytest/runner.py:6:import bdb
+src/_pytest/runner.py:7:import dataclasses
+src/_pytest/runner.py:8:import os
+src/_pytest/runner.py:9:import sys
+src/_pytest/runner.py:10:import types
+src/_pytest/runner.py:11:from typing import Callable
+src/_pytest/runner.py:12:from typing import cast
+src/_pytest/runner.py:13:from typing import final
+src/_pytest/runner.py:14:from typing import Generic
+src/_pytest/runner.py:15:from typing import Literal
+src/_pytest/runner.py:16:from typing import TYPE_CHECKING
+src/_pytest/runner.py:17:from typing import TypeVar
+src/_pytest/runner.py:19:from .reports import BaseReport
+src/_pytest/runner.py:20:from .reports import CollectErrorRepr
+src/_pytest/runner.py:21:from .reports import CollectReport
+src/_pytest/runner.py:22:from .reports import TestReport
+src/_pytest/runner.py:23:from _pytest import timing
+src/_pytest/runner.py:24:from _pytest._code.code import ExceptionChainRepr
+src/_pytest/runner.py:25:from _pytest._code.code import ExceptionInfo
+src/_pytest/runner.py:26:from _pytest._code.code import TerminalRepr
+src/_pytest/runner.py:27:from _pytest.config.argparsing import Parser
+src/_pytest/runner.py:28:from _pytest.deprecated import check_ispytest
+src/_pytest/runner.py:29:from _pytest.nodes import Collector
+src/_pytest/runner.py:30:from _pytest.nodes import Directory
+src/_pytest/runner.py:31:from _pytest.nodes import Item
+src/_pytest/runner.py:32:from _pytest.nodes import Node
+src/_pytest/runner.py:33:from _pytest.outcomes import Exit
+src/_pytest/runner.py:34:from _pytest.outcomes import OutcomeException
+src/_pytest/runner.py:35:from _pytest.outcomes import Skipped
+src/_pytest/runner.py:36:from _pytest.outcomes import TEST_OUTCOME
+src/_pytest/scope.py:11:from __future__ import annotations
+src/_pytest/scope.py:13:from enum import Enum
+src/_pytest/scope.py:14:from functools import total_ordering
+src/_pytest/scope.py:15:from typing import Literal
+src/_pytest/setuponly.py:1:from __future__ import annotations
+src/_pytest/setuponly.py:3:from typing import Generator
+src/_pytest/setuponly.py:5:from _pytest._io.saferepr import saferepr
+src/_pytest/setuponly.py:6:from _pytest.config import Config
+src/_pytest/setuponly.py:7:from _pytest.config import ExitCode
+src/_pytest/setuponly.py:8:from _pytest.config.argparsing import Parser
+src/_pytest/setuponly.py:9:from _pytest.fixtures import FixtureDef
+src/_pytest/setuponly.py:10:from _pytest.fixtures import SubRequest
+src/_pytest/setuponly.py:11:from _pytest.scope import Scope
+src/_pytest/setuponly.py:12:import pytest
+src/_pytest/setupplan.py:1:from __future__ import annotations
+src/_pytest/setupplan.py:3:from _pytest.config import Config
+src/_pytest/setupplan.py:4:from _pytest.config import ExitCode
+src/_pytest/setupplan.py:5:from _pytest.config.argparsing import Parser
+src/_pytest/setupplan.py:6:from _pytest.fixtures import FixtureDef
+src/_pytest/setupplan.py:7:from _pytest.fixtures import SubRequest
+src/_pytest/setupplan.py:8:import pytest
+src/_pytest/skipping.py:4:from __future__ import annotations
+src/_pytest/skipping.py:6:from collections.abc import Mapping
+src/_pytest/skipping.py:7:import dataclasses
+src/_pytest/skipping.py:8:import os
+src/_pytest/skipping.py:9:import platform
+src/_pytest/skipping.py:10:import sys
+src/_pytest/skipping.py:11:import traceback
+src/_pytest/skipping.py:12:from typing import Generator
+src/_pytest/skipping.py:13:from typing import Optional
+src/_pytest/skipping.py:15:from _pytest.config import Config
+src/_pytest/skipping.py:16:from _pytest.config import hookimpl
+src/_pytest/skipping.py:17:from _pytest.config.argparsing import Parser
+src/_pytest/skipping.py:18:from _pytest.mark.structures import Mark
+src/_pytest/skipping.py:19:from _pytest.nodes import Item
+src/_pytest/skipping.py:20:from _pytest.outcomes import fail
+src/_pytest/skipping.py:21:from _pytest.outcomes import skip
+src/_pytest/skipping.py:22:from _pytest.outcomes import xfail
+src/_pytest/skipping.py:23:from _pytest.reports import BaseReport
+src/_pytest/skipping.py:24:from _pytest.reports import TestReport
+src/_pytest/skipping.py:25:from _pytest.runner import CallInfo
+src/_pytest/skipping.py:26:from _pytest.stash import StashKey
+src/_pytest/stash.py:1:from __future__ import annotations
+src/_pytest/stash.py:3:from typing import Any
+src/_pytest/stash.py:4:from typing import cast
+src/_pytest/stash.py:5:from typing import Generic
+src/_pytest/stash.py:6:from typing import TypeVar
+src/_pytest/stepwise.py:1:from __future__ import annotations
+src/_pytest/stepwise.py:3:from _pytest import nodes
+src/_pytest/stepwise.py:4:from _pytest.cacheprovider import Cache
+src/_pytest/stepwise.py:5:from _pytest.config import Config
+src/_pytest/stepwise.py:6:from _pytest.config.argparsing import Parser
+src/_pytest/stepwise.py:7:from _pytest.main import Session
+src/_pytest/stepwise.py:8:from _pytest.reports import TestReport
+src/_pytest/terminal.py:7:from __future__ import annotations
+src/_pytest/terminal.py:9:import argparse
+src/_pytest/terminal.py:10:from collections import Counter
+src/_pytest/terminal.py:11:import dataclasses
+src/_pytest/terminal.py:12:import datetime
+src/_pytest/terminal.py:13:from functools import partial
+src/_pytest/terminal.py:14:import inspect
+src/_pytest/terminal.py:15:from pathlib import Path
+src/_pytest/terminal.py:16:import platform
+src/_pytest/terminal.py:17:import sys
+src/_pytest/terminal.py:18:import textwrap
+src/_pytest/terminal.py:19:from typing import Any
+src/_pytest/terminal.py:20:from typing import Callable
+src/_pytest/terminal.py:21:from typing import ClassVar
+src/_pytest/terminal.py:22:from typing import final
+src/_pytest/terminal.py:23:from typing import Generator
+src/_pytest/terminal.py:24:from typing import Literal
+src/_pytest/terminal.py:25:from typing import Mapping
+src/_pytest/terminal.py:26:from typing import NamedTuple
+src/_pytest/terminal.py:27:from typing import Sequence
+src/_pytest/terminal.py:28:from typing import TextIO
+src/_pytest/terminal.py:29:from typing import TYPE_CHECKING
+src/_pytest/terminal.py:30:import warnings
+src/_pytest/terminal.py:32:import pluggy
+src/_pytest/terminal.py:34:from _pytest import nodes
+src/_pytest/terminal.py:35:from _pytest import timing
+src/_pytest/terminal.py:36:from _pytest._code import ExceptionInfo
+src/_pytest/terminal.py:37:from _pytest._code.code import ExceptionRepr
+src/_pytest/terminal.py:38:from _pytest._io import TerminalWriter
+src/_pytest/terminal.py:39:from _pytest._io.wcwidth import wcswidth
+src/_pytest/terminal.py:40:import _pytest._version
+src/_pytest/terminal.py:41:from _pytest.assertion.util import running_on_ci
+src/_pytest/terminal.py:42:from _pytest.config import _PluggyPlugin
+src/_pytest/terminal.py:43:from _pytest.config import Config
+src/_pytest/terminal.py:44:from _pytest.config import ExitCode
+src/_pytest/terminal.py:45:from _pytest.config import hookimpl
+src/_pytest/terminal.py:46:from _pytest.config.argparsing import Parser
+src/_pytest/terminal.py:47:from _pytest.nodes import Item
+src/_pytest/terminal.py:48:from _pytest.nodes import Node
+src/_pytest/terminal.py:49:from _pytest.pathlib import absolutepath
+src/_pytest/terminal.py:50:from _pytest.pathlib import bestrelpath
+src/_pytest/terminal.py:51:from _pytest.reports import BaseReport
+src/_pytest/terminal.py:52:from _pytest.reports import CollectReport
+src/_pytest/terminal.py:53:from _pytest.reports import TestReport
+src/_pytest/threadexception.py:1:from __future__ import annotations
+src/_pytest/threadexception.py:3:import threading
+src/_pytest/threadexception.py:4:import traceback
+src/_pytest/threadexception.py:5:from types import TracebackType
+src/_pytest/threadexception.py:6:from typing import Any
+src/_pytest/threadexception.py:7:from typing import Callable
+src/_pytest/threadexception.py:8:from typing import Generator
+src/_pytest/threadexception.py:9:from typing import TYPE_CHECKING
+src/_pytest/threadexception.py:10:import warnings
+src/_pytest/threadexception.py:12:import pytest
+src/_pytest/timing.py:9:from __future__ import annotations
+src/_pytest/timing.py:11:from time import perf_counter
+src/_pytest/timing.py:12:from time import sleep
+src/_pytest/timing.py:13:from time import time
+src/_pytest/tmpdir.py:4:from __future__ import annotations
+src/_pytest/tmpdir.py:6:import dataclasses
+src/_pytest/tmpdir.py:7:import os
+src/_pytest/tmpdir.py:8:from pathlib import Path
+src/_pytest/tmpdir.py:9:import re
+src/_pytest/tmpdir.py:10:from shutil import rmtree
+src/_pytest/tmpdir.py:11:import tempfile
+src/_pytest/tmpdir.py:12:from typing import Any
+src/_pytest/tmpdir.py:13:from typing import Dict
+src/_pytest/tmpdir.py:14:from typing import final
+src/_pytest/tmpdir.py:15:from typing import Generator
+src/_pytest/tmpdir.py:16:from typing import Literal
+src/_pytest/tmpdir.py:18:from .pathlib import cleanup_dead_symlinks
+src/_pytest/tmpdir.py:19:from .pathlib import LOCK_TIMEOUT
+src/_pytest/tmpdir.py:20:from .pathlib import make_numbered_dir
+src/_pytest/tmpdir.py:21:from .pathlib import make_numbered_dir_with_cleanup
+src/_pytest/tmpdir.py:22:from .pathlib import rm_rf
+src/_pytest/tmpdir.py:23:from _pytest.compat import get_user_id
+src/_pytest/tmpdir.py:24:from _pytest.config import Config
+src/_pytest/tmpdir.py:25:from _pytest.config import ExitCode
+src/_pytest/tmpdir.py:26:from _pytest.config import hookimpl
+src/_pytest/tmpdir.py:27:from _pytest.config.argparsing import Parser
+src/_pytest/tmpdir.py:28:from _pytest.deprecated import check_ispytest
+src/_pytest/tmpdir.py:29:from _pytest.fixtures import fixture
+src/_pytest/tmpdir.py:30:from _pytest.fixtures import FixtureRequest
+src/_pytest/tmpdir.py:31:from _pytest.monkeypatch import MonkeyPatch
+src/_pytest/tmpdir.py:32:from _pytest.nodes import Item
+src/_pytest/tmpdir.py:33:from _pytest.reports import TestReport
+src/_pytest/tmpdir.py:34:from _pytest.stash import StashKey
+src/_pytest/unittest.py:4:from __future__ import annotations
+src/_pytest/unittest.py:6:import inspect
+src/_pytest/unittest.py:7:import sys
+src/_pytest/unittest.py:8:import traceback
+src/_pytest/unittest.py:9:import types
+src/_pytest/unittest.py:10:from typing import Any
+src/_pytest/unittest.py:11:from typing import Callable
+src/_pytest/unittest.py:12:from typing import Generator
+src/_pytest/unittest.py:13:from typing import Iterable
+src/_pytest/unittest.py:14:from typing import Tuple
+src/_pytest/unittest.py:15:from typing import Type
+src/_pytest/unittest.py:16:from typing import TYPE_CHECKING
+src/_pytest/unittest.py:17:from typing import Union
+src/_pytest/unittest.py:19:import _pytest._code
+src/_pytest/unittest.py:20:from _pytest.compat import is_async_function
+src/_pytest/unittest.py:21:from _pytest.config import hookimpl
+src/_pytest/unittest.py:22:from _pytest.fixtures import FixtureRequest
+src/_pytest/unittest.py:23:from _pytest.nodes import Collector
+src/_pytest/unittest.py:24:from _pytest.nodes import Item
+src/_pytest/unittest.py:25:from _pytest.outcomes import exit
+src/_pytest/unittest.py:26:from _pytest.outcomes import fail
+src/_pytest/unittest.py:27:from _pytest.outcomes import skip
+src/_pytest/unittest.py:28:from _pytest.outcomes import xfail
+src/_pytest/unittest.py:29:from _pytest.python import Class
+src/_pytest/unittest.py:30:from _pytest.python import Function
+src/_pytest/unittest.py:31:from _pytest.python import Module
+src/_pytest/unittest.py:32:from _pytest.runner import CallInfo
+src/_pytest/unittest.py:33:import pytest
+src/_pytest/unraisableexception.py:1:from __future__ import annotations
+src/_pytest/unraisableexception.py:3:import sys
+src/_pytest/unraisableexception.py:4:import traceback
+src/_pytest/unraisableexception.py:5:from types import TracebackType
+src/_pytest/unraisableexception.py:6:from typing import Any
+src/_pytest/unraisableexception.py:7:from typing import Callable
+src/_pytest/unraisableexception.py:8:from typing import Generator
+src/_pytest/unraisableexception.py:9:from typing import TYPE_CHECKING
+src/_pytest/unraisableexception.py:10:import warnings
+src/_pytest/unraisableexception.py:12:import pytest
+src/_pytest/warning_types.py:1:from __future__ import annotations
+src/_pytest/warning_types.py:3:import dataclasses
+src/_pytest/warning_types.py:4:import inspect
+src/_pytest/warning_types.py:5:from types import FunctionType
+src/_pytest/warning_types.py:6:from typing import Any
+src/_pytest/warning_types.py:7:from typing import final
+src/_pytest/warning_types.py:8:from typing import Generic
+src/_pytest/warning_types.py:9:from typing import TypeVar
+src/_pytest/warning_types.py:10:import warnings
+src/_pytest/warnings.py:2:from __future__ import annotations
+src/_pytest/warnings.py:4:from contextlib import contextmanager
+src/_pytest/warnings.py:5:import sys
+src/_pytest/warnings.py:6:from typing import Generator
+src/_pytest/warnings.py:7:from typing import Literal
+src/_pytest/warnings.py:8:import warnings
+src/_pytest/warnings.py:10:from _pytest.config import apply_warning_filters
+src/_pytest/warnings.py:11:from _pytest.config import Config
+src/_pytest/warnings.py:12:from _pytest.config import parse_warning_filter
+src/_pytest/warnings.py:13:from _pytest.main import Session
+src/_pytest/warnings.py:14:from _pytest.nodes import Item
+src/_pytest/warnings.py:15:from _pytest.terminal import TerminalReporter
+src/_pytest/warnings.py:16:import pytest

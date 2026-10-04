@@ -1,0 +1,102 @@
+packages/vite/CHANGELOG.md-575-* fix(deps): update all non-major dependencies (#15603) ([109fb80](https://github.com/vitejs/vite/commit/109fb805fd28c9f738036985b90cf207d1c48e89)), closes [#15603](https://github.com/vitejs/vite/issues/15603)
+packages/vite/CHANGELOG.md-576-* fix(hmr): normalize env files path (#15584) ([d0f1d2e](https://github.com/vitejs/vite/commit/d0f1d2e5fee1e923b89289c48fde79636afb1dc0)), closes [#15584](https://github.com/vitejs/vite/issues/15584)
+packages/vite/CHANGELOG.md:577:* fix(ssr): externalize network imports during `ssrLoadModule` (#15599) ([af2aa09](https://github.com/vitejs/vite/commit/af2aa09575229462635b7cbb6d248ca853057ba2)), closes [#15599](https://github.com/vitejs/vite/issues/15599)
+packages/vite/CHANGELOG.md-578-* fix(types): mark hmr update internal types optional (#15606) ([df8f5a5](https://github.com/vitejs/vite/commit/df8f5a50e6fde343653ee6b2ceaa42583ff33ebc)), closes [#15606](https://github.com/vitejs/vite/issues/15606)
+packages/vite/CHANGELOG.md-579-* perf: avoid parseRequest (#15617) ([0cacfad](https://github.com/vitejs/vite/commit/0cacfadf3aeb3c9ce1db490290584387efb4f5ef)), closes [#15617](https://github.com/vitejs/vite/issues/15617)
+--
+packages/vite/CHANGELOG.md-2619-* fix: make `resolveConfig()` concurrent safe (#9224) ([dfaeb2b](https://github.com/vitejs/vite/commit/dfaeb2b7dc39822bf00fc97802b758b17129c37b)), closes [#9224](https://github.com/vitejs/vite/issues/9224)
+packages/vite/CHANGELOG.md-2620-* fix: scanner and optimizer should skip wasm (#9257) ([c616077](https://github.com/vitejs/vite/commit/c616077fb8d969714dcbec5ed5ff803759d6a2f6)), closes [#9257](https://github.com/vitejs/vite/issues/9257)
+packages/vite/CHANGELOG.md:2621:* fix: ssrLoadModule executes code in non-strict mode, fixes #9197 (#9199) ([5866cfb](https://github.com/vitejs/vite/commit/5866cfb2529ef5a5d5258b0fae0b37c3484d1762)), closes [#9197](https://github.com/vitejs/vite/issues/9197) [#9199](https://github.com/vitejs/vite/issues/9199)
+packages/vite/CHANGELOG.md-2622-* fix: support multiline dynamic imports (#9314) ([e66cf69](https://github.com/vitejs/vite/commit/e66cf69cc27b8a8900f14af746ed6925c8af8fdc)), closes [#9314](https://github.com/vitejs/vite/issues/9314)
+packages/vite/CHANGELOG.md-2623-* fix: support vite client in safari 13 (#9315) ([2415193](https://github.com/vitejs/vite/commit/2415193006fe1405ac927162d074b70b03ae629f)), closes [#9315](https://github.com/vitejs/vite/issues/9315)
+--
+packages/vite/src/node/optimizer/optimizer.ts-63-  creatingDevSsrOptimizer = (async function () {
+packages/vite/src/node/optimizer/optimizer.ts-64-    // Important: scanning needs to be done before starting the SSR dev optimizer
+packages/vite/src/node/optimizer/optimizer.ts:65:    // If ssrLoadModule is called before server.listen(), the main deps optimizer
+packages/vite/src/node/optimizer/optimizer.ts-66-    // will not be yet created
+packages/vite/src/node/optimizer/optimizer.ts-67-    const ssr = false
+--
+packages/vite/src/node/server/index.ts-40-} from '../utils'
+packages/vite/src/node/server/index.ts-41-import { getFsUtils } from '../fsUtils'
+packages/vite/src/node/server/index.ts:42:import { ssrLoadModule } from '../ssr/ssrModuleLoader'
+packages/vite/src/node/server/index.ts-43-import { ssrFixStacktrace, ssrRewriteStacktrace } from '../ssr/ssrStacktrace'
+packages/vite/src/node/server/index.ts-44-import { ssrTransform } from '../ssr/ssrTransform'
+--
+packages/vite/src/node/server/index.ts-308-   * Load a given URL as an instantiated module for SSR.
+packages/vite/src/node/server/index.ts-309-   */
+packages/vite/src/node/server/index.ts:310:  ssrLoadModule(
+packages/vite/src/node/server/index.ts-311-    url: string,
+packages/vite/src/node/server/index.ts-312-    opts?: { fixStacktrace?: boolean },
+--
+packages/vite/src/node/server/index.ts-563-      return devHtmlTransformFn(server, url, html, originalUrl)
+packages/vite/src/node/server/index.ts-564-    },
+packages/vite/src/node/server/index.ts:565:    async ssrLoadModule(url, opts?: { fixStacktrace?: boolean }) {
+packages/vite/src/node/server/index.ts:566:      return ssrLoadModule(url, server, opts?.fixStacktrace)
+packages/vite/src/node/server/index.ts-567-    },
+packages/vite/src/node/server/index.ts-568-    async ssrFetchModule(url: string, importer?: string) {
+--
+packages/vite/src/node/server/transformRequest.ts-417- *
+packages/vite/src/node/server/transformRequest.ts-418- * - Client: We need to transform the import specifiers with new timestamps
+packages/vite/src/node/server/transformRequest.ts:419: * - SSR: We don't need to change anything as `ssrLoadModule` controls it
+packages/vite/src/node/server/transformRequest.ts-420- */
+packages/vite/src/node/server/transformRequest.ts-421-async function handleModuleSoftInvalidation(
+--
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-26-  const moduleAbsolutePath = normalizePath(path.join(root, moduleRelativePath))
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-27-  try {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts:28:    await server.ssrLoadModule(moduleRelativePath)
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-29-  } catch (e) {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-30-    expect(e.message).toBe(
+--
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-40-  const server = await createDevServer()
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-41-  try {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts:42:    await server.ssrLoadModule('/fixtures/modules/has-error.js')
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-43-  } catch (e) {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-44-    expect(e[s]).toBeUndefined()
+--
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-48-
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-49-  try {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts:50:    await server.ssrLoadModule('/fixtures/modules/has-error.js')
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-51-  } catch (e) {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-52-    expect(e[s]).toBe(true)
+--
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-59-  const filename = path.resolve(root, '.' + moduleRelativePath)
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-60-
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts:61:  const viteValue = await server.ssrLoadModule(moduleRelativePath)
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-62-  expect(viteValue.dirname).toBe(path.dirname(filename))
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-63-  expect(viteValue.filename).toBe(filename)
+--
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-66-test('can export global', async () => {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-67-  const server = await createDevServer()
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts:68:  const mod = await server.ssrLoadModule('/fixtures/global/export.js')
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-69-  expect(mod.global).toBe('ok')
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-70-})
+--
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-72-test('can access nodejs global', async () => {
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-73-  const server = await createDevServer()
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts:74:  const mod = await server.ssrLoadModule('/fixtures/global/test.js')
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-75-  expect(mod.default).toBe(globalThis)
+packages/vite/src/node/ssr/__tests__/ssrLoadModule.spec.ts-76-})
+--
+packages/vite/src/node/ssr/__tests__/ssrStacktrace.spec.ts-22-  for (let i = 0; i < 2; i++) {
+packages/vite/src/node/ssr/__tests__/ssrStacktrace.spec.ts-23-    try {
+packages/vite/src/node/ssr/__tests__/ssrStacktrace.spec.ts:24:      await server.ssrLoadModule('/fixtures/modules/has-error.js')
+packages/vite/src/node/ssr/__tests__/ssrStacktrace.spec.ts-25-    } catch (e) {
+packages/vite/src/node/ssr/__tests__/ssrStacktrace.spec.ts-26-      server.ssrFixStacktrace(e)
+--
+packages/vite/src/node/ssr/index.ts-37-
+packages/vite/src/node/ssr/index.ts-38-    /**
+packages/vite/src/node/ssr/index.ts:39:     * Conditions that are used during ssr import (including `ssrLoadModule`) of externalized dependencies.
+packages/vite/src/node/ssr/index.ts-40-     *
+packages/vite/src/node/ssr/index.ts-41-     * @default []
+--
+packages/vite/src/node/ssr/ssrModuleLoader.ts-39-const importErrors = new WeakMap<Error, { importee: string }>()
+packages/vite/src/node/ssr/ssrModuleLoader.ts-40-
+packages/vite/src/node/ssr/ssrModuleLoader.ts:41:export async function ssrLoadModule(
+packages/vite/src/node/ssr/ssrModuleLoader.ts-42-  url: string,
+packages/vite/src/node/ssr/ssrModuleLoader.ts-43-  server: ViteDevServer,
+--
+packages/vite/src/node/ssr/ssrModuleLoader.ts-164-      }
+packages/vite/src/node/ssr/ssrModuleLoader.ts-165-
+packages/vite/src/node/ssr/ssrModuleLoader.ts:166:      return ssrLoadModule(dep, server, fixStacktrace)
+packages/vite/src/node/ssr/ssrModuleLoader.ts-167-    } catch (err) {
+packages/vite/src/node/ssr/ssrModuleLoader.ts-168-      // tell external error handler which mod was imported with error

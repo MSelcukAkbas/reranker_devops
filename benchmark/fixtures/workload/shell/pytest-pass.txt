@@ -1,0 +1,26 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /work/searchslim
+configfile: pyproject.toml
+testpaths: tests
+collected 328 items
+
+tests/test_bench.py .........                                            [  2%]
+tests/test_cli.py ......                                                 [  4%]
+tests/test_compact.py .................................................. [ 19%]
+.                                                                        [ 20%]
+tests/test_coverage.py ......................................            [ 31%]
+tests/test_hooks.py ............................                         [ 40%]
+tests/test_install.py ........                                           [ 42%]
+tests/test_live.py .....                                                 [ 44%]
+tests/test_lossless.py .......................                           [ 51%]
+tests/test_parsers.py ...........                                        [ 54%]
+tests/test_powershell.py ..............                                  [ 58%]
+tests/test_rerank.py ..............                                      [ 63%]
+tests/test_rewrite.py .................................................. [ 78%]
+........................s                                                [ 85%]
+tests/test_rules.py ..........................                           [ 93%]
+tests/test_session.py ...............                                    [ 98%]
+tests/test_windows_locale.py .....                                       [100%]
+
+======================== 327 passed, 1 skipped in 7.10s ========================

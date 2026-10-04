@@ -1,0 +1,65 @@
+FAIL ./s7.test.js
+  ● suite 7 › broken
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "a": 2,
+    +   "a": 1,
+      }
+
+      1 | describe('suite 7', () => {
+      2 |   for (let i = 0; i < 8; i++) test('case ' + i, () => expect(i).toBe(i));
+    > 3 |   test('broken', () => expect({a:1}).toEqual({a:2}));
+        |                                      ^
+      4 |   
+      5 | });
+      6 |
+
+      at Object.toEqual (s7.test.js:3:38)
+
+  console.warn
+    deprecated api used
+
+      2 |   for (let i = 0; i < 8; i++) test('case ' + i, () => expect(i).toBe(i));
+      3 |   
+    > 4 |   test('warns', () => { console.warn('deprecated api used'); });
+        |                                 ^
+      5 | });
+      6 |
+
+      at Object.warn (s9.test.js:4:33)
+
+Summary of all failing tests
+FAIL ./s7.test.js
+  ● suite 7 › broken
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "a": 2,
+    +   "a": 1,
+      }
+
+      1 | describe('suite 7', () => {
+      2 |   for (let i = 0; i < 8; i++) test('case ' + i, () => expect(i).toBe(i));
+    > 3 |   test('broken', () => expect({a:1}).toEqual({a:2}));
+        |                                      ^
+      4 |   
+      5 | });
+      6 |
+
+      at Object.toEqual (s7.test.js:3:38)
+
+
+Test Suites: 1 failed, 39 passed, 40 total
+Tests:       1 failed, 321 passed, 322 total
+Snapshots:   0 total
+Time:        1.147 s
+Ran all test suites.

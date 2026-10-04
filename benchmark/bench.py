@@ -32,6 +32,7 @@ sys.path.insert(0, str(ROOT.parent / "src"))
 
 from searchslim import Config, Kind, detect_kind, estimate_tokens, parse, slim  # noqa: E402
 from searchslim.coverage import split_note as _split_note  # noqa: E402
+from searchslim.lossless import match_locations  # noqa: E402
 from searchslim.rerank import pattern_and_paths  # noqa: E402
 
 TASKS = ROOT / "tasks.json"
@@ -167,6 +168,9 @@ def evidence_status(ev: dict, output: str, kind: Kind, dpath: str = "") -> str:
     if kind is Kind.CONTENT:
         seen_paths = {line_path(ln) for ln in parsed.lines}
         if "line" in ev and any(line_path(ln) == path and ln.number == ev["line"] for ln in parsed.lines):
+            return "kept"
+        # An L2 projection writes a name instead of the line text; its location still counts.
+        if "line" in ev and (path, ev["line"]) in match_locations(output, dpath):
             return "kept"
         if "line" not in ev and path in seen_paths:
             return "kept"

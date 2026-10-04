@@ -1,0 +1,13 @@
+diff --git a/crates/globset/src/glob.rs b/crates/globset/src/glob.rs
+index c25e3f2..3a1578c 100644
+--- a/crates/globset/src/glob.rs
++++ b/crates/globset/src/glob.rs
+@@ -682,7 +682,7 @@ impl Tokens {
+                     }
+                 }
+                 Token::RecursivePrefix => {
+-                    re.push_str("(?:/?|.*/)");
++                    re.push_str("(?:.*/)");
+                 }
+                 Token::RecursiveSuffix => {
+                     re.push_str("/.*");

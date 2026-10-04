@@ -1,0 +1,179 @@
+docs/config/index.md:99:Environmental Variables can be obtained from `process.env` as usual.
+docs/config/preview-options.md:61:Automatically open the app in the browser on server start. When the value is a string, it will be used as the URL's pathname. If you want to open the server in a specific browser you like, you can set the env `process.env.BROWSER` (e.g. `firefox`). You can also set `process.env.BROWSER_ARGS` to pass additional arguments (e.g. `--incognito`).
+docs/config/server-options.md:71:Automatically open the app in the browser on server start. When the value is a string, it will be used as the URL's pathname. If you want to open the server in a specific browser you like, you can set the env `process.env.BROWSER` (e.g. `firefox`). You can also set `process.env.BROWSER_ARGS` to pass additional arguments (e.g. `--incognito`).
+docs/config/shared-options.md:475:  'import.meta.env.ENV_VARIABLE': JSON.stringify(process.env.ENV_VARIABLE)
+docs/guide/api-javascript.md:36:When using `createServer` and `build` in the same Node.js process, both functions rely on `process.env.NODE_ENV` to work properly, which also depends on the `mode` config option. To prevent conflicting behavior, set `process.env.NODE_ENV` or the `mode` of the two APIs to `development`. Otherwise, you can spawn a child process to run the APIs separately.
+docs/guide/build.md:219:In library mode, all [`import.meta.env.*`](./env-and-mode.md) usage are statically replaced when building for production. However, `process.env.*` usage are not, so that consumers of your library can dynamically change it. If this is undesirable, you can use `define: { 'process.env.NODE_ENV': '"production"' }` for example to statically replace them, or use [`esm-env`](https://github.com/benmccann/esm-env) for better compatibility with bundlers and runtimes.
+docs/guide/env-and-mode.md:158:It's important to note that `NODE_ENV` (`process.env.NODE_ENV`) and modes are two different concepts. Here's how different commands affect the `NODE_ENV` and mode:
+docs/guide/env-and-mode.md:185:The main benefit with `NODE_ENV=...` in the command is that it allows Vite to detect the value early. It also allows you to read `process.env.NODE_ENV` in your Vite config as Vite can only load the env files once the config is evaluated.
+docs/guide/ssr.md:197:Then, in `server.js` we need to add some production specific logic by checking `process.env.NODE_ENV`:
+eslint.config.js:17:const shouldTypeCheck = typeof process.env.VSCODE_PID === 'string'
+packages/create-vite/src/index.ts:421:  const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
+packages/plugin-legacy/CHANGELOG.md:269:* fix(plugin-legacy): prevent global process.env.NODE_ENV mutation (#9741) ([a8279af](https://github.com/vitejs/vite/commit/a8279af608657861b64af5980942cced0b04c8ac)), closes [#9741](https://github.com/vitejs/vite/issues/9741)
+packages/plugin-legacy/src/index.ts:164:  const debugFlags = (process.env.DEBUG || '').split(',')
+packages/vite/CHANGELOG.md:712:* fix(define): allow define process.env (#15173) ([ec401da](https://github.com/vitejs/vite/commit/ec401da07435f63968d4d3da361c1d40b57b6a0c)), closes [#15173](https://github.com/vitejs/vite/issues/15173)
+packages/vite/CHANGELOG.md:1784:* fix(client-inject): replace globalThis.process.env.NODE_ENV (fix #12185) (#12194) ([2063648](https://github.com/vitejs/vite/commit/20636489ab67337dddc9421524424cefb62a1299)), closes [#12185](https://github.com/vitejs/vite/issues/12185) [#12194](https://github.com/vitejs/vite/issues/12194)
+packages/vite/CHANGELOG.md:2093:* fix(env): prevent env expand on process.env (#11213) ([d4a1e2b](https://github.com/vitejs/vite/commit/d4a1e2b65b67c54ce21b094ac8ae914fd3269031)), closes [#11213](https://github.com/vitejs/vite/issues/11213)
+packages/vite/CHANGELOG.md:2102:* fix: import.meta.env and process.env undefined variable replacement (fix #8663) (#10958) ([3e0cd3d](https://github.com/vitejs/vite/commit/3e0cd3d98e612de4bd21125d151dbb14f35a64f0)), closes [#8663](https://github.com/vitejs/vite/issues/8663) [#10958](https://github.com/vitejs/vite/issues/10958)
+packages/vite/CHANGELOG.md:2860:* fix: correctly replace process.env.NODE_ENV (#8283) ([ec52baa](https://github.com/vitejs/vite/commit/ec52baa17ef2cf35d8133ddec2a7f6970be6c913)), closes [#8283](https://github.com/vitejs/vite/issues/8283)
+packages/vite/bin/vite.js:31:  process.env.DEBUG = `${
+packages/vite/bin/vite.js:32:    process.env.DEBUG ? process.env.DEBUG + ',' : ''
+packages/vite/bin/vite.js:38:      process.env.VITE_DEBUG_FILTER = filter
+packages/vite/index.cjs:27:  if (process.env.VITE_CJS_IGNORE_WARNING) return
+packages/vite/index.cjs:46:  if (process.env.VITE_CJS_TRACE) {
+packages/vite/src/node/__tests__/env.spec.ts:44:    expect(process.env.VITE_USER_NODE_ENV).toEqual(undefined)
+packages/vite/src/node/__tests__/env.spec.ts:48:    const _nodeEnv = process.env.NODE_ENV
+packages/vite/src/node/__tests__/env.spec.ts:49:    process.env.NODE_ENV = 'production'
+packages/vite/src/node/__tests__/env.spec.ts:51:    expect(process.env.VITE_USER_NODE_ENV).toEqual('development')
+packages/vite/src/node/__tests__/env.spec.ts:52:    process.env.NODE_ENV = _nodeEnv
+packages/vite/src/node/__tests__/env.spec.ts:56:    process.env.VITE_USER_NODE_ENV = 'test'
+packages/vite/src/node/__tests__/env.spec.ts:58:    expect(process.env.VITE_USER_NODE_ENV).toEqual('test')
+packages/vite/src/node/__tests__/env.spec.ts:61:  test('prioritize existing process.env', () => {
+packages/vite/src/node/__tests__/env.spec.ts:62:    process.env.VITE_ENV_TEST_ENV = 'EXIST'
+packages/vite/src/node/build.ts:944:  const tty = process.stdout.isTTY && !process.env.CI
+packages/vite/src/node/config.ts:460:  const isNodeEnvSet = !!process.env.NODE_ENV
+packages/vite/src/node/config.ts:466:    process.env.NODE_ENV = defaultNodeEnv
+packages/vite/src/node/config.ts:583:  const userNodeEnv = process.env.VITE_USER_NODE_ENV
+packages/vite/src/node/config.ts:586:      process.env.NODE_ENV = 'development'
+packages/vite/src/node/config.ts:592:          `If you need to set process.env.NODE_ENV, you can set it in the Vite config instead.`,
+packages/vite/src/node/config.ts:597:  const isProduction = process.env.NODE_ENV === 'production'
+packages/vite/src/node/env.ts:40:  // test NODE_ENV override before expand as otherwise process.env.NODE_ENV would override this
+packages/vite/src/node/env.ts:41:  if (parsed.NODE_ENV && process.env.VITE_USER_NODE_ENV === undefined) {
+packages/vite/src/node/env.ts:42:    process.env.VITE_USER_NODE_ENV = parsed.NODE_ENV
+packages/vite/src/node/env.ts:45:  if (parsed.BROWSER && process.env.BROWSER === undefined) {
+packages/vite/src/node/env.ts:46:    process.env.BROWSER = parsed.BROWSER
+packages/vite/src/node/env.ts:48:  if (parsed.BROWSER_ARGS && process.env.BROWSER_ARGS === undefined) {
+packages/vite/src/node/env.ts:49:    process.env.BROWSER_ARGS = parsed.BROWSER_ARGS
+packages/vite/src/node/env.ts:52:  // let environment variables use each other. make a copy of `process.env` so that `dotenv-expand`
+packages/vite/src/node/env.ts:53:  // doesn't re-assign the expanded values to the global `process.env`.
+packages/vite/src/node/env.ts:54:  const processEnv = { ...process.env } as DotenvPopulateInput
+packages/vite/src/node/env.ts:66:  for (const key in process.env) {
+packages/vite/src/node/env.ts:68:      env[key] = process.env[key] as string
+packages/vite/src/node/logger.ts:78:    allowClearScreen && process.stdout.isTTY && !process.env.CI
+packages/vite/src/node/optimizer/index.ts:764:    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || config.mode),
+packages/vite/src/node/optimizer/index.ts:1159:  return process.env.npm_config_user_agent?.startsWith(manager) ? 1 : -1
+packages/vite/src/node/optimizer/index.ts:1169:      mode: process.env.NODE_ENV || config.mode,
+packages/vite/src/node/plugins/clientInjections.ts:95:      } else if (!options?.ssr && code.includes('process.env.NODE_ENV')) {
+packages/vite/src/node/plugins/clientInjections.ts:96:        // replace process.env.NODE_ENV instead of defining a global
+packages/vite/src/node/plugins/clientInjections.ts:100:          config.define?.['process.env.NODE_ENV'] ||
+packages/vite/src/node/plugins/clientInjections.ts:101:          JSON.stringify(process.env.NODE_ENV || config.mode)
+packages/vite/src/node/plugins/clientInjections.ts:106:            'process.env.NODE_ENV': nodeEnv,
+packages/vite/src/node/plugins/clientInjections.ts:107:            'global.process.env.NODE_ENV': nodeEnv,
+packages/vite/src/node/plugins/clientInjections.ts:108:            'globalThis.process.env.NODE_ENV': nodeEnv,
+packages/vite/src/node/plugins/define.ts:18:  // ignore replace process.env in lib build
+packages/vite/src/node/plugins/define.ts:21:    const nodeEnv = process.env.NODE_ENV || config.mode
+packages/vite/src/node/plugins/define.ts:23:      'process.env': `{}`,
+packages/vite/src/node/plugins/define.ts:24:      'global.process.env': `{}`,
+packages/vite/src/node/plugins/define.ts:25:      'globalThis.process.env': `{}`,
+packages/vite/src/node/plugins/define.ts:26:      'process.env.NODE_ENV': JSON.stringify(nodeEnv),
+packages/vite/src/node/plugins/define.ts:27:      'global.process.env.NODE_ENV': JSON.stringify(nodeEnv),
+packages/vite/src/node/plugins/define.ts:28:      'globalThis.process.env.NODE_ENV': JSON.stringify(nodeEnv),
+packages/vite/src/node/plugins/define.ts:86:      patternKeys.push('process.env')
+packages/vite/src/node/plugins/reporter.ts:38:  const tty = process.stdout.isTTY && !process.env.CI
+packages/vite/src/node/server/index.ts:846:  if (process.env.DEBUG) {
+packages/vite/src/node/server/openBrowser.ts:30:  const browser = typeof opt === 'string' ? opt : process.env.BROWSER || ''
+packages/vite/src/node/server/openBrowser.ts:34:    const browserArgs = process.env.BROWSER_ARGS
+packages/vite/src/node/server/openBrowser.ts:35:      ? process.env.BROWSER_ARGS.split(' ')
+packages/vite/src/node/server/pluginContainer.ts:92:  process.env.DEBUG_VITE_SOURCEMAP_COMBINE_FILTER
+packages/vite/src/node/shortcuts.ts:32:  if (!server.httpServer || !process.stdin.isTTY || process.env.CI) {
+packages/vite/src/node/ssr/runtime/__tests__/server-hmr.spec.ts:40:  process.env.CI ? 50_00 : 5_000,
+packages/vite/src/node/utils.ts:151:const filter = process.env.VITE_DEBUG_FILTER
+packages/vite/src/node/utils.ts:153:const DEBUG = process.env.DEBUG
+packages/vite/src/node/utils.ts:1336:    process.env.npm_config_user_agent?.split(' ')[0].split('/')[0] || 'npm'
+packages/vite/src/node/utils.ts:1450:  if (process.env.CI !== 'true') {
+packages/vite/src/node/utils.ts:1459:  if (process.env.CI !== 'true') {
+packages/vite/src/runtime/types.ts:135:   * Custom environment variables available on `import.meta.env`. This doesn't modify the actual `process.env`.
+playground/css-lightningcss-proxy/server.js:7:const isTest = process.env.VITEST
+playground/define/__tests__/define.spec.ts:20:    JSON.parse(defines['process.env.NODE_ENV']),
+playground/define/__tests__/define.spec.ts:23:    JSON.stringify(defines['process.env'], null, 2),
+playground/define/__tests__/define.spec.ts:26:    JSON.parse(defines['process.env.SOMEVAR']),
+playground/define/__tests__/define.spec.ts:29:    defines.__OBJ__.process.env.SOMEVAR,
+playground/define/__tests__/define.spec.ts:32:    JSON.stringify({ SOMEVAR: defines['process.env.SOMEVAR'] }),
+playground/define/__tests__/define.spec.ts:56:  ).toBe('process.env.')
+playground/define/__tests__/define.spec.ts:59:  ).toBe('global.process.env.')
+playground/define/__tests__/define.spec.ts:64:  ).toBe('globalThis.process.env.')
+playground/define/__tests__/define.spec.ts:67:  ).toBe('process.env.NODE_ENV')
+playground/define/__tests__/define.spec.ts:72:  ).toBe('global.process.env.NODE_ENV')
+playground/define/__tests__/define.spec.ts:77:  ).toBe('globalThis.process.env.NODE_ENV')
+playground/define/__tests__/define.spec.ts:88:  ).toBe(JSON.parse(defines['process.env.SOMEVAR']))
+playground/define/index.html:27:  <p>process.env. <code class="process-env-dot"></code></p>
+playground/define/index.html:28:  <p>global.process.env. <code class="global-process-env-dot"></code></p>
+playground/define/index.html:30:    globalThis.process.env. <code class="globalThis-process-env-dot"></code>
+playground/define/index.html:32:  <p>process.env.NODE_ENV <code class="process-env-NODE_ENV"></code></p>
+playground/define/index.html:34:    global.process.env.NODE_ENV
+playground/define/index.html:38:    globalThis.process.env.NODE_ENV
+playground/define/index.html:46:  <p>process.env. <code class="process-env-dot"></code></p>
+playground/define/index.html:47:  <p>global.process.env. <code class="global-process-env-dot"></code></p>
+playground/define/index.html:49:    globalThis.process.env. <code class="globalThis-process-env-dot"></code>
+playground/define/index.html:51:  <p>process.env.NODE_ENV <code class="process-env-NODE_ENV"></code></p>
+playground/define/index.html:53:    global.process.env.NODE_ENV
+playground/define/index.html:57:    globalThis.process.env.NODE_ENV
+playground/define/index.html:86:  text('.process-node-env', process.env.NODE_ENV)
+playground/define/index.html:87:  text('.process-env', JSON.stringify(process.env, null, 2))
+playground/define/index.html:88:  text('.env-var', process.env.SOMEVAR)
+playground/define/index.html:89:  text('.process-as-property', __OBJ__.process.env.SOMEVAR)
+playground/define/index.html:93:      ...(process.env.SOMEVAR ? { SOMEVAR: `"${process.env.SOMEVAR}"` } : {}),
+playground/define/index.html:117:  text('.ignores-string-literals .process-env-dot', 'process.env.')
+playground/define/index.html:120:    'global.process.env.',
+playground/define/index.html:124:    'globalThis.process.env.',
+playground/define/index.html:126:  text('.ignores-string-literals .process-env-NODE_ENV', 'process.env.NODE_ENV')
+playground/define/index.html:129:    'global.process.env.NODE_ENV',
+playground/define/index.html:133:    'globalThis.process.env.NODE_ENV',
+playground/define/index.html:139:    `${process.env.SOMEVAR}`,
+playground/define/index.html:143:    `${process.env.NODE_ENV}`,
+playground/define/vite.config.js:21:    'process.env.NODE_ENV': '"dev"',
+playground/define/vite.config.js:22:    'process.env.SOMEVAR': '"SOMEVAR"',
+playground/define/vite.config.js:23:    'process.env': {
+playground/env/__tests__/env.spec.ts:52:  expect(await page.textContent('.node-env')).toBe(process.env.NODE_ENV)
+playground/env/__tests__/env.spec.ts:53:  expect(await page.textContent('.global-node-env')).toBe(process.env.NODE_ENV)
+playground/env/__tests__/env.spec.ts:55:    process.env.NODE_ENV,
+playground/env/index.html:26:<p>process.env.NODE_ENV: <code class="node-env"></code></p>
+playground/env/index.html:27:<p>global.process.env.NODE_ENV: <code class="global-node-env"></code></p>
+playground/env/index.html:29:  globalThis.process.env.NODE_ENV: <code class="global-this-node-env"></code>
+playground/env/index.html:63:  text('.node-env', process.env.NODE_ENV)
+playground/env/index.html:64:  text('.global-node-env', global.process.env.NODE_ENV)
+playground/env/index.html:65:  text('.global-this-node-env', globalThis.process.env.NODE_ENV)
+playground/env/vite.config.js:3:process.env.EXPAND = 'expand'
+playground/json/server.js:8:const isTest = process.env.VITEST
+playground/lib/__tests__/lib.spec.ts:85:  test('preserve process.env', () => {
+playground/lib/__tests__/lib.spec.ts:89:    expect(es).toMatch('process.env.NODE_ENV')
+playground/lib/__tests__/lib.spec.ts:90:    expect(iife).toMatch('process.env.NODE_ENV')
+playground/lib/__tests__/lib.spec.ts:91:    expect(umd).toMatch('process.env.NODE_ENV')
+playground/lib/__tests__/serve.ts:24:    process.env.VITE_INLINE = 'inline-serve'
+playground/lib/index.dist.html:8:  // shim test preserve process.env.NODE_ENV
+playground/lib/src/main.js:8:  console.log(process.env.NODE_ENV)
+playground/lib/vite.multiple-output.config.js:4:const root = process.env.VITEST
+playground/optimize-deps/__tests__/optimize-deps.spec.ts:107:test('import from dep with process.env.NODE_ENV', async () => {
+playground/optimize-deps/dep-node-env/index.js:1:export const env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev'
+playground/optimize-deps/index.html:50:<h2>Import from dependency with process.env.NODE_ENV</h2>
+playground/optimize-deps-no-discovery/vite.config.js:4:process.env.NODE_ENV = ''
+playground/optimize-missing-deps/server.js:8:const isTest = process.env.VITEST
+playground/ssr/server.js:7:const isTest = process.env.VITEST
+playground/ssr-alias/src/main.js:8:  builtin: process.env['__TEST_ALIAS__'],
+playground/ssr-conditions/server.js:8:const isTest = process.env.VITEST
+playground/ssr-deps/__tests__/ssr-deps.spec.ts:103:    `Hello World from ${process.env.NODE_ENV}!`,
+playground/ssr-deps/server.js:9:const isTest = process.env.VITEST
+playground/ssr-html/server.js:7:const isTest = process.env.VITEST
+playground/ssr-html/test-stacktrace.js:25:const isTest = process.env.VITEST
+playground/ssr-noexternal/server.js:8:const isTest = process.env.VITEST
+playground/ssr-noexternal/server.js:12:  isProd = process.env.NODE_ENV === 'production',
+playground/ssr-pug/server.js:9:const isTest = process.env.VITEST
+playground/ssr-webworker/worker.js:7:const isTest = !!process.env.TEST
+playground/test-utils.ts:217:  const maxTries = process.env.CI ? 200 : 50
+playground/test-utils.ts:242:  const maxTries = process.env.CI ? 200 : 50
+playground/vitestGlobalSetup.ts:10:  process.env.NODE_ENV = process.env.VITE_TEST_BUILD
+playground/vitestGlobalSetup.ts:15:    headless: !process.env.VITE_DEBUG_SERVE,
+playground/vitestGlobalSetup.ts:16:    args: process.env.CI
+playground/vitestGlobalSetup.ts:61:  if (!process.env.VITE_PRESERVE_BUILD_ARTIFACTS) {
+playground/vitestSetup.ts:30:export const isBuild = !!process.env.VITE_TEST_BUILD
+playground/vitestSetup.ts:114:        process.env.VITE_DEBUG_SERVE &&
+playground/vitestSetup.ts:246:    process.env.VITE_INLINE = 'inline-serve'
+playground/vitestSetup.ts:255:    process.env.VITE_INLINE = 'inline-build'
+playground/vitestSetup.ts:285:    const _nodeEnv = process.env.NODE_ENV
+playground/vitestSetup.ts:288:    process.env.NODE_ENV = _nodeEnv
+playground/worker/__tests__/es/worker-es.spec.ts:10:    process.env.NODE_ENV,
+playground/worker/__tests__/iife/worker-iife.spec.ts:17:  await untilUpdated(() => page.textContent('.mode'), process.env.NODE_ENV)
+playground/worker/__tests__/relative-base/worker-relative-base.spec.ts:10:    process.env.NODE_ENV,
+playground/worker/modules/workerImport.ts:2:export const mode = process.env.NODE_ENV
+playground/worker/worker-sourcemap-config.js:8:      process.env.WORKER_MODE
+vitest.config.e2e.ts:4:const timeout = process.env.PWDEBUG ? Infinity : process.env.CI ? 50000 : 30000

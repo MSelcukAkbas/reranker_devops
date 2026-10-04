@@ -1,0 +1,24 @@
+eslint.config.js:100:      '@typescript-eslint/no-unsafe-function-type': 'off', // TODO: we should turn this on in a new PR
+packages/create-vite/build.config.ts:26:        // @ts-expect-error TODO: unbuild uses rollup v3 and Vite uses rollup v4
+packages/vite/CHANGELOG.md:76:* chore: remove stale TODOs (#17866) ([e012f29](https://github.com/vitejs/vite/commit/e012f296df583bd133d26399397bd4ae49de1497)), closes [#17866](https://github.com/vitejs/vite/issues/17866)
+packages/vite/src/node/http.ts:117:      // @ts-expect-error TODO: is this correct?
+packages/vite/src/node/plugins/css.ts:1323:            // TODO: support source map
+packages/vite/src/node/plugins/css.ts:1745:// TODO: image and cross-fade could contain a "url" that needs to be processed
+packages/vite/src/node/plugins/css.ts:2427:      // TODO: change default in v6
+packages/vite/src/node/plugins/resolve.ts:930:  // TODO: we need to wait until scanning is done here as this function
+packages/vite/src/node/server/pluginContainer.ts:709:      // TODO: move it to overrides
+packages/vite/src/node/server/ws.ts:119:  // TODO: the main server port may not have been chosen yet as it may use the next available
+packages/vite/src/node/ssr/ssrModuleLoader.ts:88:    // TODO more info? is this even necessary?
+packages/vite/src/node/ssr/ssrTransform.ts:167:              : // @ts-expect-error TODO: Estree types don't consider arbitrary module namespace specifiers yet
+packages/vite/src/node/ssr/ssrTransform.ts:185:              // @ts-expect-error TODO: Estree types don't consider arbitrary module namespace specifiers yet
+packages/vite/src/node/ssr/ssrTransform.ts:235:                : // @ts-expect-error TODO: Estree types don't consider arbitrary module namespace specifiers yet
+packages/vite/src/node/ssr/ssrTransform.ts:253:                : // @ts-expect-error TODO: Estree types don't consider arbitrary module namespace specifiers yet
+packages/vite/src/node/utils.ts:98:// TODO: Use `isBuiltin` from `node:module`, but Deno doesn't support it
+packages/vite/src/node/utils.ts:137:// TODO: use import()
+playground/assets/index.html:479:  // TODO: is not supported yet (https://github.com/vitejs/vite/pull/16243)
+playground/hmr-ssr/__tests__/hmr-ssr.spec.ts:255:  // TODO
+playground/hmr-ssr/__tests__/hmr-ssr.spec.ts:269:  // TODO: css is not supported in SSR (yet?)
+playground/nested-deps/__tests__/nested-deps.spec.ts:13:  // TODO: Review if the test is correct
+playground/optimize-deps/vite.config.js:87:    // TODO: Remove this one support for prebundling in build lands.
+playground/vitestSetup.ts:85:  // TODO: ssr playground?
+playground/worker/__tests__/relative-base/worker-relative-base.spec.ts:33:// TODO: inline worker should inline assets
